@@ -11,7 +11,6 @@ import {
   Position,
   Handle,
 } from "@xyflow/react";
-import "@xyflow/react/dist/style.css";
 import type { GameTree, CandidateMove } from "@/lib/contracts/models";
 import { motion } from "framer-motion";
 

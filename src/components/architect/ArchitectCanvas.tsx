@@ -16,7 +16,6 @@ import {
   Handle,
   Position,
 } from "@xyflow/react";
-import "@xyflow/react/dist/style.css";
 import type { Playbook, AgentBlock, AgentBlockType } from "@/lib/contracts/models";
 import {
   Shield,
