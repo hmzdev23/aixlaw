@@ -1,24 +1,16 @@
-import {
-  AppShell,
-  BestMoveCard,
-  ContractSummaryCard,
-  DealPageHeader,
-  MetricCard,
-  NextStepCard,
-} from "@/components/product-ui/components";
+import { AppShell, DealPageHeader } from "@/components/product-ui/components";
+import { CockpitLive } from "@/components/cockpit/CockpitLive";
 
-export default function Page() {
+export default async function Page({
+  params,
+}: {
+  params: Promise<{ id: string }>;
+}) {
+  const { id } = await params;
   return (
     <AppShell>
-      <DealPageHeader activeTab="Cockpit" />
-      <div className="grid gap-7 lg:grid-cols-[300px_1fr_310px]">
-        <MetricCard />
-        <ContractSummaryCard />
-        <div className="space-y-7">
-          <BestMoveCard />
-          <NextStepCard />
-        </div>
-      </div>
+      <DealPageHeader dealId={id} activeTab="Cockpit" />
+      <CockpitLive dealId={id} />
     </AppShell>
   );
 }

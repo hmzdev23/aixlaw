@@ -78,9 +78,11 @@ export class InboundServiceImpl implements InboundService {
 
   async triggerManualDemo(opts?: {
     documentFocus?: InboundDocumentFocus;
+    /** When set (e.g. `"demo"`), keeps URLs like `/deals/demo/cockpit` aligned with engine sessions. */
+    dealId?: string;
   }): Promise<InboundEvent> {
     const focus: InboundDocumentFocus = opts?.documentFocus ?? "msa";
-    const dealId = newDealId();
+    const dealId = opts?.dealId?.trim() || newDealId();
     const personaId = resolvePersonaId(await this.deps.getCurrentEmail());
 
     const fixturePath =

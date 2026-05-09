@@ -28,7 +28,7 @@ import {
   activity,
   agents,
   clauses,
-  dealTabs,
+  dealTabsFor,
   deals,
   navItems,
   paletteAgents,
@@ -44,10 +44,23 @@ function cn(...classes: Array<string | false | null | undefined>) {
 export function Logo() {
   return (
     <Link href="/dashboard" className="flex items-center gap-3 text-[13px] font-semibold tracking-[0.08em] text-[var(--ink)]">
-      <span className="grid h-6 w-6 place-items-center rounded-full bg-[var(--ink)] text-white">
-        <span className="text-[13px] leading-none">♞</span>
-      </span>
-      GAMBIT
+      {/* eslint-disable-next-line @next/next/no-img-element */}
+      <img
+        src="/brand/01_primary_icon_mark.png"
+        alt=""
+        width={28}
+        height={28}
+        className="h-7 w-7 shrink-0 rounded-md"
+      />
+      {/* eslint-disable-next-line @next/next/no-img-element */}
+      <img
+        src="/brand/02_horizontal_wordmark_lockup.png"
+        alt="Gambit"
+        height={22}
+        width={120}
+        className="h-[22px] w-auto hidden sm:block"
+      />
+      <span className="sm:hidden font-semibold">GAMBIT</span>
     </Link>
   );
 }
@@ -181,7 +194,16 @@ export function PageHeader({
   );
 }
 
-export function DealPageHeader({ activeTab }: { activeTab: string }) {
+export function DealPageHeader({
+  dealId,
+  activeTab,
+  title = "Dunder AI ↔ Initech — MSA / NDA",
+}: {
+  dealId: string;
+  activeTab: string;
+  title?: string;
+}) {
+  const tabs = dealTabsFor(dealId);
   return (
     <div className="mb-7 border-b border-[var(--hairline)] pb-4">
       <div className="mb-5 flex items-center justify-between">
@@ -189,7 +211,7 @@ export function DealPageHeader({ activeTab }: { activeTab: string }) {
           <Link href="/deals" aria-label="Back to deals">
             <ArrowLeft className="h-4 w-4" />
           </Link>
-          <h1 className="text-[17px] font-semibold text-[var(--ink)]">MegaCorp Cloud Services – MSA</h1>
+          <h1 className="text-[17px] font-semibold text-[var(--ink)]">{title}</h1>
         </div>
         {activeTab === "Architect" ? (
           <Button variant="secondary" className="h-9 px-4">Save Playbook</Button>
@@ -197,8 +219,8 @@ export function DealPageHeader({ activeTab }: { activeTab: string }) {
           <Button variant="secondary" className="h-9 px-4">Actions <ChevronDown className="h-3.5 w-3.5" /></Button>
         ) : null}
       </div>
-      <nav className="flex items-center gap-8">
-        {dealTabs.map((tab) => (
+      <nav className="flex flex-wrap items-center gap-6 md:gap-8">
+        {tabs.map((tab) => (
           <Link
             key={tab.label}
             href={tab.href}

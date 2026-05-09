@@ -5,10 +5,15 @@ import {
   WorkflowCanvas,
 } from "@/components/product-ui/components";
 
-export default function Page() {
+export default async function Page({
+  params,
+}: {
+  params: Promise<{ id: string }>;
+}) {
+  const { id } = await params;
   return (
     <AppShell>
-      <DealPageHeader activeTab="Architect" />
+      <DealPageHeader dealId={id} activeTab="Architect" />
       <div className="mb-7">
         <h2 className="text-[22px] font-semibold tracking-[-0.01em] text-[var(--ink)]">Build your negotiation playbook</h2>
         <p className="mt-2 text-[13px] text-[var(--body)]">Drag, connect, and configure agents.</p>

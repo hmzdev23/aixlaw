@@ -26,11 +26,13 @@ export async function POST(req: Request) {
   try {
     const body = await readJson(req, BodySchema);
     const locale: "en" | "fr" = body.locale ?? "en";
-    const report = await realComplianceService.checkProposedTextEx(body.text, locale, {
+    const ex = await realComplianceService.checkProposedTextEx(body.text, locale, {
       dealId: body.dealId,
       forceLaw25: body.forceLaw25,
       piaTokens: body.piaTokens,
     });
+    const { _extracted: _, ...report } = ex;
+    void _;
     return ok(report);
   } catch (e) {
     return fail(e);

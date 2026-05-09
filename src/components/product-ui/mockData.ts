@@ -22,11 +22,17 @@ export const navItems = [
   { label: "Settings", href: "/settings", icon: Settings },
 ];
 
-export const dealTabs = [
-  { label: "Cockpit", href: "/deals/megacorp/cockpit" },
-  { label: "War Room", href: "/deals/megacorp/war-room" },
-  { label: "Architect", href: "/deals/megacorp/architect" },
-];
+export function dealTabsFor(dealId: string) {
+  return [
+    { label: "Cockpit", href: `/deals/${dealId}/cockpit` },
+    { label: "War Room", href: `/deals/${dealId}/war-room` },
+    { label: "Architect", href: `/deals/${dealId}/architect` },
+    { label: "Review", href: `/deals/${dealId}/review` },
+  ] as const;
+}
+
+/** @deprecated use dealTabsFor(dealId) for dynamic deal routes */
+export const dealTabs = dealTabsFor("demo");
 
 export const activeDeals = [
   {

@@ -3,19 +3,26 @@ import {
   Button,
   Card,
   ClauseDiff,
-  StatusPill,
+  DealPageHeader,
   clauses,
 } from "@/components/product-ui/components";
-import { ArrowLeft, MoreHorizontal } from "lucide-react";
+import { MoreHorizontal } from "lucide-react";
 import Link from "next/link";
 
-export default function Page() {
+export default async function Page({
+  params,
+}: {
+  params: Promise<{ id: string }>;
+}) {
+  const { id } = await params;
   return (
     <AppShell>
+      <DealPageHeader dealId={id} activeTab="Review" />
       <div className="mb-7 flex items-center justify-between border-b border-[var(--hairline)] pb-5">
         <div className="flex items-center gap-3">
-          <Link href="/deals/megacorp/cockpit" aria-label="Back to cockpit"><ArrowLeft className="h-4 w-4" /></Link>
-          <h1 className="text-[17px] font-semibold">MegaCorp Cloud Services – MSA</h1>
+          <Link href={`/deals/${id}/cockpit`} className="text-[13px] text-[var(--body)] hover:text-[var(--ink)]">
+            ← Back to cockpit
+          </Link>
         </div>
         <div className="flex items-center gap-5">
           <span className="text-[13px] font-medium">Compare</span>
@@ -24,6 +31,20 @@ export default function Page() {
           </span>
           <MoreHorizontal className="h-4 w-4" />
         </div>
+      </div>
+      <div className="mb-6 flex flex-wrap gap-3">
+        <a
+          href={`/api/workproduct/supervisor?dealId=${encodeURIComponent(id)}&mode=legal`}
+          className="inline-flex h-10 items-center rounded-full border border-[var(--hairline)] bg-white px-4 text-[13px] font-medium"
+        >
+          Supervisor PDF (Legal)
+        </a>
+        <a
+          href={`/api/workproduct/supervisor?dealId=${encodeURIComponent(id)}&mode=plain`}
+          className="inline-flex h-10 items-center rounded-full border border-[var(--hairline)] bg-white px-4 text-[13px] font-medium"
+        >
+          Supervisor PDF (Plain)
+        </a>
       </div>
       <div className="grid gap-7 lg:grid-cols-[250px_1fr_210px]">
         <aside>

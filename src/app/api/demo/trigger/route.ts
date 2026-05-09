@@ -21,6 +21,7 @@ export const dynamic = "force-dynamic";
 const BodySchema = z
   .object({
     documentFocus: z.enum(["nda", "msa"]).optional(),
+    dealId: z.string().min(1).optional(),
   })
   .strict();
 
@@ -42,6 +43,7 @@ export async function POST(req: Request): Promise<Response> {
     const inbound = await getInboundService();
     const event = await inbound.triggerManualDemo({
       documentFocus: parsed.data.documentFocus,
+      dealId: parsed.data.dealId ?? "demo",
     });
     const session = inbound.toDealSession(event);
     return ok({ event, session });

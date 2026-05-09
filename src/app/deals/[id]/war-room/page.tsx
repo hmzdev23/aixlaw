@@ -8,10 +8,15 @@ import {
 } from "@/components/product-ui/components";
 import { ChevronDown } from "lucide-react";
 
-export default function Page() {
+export default async function Page({
+  params,
+}: {
+  params: Promise<{ id: string }>;
+}) {
+  const { id } = await params;
   return (
     <AppShell>
-      <DealPageHeader activeTab="War Room" />
+      <DealPageHeader dealId={id} activeTab="War Room" />
       <section className="relative min-h-[550px] rounded-xl bg-white">
         <div className="text-center">
           <h2 className="text-[18px] font-semibold text-[var(--ink)]">How this move was decided</h2>
