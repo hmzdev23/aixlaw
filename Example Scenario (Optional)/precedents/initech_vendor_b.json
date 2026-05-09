@@ -1,0 +1,35 @@
+{
+  "id": "initech_vendor_b",
+  "label": "PaymentsAPI Co. (2023)",
+  "year": 2023,
+  "vendorType": "payments orchestration platform",
+  "outcome": "walked",
+  "summary": "Vendor walked away after seven weeks. Initech refused to budge on Ontario-only data residency, the cyber insurance minimum, and step-in rights. Vendor's executive team concluded the operational lift exceeded the deal's first-year ARR.",
+  "clauses": [
+    {
+      "ref": "9.2 Data Location",
+      "topic": "data_residency",
+      "text": "Client Data shall be stored and processed within the Province of Ontario. Vendor shall not transfer, replicate, or back up Client Data outside of Ontario without Client's prior written consent."
+    },
+    {
+      "ref": "7.3 Minimum Insurance",
+      "topic": "insurance",
+      "text": "Vendor shall maintain throughout the term commercial general liability insurance of not less than CAD $5,000,000 per occurrence, professional liability (errors and omissions) insurance of not less than CAD $5,000,000 per occurrence, and cyber liability insurance of not less than CAD $10,000,000 per occurrence."
+    },
+    {
+      "ref": "10.9 Step-in Rights",
+      "topic": "step_in",
+      "text": "In the event Vendor is unable or unwilling to perform its obligations under this Agreement, Client shall have the right, upon written notice, to assume direct control of the Services or to appoint a third party to do so, and Vendor shall cooperate fully with such transition at no additional cost to Client."
+    },
+    {
+      "ref": "7.1 Limitation of Liability",
+      "topic": "liability_cap",
+      "text": "Vendor proposed a liability cap equal to twelve (12) months of fees paid; Initech required uncapped liability for breaches of Section 9, gross negligence, and wilful misconduct. The parties failed to reach agreement on this point."
+    },
+    {
+      "ref": "2.1 Uptime Service Level",
+      "topic": "sla",
+      "text": "Vendor shall use commercially reasonable efforts to ensure the Services are available 99.9% of the time in any given calendar month. Scheduled maintenance shall not occur during business hours and requires ten (10) business days' prior notice."
+    }
+  ]
+}

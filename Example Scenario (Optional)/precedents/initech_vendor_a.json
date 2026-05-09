@@ -1,0 +1,35 @@
+{
+  "id": "initech_vendor_a",
+  "label": "CoreBank Identity Verification (2022)",
+  "year": 2022,
+  "vendorType": "identity verification SaaS",
+  "outcome": "signed",
+  "summary": "Mid-stage Toronto vendor signed after Initech accepted a $2M aggregate cap but kept breach liability uncapped. Vendor walked away on convenience termination twice before agreeing to a 60-day cure period instead.",
+  "clauses": [
+    {
+      "ref": "7.1 Limitation of Liability",
+      "topic": "liability_cap",
+      "text": "Vendor's total aggregate liability shall not exceed CAD $2,000,000; provided that the foregoing cap shall not apply to claims arising from a breach of Section 9 (Data Protection) or any unauthorized access to or disclosure of Client Data, in respect of which Vendor's liability shall be uncapped."
+    },
+    {
+      "ref": "9.3 Audit Rights",
+      "topic": "audit",
+      "text": "Client may audit Vendor's information security controls no more than twice per calendar year upon forty-eight (48) hours' prior written notice. Vendor shall bear the costs of its own personnel in connection with any such audit."
+    },
+    {
+      "ref": "5.2 Termination for Cause",
+      "topic": "termination",
+      "text": "Either party may terminate upon material breach not cured within sixty (60) days of written notice. Initech declined to accept any convenience termination right in this Agreement following extensive negotiation."
+    },
+    {
+      "ref": "9.1 Breach Notification",
+      "topic": "breach_notification",
+      "text": "Vendor shall notify Client within twenty-four (24) hours of becoming aware of any unauthorized access to Client Data, with a follow-up incident report within five (5) business days."
+    },
+    {
+      "ref": "9.2 Data Location",
+      "topic": "data_residency",
+      "text": "Client Data shall be stored and processed in Canada. Cross-border transfer requires Client's prior written consent on a per-event basis."
+    }
+  ]
+}
