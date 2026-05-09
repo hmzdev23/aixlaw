@@ -1,12 +1,18 @@
 /**
  * `ComplianceService` registration seam.
  *
- * Real implementation lands with T6 (TrueSight + OSFI + PIPEDA + Law25). Until
- * then we ship a deterministic stub that returns a sensible canned report so
- * T5 (Council) and T3 (UI) can consume the contract without waiting on T6.
+ * Lifecycle:
+ *   - Sprint 0 / T5: a deterministic stub was the default so Council/Architect
+ *     could ship without waiting on T6.
+ *   - T6 (this branch): the real implementation in `./complianceService.ts` is
+ *     registered as the default. T5 callers (`complianceService()`) get the
+ *     real engine with **no call-site changes**.
+ *   - Tests can still inject a custom impl via `setComplianceService(impl)`
+ *     and revert via `__resetComplianceForTests()`.
  *
- * When T6 arrives, it imports `setComplianceService(realImpl)` once at module
- * load time; everything else changes nothing.
+ * If you need the deterministic stub explicitly (e.g. a test that wants to
+ * isolate Council behaviour from compliance signals), call
+ * `setComplianceService(stubComplianceService)` directly.
  */
 
 import type {
@@ -17,6 +23,7 @@ import type {
   PipedaResult,
   TrueSightResult,
 } from "@/contracts";
+import { realComplianceService } from "./complianceService";
 
 const STUB_OSFI: OsfiResult = {
   triggered: true,
@@ -28,10 +35,9 @@ const STUB_OSFI: OsfiResult = {
     "Step-in rights on vendor failure",
   ],
   notes: [
-    "These are scenario-derived themes, not a regulatory opinion. T6 will replace with the live engine.",
+    "Stub baseline — used only when explicitly registered via setComplianceService(stubComplianceService).",
   ],
 };
-
 const STUB_PIPEDA: PipedaResult = {
   triggered: true,
   triggers: [
@@ -39,17 +45,8 @@ const STUB_PIPEDA: PipedaResult = {
     "Retention windows on Client Data exceed PIPEDA accountability defaults",
   ],
 };
-
-const STUB_LAW25: Law25Result = {
-  triggered: false,
-  triggers: [],
-};
-
-const STUB_TRUESIGHT: TrueSightResult = {
-  status: "clean",
-  claims: [],
-};
-
+const STUB_LAW25: Law25Result = { triggered: false, triggers: [] };
+const STUB_TRUESIGHT: TrueSightResult = { status: "clean", claims: [] };
 const STUB_REPORT: ComplianceReport = {
   trueSight: STUB_TRUESIGHT,
   osfi: STUB_OSFI,
@@ -57,35 +54,29 @@ const STUB_REPORT: ComplianceReport = {
   law25: STUB_LAW25,
 };
 
-class StubComplianceService implements ComplianceService {
-  async checkProposedText(
-    text: string,
-    locale: "en" | "fr"
-  ): Promise<ComplianceReport> {
-    // Args reserved for the T6 implementation; intentionally unused here so
-    // that the stub returns a deterministic baseline regardless of input.
+export const stubComplianceService: ComplianceService = {
+  async checkProposedText(text, locale) {
     void text;
     void locale;
-    // Deep copy so callers can't mutate the cached object.
     return JSON.parse(JSON.stringify(STUB_REPORT)) as ComplianceReport;
-  }
-}
+  },
+};
 
-let active: ComplianceService = new StubComplianceService();
+let active: ComplianceService = realComplianceService;
 
 export function complianceService(): ComplianceService {
   return active;
 }
 
 /**
- * Replace the active ComplianceService. Called once by T6's module bootstrap.
- * Idempotent and process-local. Tests can swap in mocks freely.
+ * Replace the active ComplianceService. Module-local & idempotent. Tests can
+ * pass `stubComplianceService` here when they want the deterministic baseline.
  */
 export function setComplianceService(impl: ComplianceService): void {
   active = impl;
 }
 
-/** Test-only: revert to the stub. */
+/** Test-only: revert to the real T6 implementation. */
 export function __resetComplianceForTests(): void {
-  active = new StubComplianceService();
+  active = realComplianceService;
 }
