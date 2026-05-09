@@ -1,0 +1,12 @@
+{
+  "totalSeats": 50,
+  "records": [
+    {
+      "dealId": "demo-arch-exec",
+      "tier": "Enterprise",
+      "seats": 50,
+      "allocatedAt": "2026-05-09T17:16:20.916Z"
+    }
+  ],
+  "updatedAt": "2026-05-09T17:16:20.916Z"
+}

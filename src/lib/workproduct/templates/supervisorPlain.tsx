@@ -1,3 +1,4 @@
+import React from "react";
 /**
  * Supervisor PDF — Plain-English mode. Uses business phrasing, not contract
  * terms. The hero line per docs/tasks/08:

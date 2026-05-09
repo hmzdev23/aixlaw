@@ -1,3 +1,4 @@
+import React from "react";
 /**
  * Supervisor PDF — Legal mode. Uses defined contract terms ("uncapped breach
  * exposure", "convenience termination", "step-in rights") without softening.

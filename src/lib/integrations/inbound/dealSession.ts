@@ -12,6 +12,7 @@ import type {
   InboundDocumentFocus,
   Locale,
 } from "@/lib/contracts";
+import { setSession } from "@/lib/engine/_shared/sessionStore";
 import { FIXTURE_PATHS } from "@/lib/util/fixturePath";
 
 const VENDOR_ID = "dunder_ai" as const;
@@ -42,7 +43,7 @@ export interface BuildDealSessionInput {
 export function buildDealSession(input: BuildDealSessionInput): DealSession {
   const focus: InboundDocumentFocus = input.documentFocus ?? "msa";
   const activeId = focus === "nda" ? NDA_DOC.id : MSA_DOC.id;
-  return {
+  const session: DealSession = {
     dealId: input.dealId,
     vendorId: VENDOR_ID,
     counterpartyId: COUNTERPARTY_ID,
@@ -50,12 +51,11 @@ export function buildDealSession(input: BuildDealSessionInput): DealSession {
     // T4 (Aditya) writes synthetic precedent JSON under
     // "Example Scenario (Optional)/precedents/". We stub the keys here so
     // the engine has stable references to look up.
-    precedentRefs: [
-      "precedent_initech_vendor_a",
-      "precedent_initech_vendor_b",
-      "precedent_initech_vendor_c",
-    ],
+    precedentRefs: ["initech_vendor_a", "initech_vendor_b", "initech_vendor_c"],
     locale: input.locale ?? "en",
     activeDocumentId: activeId,
   };
+  // Canonical engine session registry (T4–T9) — keep in sync with inbound.
+  setSession(session);
+  return session;
 }
