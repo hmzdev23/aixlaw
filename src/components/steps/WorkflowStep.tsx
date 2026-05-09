@@ -47,12 +47,22 @@ export function WorkflowStep() {
 
   return (
     <div className="flex flex-col gap-5">
-      <header className="flex flex-wrap items-end justify-between gap-3">
+      <header className="flex flex-wrap items-end justify-between gap-3 fade-in">
         <div>
-          <h2 className="text-[22px] font-semibold tracking-tight">Build your workflow</h2>
-          <p className="muted text-[13px]">
+          <span
+            className="inline-block rounded-full border px-3 py-1 text-[10px] font-semibold uppercase tracking-[0.22em]"
+            style={{
+              borderColor: "var(--green-line, #b9d6c4)",
+              color: "var(--green-deep, #185538)",
+              background: "var(--green-soft, #e7f1ea)",
+            }}
+          >
+            Step &middot; Workflow
+          </span>
+          <h2 className="mt-2 text-[24px] font-semibold tracking-tight">Build your workflow</h2>
+          <p className="subhead text-[13px]">
             Drag an agent onto a numbered slot. Drag between slots to reorder.
-            Click <span className="kbd">×</span> on a slot to remove. Empty slots are skipped.
+            Click <span className="kbd">&times;</span> on a slot to remove. Empty slots are skipped.
           </p>
         </div>
         <div className="flex items-center gap-2">
@@ -132,14 +142,14 @@ export function WorkflowStep() {
       </div>
 
       <div className="mt-2 flex justify-between">
-        <button type="button" className="btn btn-ghost" onClick={() => dispatch({ type: "BACK" })}>← Back</button>
+        <button type="button" className="btn btn-ghost" onClick={() => dispatch({ type: "BACK" })}>&larr; Back</button>
         <button
           type="button"
-          className="btn"
+          className="btn btn-accent"
           onClick={() => dispatch({ type: "GOTO", step: "goal" })}
           disabled={state.workflow.length === 0}
         >
-          Continue → State your goal
+          Continue &rarr; State your goal
         </button>
       </div>
     </div>

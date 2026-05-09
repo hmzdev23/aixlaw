@@ -150,16 +150,26 @@ export function MemoStep() {
 
   return (
     <div className="flex flex-col gap-5">
-      <header>
-        <h2 className="text-[22px] font-semibold tracking-tight">Need a workspace memo?</h2>
-        <p className="muted text-[13px]">
+      <header className="fade-in">
+        <span
+          className="inline-block rounded-full border px-3 py-1 text-[10px] font-semibold uppercase tracking-[0.22em]"
+          style={{
+            borderColor: "var(--green-line, #b9d6c4)",
+            color: "var(--green-deep, #185538)",
+            background: "var(--green-soft, #e7f1ea)",
+          }}
+        >
+          Step &middot; Memo
+        </span>
+        <h2 className="mt-2 text-[24px] font-semibold tracking-tight">Need a workspace memo?</h2>
+        <p className="subhead text-[13px]">
           Generates a redacted PDF you can post to Slack with one click.
         </p>
       </header>
 
       {needed === null ? (
         <div className="flex gap-2">
-          <button type="button" className="btn" onClick={() => setAnswer(true)}>Yes, build one</button>
+          <button type="button" className="btn btn-accent" onClick={() => setAnswer(true)}>Yes, build one</button>
           <button type="button" className="btn btn-secondary" onClick={() => setAnswer(false)}>No, skip</button>
         </div>
       ) : !needed ? (
@@ -220,17 +230,17 @@ export function MemoStep() {
             {pdfUrl ? (
               <a className="btn btn-secondary" href={pdfUrl} download="gambit-memo.pdf">Download PDF</a>
             ) : null}
-            <button type="button" className="btn" disabled={posting} onClick={() => void post()}>
-              {posting ? "Posting…" : posted ? "✓ Posted to Slack" : "Post to Slack"}
+            <button type="button" className="btn btn-accent" disabled={posting} onClick={() => void post()}>
+              {posting ? "Posting\u2026" : posted ? "\u2713 Posted to Slack" : "Post to Slack"}
             </button>
           </div>
         </>
       )}
 
       <div className="flex justify-between">
-        <button type="button" className="btn btn-ghost" onClick={() => dispatch({ type: "BACK" })}>← Back</button>
-        <button type="button" className="btn" onClick={() => dispatch({ type: "GOTO", step: "edited" })}>
-          Continue → See edited contract
+        <button type="button" className="btn btn-ghost" onClick={() => dispatch({ type: "BACK" })}>&larr; Back</button>
+        <button type="button" className="btn btn-accent" onClick={() => dispatch({ type: "GOTO", step: "edited" })}>
+          Continue &rarr; See edited contract
         </button>
       </div>
     </div>

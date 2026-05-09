@@ -100,9 +100,19 @@ export function ContextStep() {
 
   return (
     <div className="flex flex-col gap-5">
-      <header>
-        <h2 className="text-[22px] font-semibold tracking-tight">Brief the agents</h2>
-        <p className="muted text-[13px]">
+      <header className="fade-in">
+        <span
+          className="inline-block rounded-full border px-3 py-1 text-[10px] font-semibold uppercase tracking-[0.22em]"
+          style={{
+            borderColor: "var(--green-line, #b9d6c4)",
+            color: "var(--green-deep, #185538)",
+            background: "var(--green-soft, #e7f1ea)",
+          }}
+        >
+          Step &middot; Context
+        </span>
+        <h2 className="mt-2 text-[24px] font-semibold tracking-tight">Brief the agents</h2>
+        <p className="subhead text-[13px]">
           Each agent asks for what they need. Use the hint cards on the right;
           you can drop our suggestion straight into the textbox.
         </p>
@@ -168,8 +178,8 @@ export function ContextStep() {
           <button type="button" className="btn btn-secondary" onClick={() => saveAndAdvance(true)}>
             Skip {agent.name}
           </button>
-          <button type="button" className="btn" onClick={() => saveAndAdvance(false)}>
-            {idx < order.length - 1 ? "Save & next agent →" : "Save & open War Room →"}
+          <button type="button" className="btn btn-accent" onClick={() => saveAndAdvance(false)}>
+            {idx < order.length - 1 ? "Save & next agent \u2192" : "Save & open War Room \u2192"}
           </button>
         </div>
       </div>
@@ -187,14 +197,27 @@ function ProgressChips({ order, idx }: { order: string[]; idx: number }) {
         return (
           <span
             key={id}
-            className="inline-flex items-center gap-1 rounded-full border px-2.5 py-0.5"
+            className="inline-flex items-center gap-1 rounded-full border px-2.5 py-0.5 transition"
             style={{
-              background: active ? "var(--ink)" : done ? "white" : "transparent",
-              color: active ? "white" : "var(--ink)",
-              borderColor: active ? "var(--ink)" : "var(--line-strong)",
+              background: active
+                ? "var(--green)"
+                : done
+                  ? "var(--green-soft, #e7f1ea)"
+                  : "transparent",
+              color: active
+                ? "white"
+                : done
+                  ? "var(--green-deep, #185538)"
+                  : "var(--ink)",
+              borderColor: active
+                ? "var(--green)"
+                : done
+                  ? "var(--green)"
+                  : "var(--line-strong)",
+              fontWeight: active ? 600 : 500,
             }}
           >
-            {done ? "✓ " : ""}
+            {done ? "\u2713 " : ""}
             {a?.name}
           </span>
         );
@@ -228,25 +251,39 @@ function HintCard({
   }
   return (
     <aside
-      className={`fade-in stagger-${(qIndex % 5) + 1} rounded-md border px-3 py-3`}
-      style={{ borderColor: "var(--ink)", background: "white" }}
+      className={`fade-in stagger-${(qIndex % 5) + 1} rounded-lg border px-3 py-3 lift-on-hover`}
+      style={{
+        borderColor: "var(--green-line, #b9d6c4)",
+        background: "linear-gradient(180deg, var(--green-soft, #e7f1ea) 0%, white 80%)",
+        borderLeft: "3px solid var(--green)",
+      }}
     >
-      <p className="text-[11px] uppercase tracking-widest muted">Hint for Q{qIndex + 1}</p>
+      <p
+        className="text-[10px] font-semibold uppercase tracking-[0.2em]"
+        style={{ color: "var(--green-deep, #185538)" }}
+      >
+        Hint for Q{qIndex + 1}
+      </p>
       <p className="mt-1 text-[13px] font-semibold">{hint.headline}</p>
-      <p className="muted mt-2 text-[12px] leading-relaxed">{hint.detail}</p>
+      <p
+        className="mt-2 text-[12px] leading-relaxed"
+        style={{ color: "var(--ink-soft)" }}
+      >
+        {hint.detail}
+      </p>
       <div
         className="mt-3 rounded-md border p-2"
-        style={{ borderColor: "var(--line)", background: "var(--accent-soft)" }}
+        style={{ borderColor: "var(--line-strong)", background: "white" }}
       >
         <p className="text-[10px] uppercase tracking-widest muted">Suggested answer</p>
         <p className="mt-1 text-[12px] leading-relaxed">{hint.suggestedAnswer}</p>
         <button
           type="button"
-          className="btn mt-2"
+          className="btn btn-accent mt-2"
           style={{ height: 28, padding: "0 12px", fontSize: 12 }}
           onClick={() => onApply(hint.suggestedAnswer)}
         >
-          Say this to {agentName} →
+          Say this to {agentName} &rarr;
         </button>
       </div>
     </aside>

@@ -94,21 +94,29 @@ export function UploadStep() {
   }
 
   return (
-    <div className="mx-auto flex max-w-[640px] flex-col gap-5 py-6">
-      <header className="text-center">
-        <h2 className="text-[26px] font-semibold tracking-tight">Upload a contract</h2>
-        <p className="muted mt-2 text-[14px]">
-          PDF or DOCX, up to 12 MB. We&apos;ll read it, identify the parties, and
-          step you through it.
+    <div className="mx-auto flex max-w-[660px] flex-col gap-6 py-4">
+      <header className="text-center fade-in">
+        <span
+          className="inline-block rounded-full border px-3 py-1 text-[10px] font-semibold uppercase tracking-[0.22em]"
+          style={{
+            borderColor: "var(--green-line, #b9d6c4)",
+            color: "var(--green-deep, #185538)",
+            background: "var(--green-soft, #e7f1ea)",
+          }}
+        >
+          Step 1 &middot; Upload
+        </span>
+        <h2 className="mt-3 text-[28px] font-semibold tracking-tight">
+          Upload a contract
+        </h2>
+        <p className="subhead mt-2 text-[14px]">
+          PDF, DOCX, or TXT, up to 12 MB. We&apos;ll read it, identify the parties,
+          and step you through the negotiation.
         </p>
       </header>
 
       <label
-        className="flex cursor-pointer flex-col items-center justify-center gap-3 rounded-xl border border-dashed py-14 text-center transition-colors"
-        style={{
-          borderColor: drag ? "var(--ink)" : "var(--line-strong)",
-          background: drag ? "var(--accent-soft)" : "white",
-        }}
+        className={`upload-zone fade-in stagger-1 ${drag ? "is-drag" : ""}`}
         onDragOver={(e) => {
           e.preventDefault();
           setDrag(true);
@@ -122,13 +130,70 @@ export function UploadStep() {
           className="hidden"
           onChange={onPickFile}
         />
-        <p className="text-[15px] font-medium">Drop a contract here or click to browse</p>
-        <p className="muted text-[12px]">PDF, DOCX, or TXT</p>
+        <span className="upload-icon">
+          <svg
+            width="28"
+            height="28"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="1.8"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            aria-hidden
+          >
+            <path d="M12 16V4" />
+            <path d="m6 10 6-6 6 6" />
+            <path d="M4 16v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2" />
+          </svg>
+        </span>
+        <div className="flex flex-col items-center gap-1">
+          <p
+            className="text-[16px] font-semibold"
+            style={{ color: "var(--ink)" }}
+          >
+            Click to upload
+          </p>
+          <p className="text-[12.5px]" style={{ color: "var(--ink-soft)" }}>
+            or drag and drop your contract here
+          </p>
+        </div>
+        <div className="flex flex-wrap items-center justify-center gap-1.5 pt-1">
+          {["PDF", "DOCX", "TXT"].map((t) => (
+            <span
+              key={t}
+              className="rounded-full border px-2 py-0.5 text-[10px] font-semibold tracking-wider"
+              style={{
+                borderColor: "var(--line-strong)",
+                color: "var(--ink-soft)",
+                background: "white",
+              }}
+            >
+              {t}
+            </span>
+          ))}
+          <span className="muted text-[10px]">&middot; max 12 MB</span>
+        </div>
+        <span className="shimmer-bg pointer-events-none absolute inset-0 rounded-[18px]" />
       </label>
 
       {error ? (
-        <p className="text-[13px]" style={{ color: "var(--negative)" }}>{error}</p>
+        <p
+          className="rounded-md border px-3 py-2 text-[13px] fade-in"
+          style={{
+            color: "var(--negative)",
+            borderColor: "var(--negative)",
+            background: "#fdecea",
+          }}
+        >
+          {error}
+        </p>
       ) : null}
+
+      <p className="muted text-center text-[11px] fade-in stagger-2">
+        Drop a Dunder &middot; Initech sample or a Nimbus Health &middot; OHSN
+        sample to see the council adapt automatically.
+      </p>
     </div>
   );
 }
@@ -145,14 +210,40 @@ function LoadingPanel({
   scenarioName: string | null;
 }) {
   return (
-    <div className="mx-auto flex max-w-[520px] flex-col items-center gap-6 py-10 text-center">
-      <span className="spinner" style={{ width: 28, height: 28, borderWidth: 3 }} />
-      <h2 className="text-[22px] font-semibold tracking-tight">
+    <div className="mx-auto flex max-w-[540px] flex-col items-center gap-6 py-10 text-center">
+      <span
+        className="spinner breathe-green"
+        style={{
+          width: 32,
+          height: 32,
+          borderWidth: 3,
+          borderTopColor: "var(--green)",
+        }}
+      />
+      <h2 className="text-[22px] font-semibold tracking-tight fade-in">
         {ready ? "Ready" : "Reading the contract"}
       </h2>
-      <ul className="card w-full px-5 py-4 text-left">
+      <ul className="card card-tonal w-full px-5 py-4 text-left">
         {stages.map((s, i) => {
           const status = i < active ? "done" : i === active ? "live" : "pending";
+          const bg =
+            status === "done"
+              ? "var(--green)"
+              : status === "live"
+                ? "var(--green-soft)"
+                : "transparent";
+          const fg =
+            status === "done"
+              ? "white"
+              : status === "live"
+                ? "var(--green-deep)"
+                : "var(--ink)";
+          const border =
+            status === "live"
+              ? "1px solid var(--green)"
+              : status === "done"
+                ? "1px solid var(--green)"
+                : "1px solid var(--line)";
           return (
             <li
               key={s}
@@ -161,16 +252,7 @@ function LoadingPanel({
             >
               <span
                 className="grid h-5 w-5 shrink-0 place-items-center rounded-full text-[10px] font-semibold"
-                style={{
-                  background:
-                    status === "done"
-                      ? "var(--ink)"
-                      : status === "live"
-                        ? "var(--accent-soft)"
-                        : "transparent",
-                  color: status === "done" ? "white" : "var(--ink)",
-                  border: status === "live" ? "1px solid var(--ink)" : "1px solid var(--line)",
-                }}
+                style={{ background: bg, color: fg, border }}
               >
                 {status === "done" ? "✓" : i + 1}
               </span>
@@ -181,7 +263,16 @@ function LoadingPanel({
         })}
       </ul>
       {ready && scenarioName ? (
-        <p className="muted fade-in text-[13px]">Identified: {scenarioName}</p>
+        <p
+          className="fade-in rounded-full border px-3 py-1 text-[12px] font-semibold"
+          style={{
+            borderColor: "var(--green-line, #b9d6c4)",
+            background: "var(--green-soft, #e7f1ea)",
+            color: "var(--green-deep, #185538)",
+          }}
+        >
+          Identified: {scenarioName}
+        </p>
       ) : null}
     </div>
   );

@@ -137,10 +137,20 @@ export function WarRoomStep() {
 
   return (
     <div className="flex flex-col gap-5">
-      <header className="flex flex-wrap items-end justify-between gap-3">
+      <header className="flex flex-wrap items-end justify-between gap-3 fade-in">
         <div>
-          <h2 className="text-[22px] font-semibold tracking-tight">War Room</h2>
-          <p className="muted text-[13px]">
+          <span
+            className="inline-block rounded-full border px-3 py-1 text-[10px] font-semibold uppercase tracking-[0.22em]"
+            style={{
+              borderColor: "var(--ink)",
+              color: "white",
+              background: "var(--ink)",
+            }}
+          >
+            Step &middot; War Room
+          </span>
+          <h2 className="mt-2 text-[24px] font-semibold tracking-tight">War Room</h2>
+          <p className="subhead text-[13px]">
             Goal: <em>&ldquo;{state.goal}&rdquo;</em>
             {state.activeAgentId ? (
               <span
@@ -188,15 +198,15 @@ export function WarRoomStep() {
 
       <div className="mt-2 flex justify-between">
         <button type="button" className="btn btn-ghost" onClick={() => dispatch({ type: "BACK" })}>
-          ← Back
+          &larr; Back
         </button>
         <button
           type="button"
-          className="btn"
+          className="btn btn-accent"
           onClick={() => dispatch({ type: "GOTO", step: "export" })}
           disabled={state.debate.length === 0}
         >
-          Continue → Export the chat
+          Continue &rarr; Export the chat
         </button>
       </div>
     </div>
@@ -360,8 +370,8 @@ function DecisionPane({
           <span className="spinner" /> Drafting next options…
         </p>
       ) : finished && options.length === 0 ? (
-        <button type="button" className="btn" onClick={onContinue}>
-          Continue → Export
+        <button type="button" className="btn btn-accent" onClick={onContinue}>
+          Continue &rarr; Export
         </button>
       ) : options.length === 0 ? (
         <p className="muted text-[12px]">

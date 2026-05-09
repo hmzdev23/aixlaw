@@ -62,9 +62,19 @@ export function MeetingStep() {
 
   return (
     <div className="flex flex-col gap-5">
-      <header>
-        <h2 className="text-[22px] font-semibold tracking-tight">Need to set a meeting?</h2>
-        <p className="muted text-[13px]">
+      <header className="fade-in">
+        <span
+          className="inline-block rounded-full border px-3 py-1 text-[10px] font-semibold uppercase tracking-[0.22em]"
+          style={{
+            borderColor: "var(--green-line, #b9d6c4)",
+            color: "var(--green-deep, #185538)",
+            background: "var(--green-soft, #e7f1ea)",
+          }}
+        >
+          Step &middot; Meeting
+        </span>
+        <h2 className="mt-2 text-[24px] font-semibold tracking-tight">Need to set a meeting?</h2>
+        <p className="subhead text-[13px]">
           We can drop a 30-min review on Google Calendar with everything decided
           here. If we don&apos;t have OAuth, we&apos;ll give you a one-click
           &ldquo;add to Google Calendar&rdquo; link instead.
@@ -73,7 +83,7 @@ export function MeetingStep() {
 
       {needed === null ? (
         <div className="flex gap-2">
-          <button type="button" className="btn" onClick={() => setAnswer(true)}>Yes, schedule one</button>
+          <button type="button" className="btn btn-accent" onClick={() => setAnswer(true)}>Yes, schedule one</button>
           <button type="button" className="btn btn-secondary" onClick={() => setAnswer(false)}>No, skip</button>
         </div>
       ) : needed ? (
@@ -97,8 +107,8 @@ export function MeetingStep() {
           </label>
           <div className="md:col-span-2 flex items-center justify-between gap-2">
             <button type="button" className="btn btn-ghost" onClick={() => setAnswer(false)}>Actually, skip</button>
-            <button type="button" className="btn" disabled={busy} onClick={() => void book()}>
-              {busy ? "Booking…" : "Book in Google Calendar"}
+            <button type="button" className="btn btn-accent" disabled={busy} onClick={() => void book()}>
+              {busy ? "Booking\u2026" : "Book in Google Calendar"}
             </button>
           </div>
           {error ? (
@@ -120,13 +130,13 @@ export function MeetingStep() {
       )}
 
       <div className="flex justify-between">
-        <button type="button" className="btn btn-ghost" onClick={() => dispatch({ type: "BACK" })}>← Back</button>
+        <button type="button" className="btn btn-ghost" onClick={() => dispatch({ type: "BACK" })}>&larr; Back</button>
         <button
           type="button"
-          className="btn"
+          className="btn btn-accent"
           onClick={() => dispatch({ type: "GOTO", step: "memo" })}
         >
-          Continue → Need a Slack memo?
+          Continue &rarr; Need a Slack memo?
         </button>
       </div>
     </div>

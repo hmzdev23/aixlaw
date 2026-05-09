@@ -23,11 +23,21 @@ export function GoalStep() {
 
   return (
     <div className="mx-auto flex max-w-[680px] flex-col gap-5">
-      <header>
-        <h2 className="text-[22px] font-semibold tracking-tight">
+      <header className="fade-in">
+        <span
+          className="inline-block rounded-full border px-3 py-1 text-[10px] font-semibold uppercase tracking-[0.22em]"
+          style={{
+            borderColor: "var(--green-line, #b9d6c4)",
+            color: "var(--green-deep, #185538)",
+            background: "var(--green-soft, #e7f1ea)",
+          }}
+        >
+          Step &middot; Goal
+        </span>
+        <h2 className="mt-2 text-[24px] font-semibold tracking-tight">
           What do you want out of this contract?
         </h2>
-        <p className="muted text-[13px]">
+        <p className="subhead text-[13px]">
           The agents will use this as the win condition while debating. One
           sentence is enough.
         </p>
@@ -55,10 +65,12 @@ export function GoalStep() {
                 key={s}
                 type="button"
                 onClick={() => setV(s)}
-                className={`fade-in stagger-${(i % 5) + 1} rounded-full border px-3 py-1.5 text-left text-[12px]`}
+                className={`fade-in stagger-${(i % 5) + 1} rounded-full border px-3 py-1.5 text-left text-[12px] transition`}
                 style={{
-                  borderColor: "var(--line-strong)",
-                  background: v === s ? "var(--accent-soft)" : "white",
+                  borderColor: v === s ? "var(--green)" : "var(--line-strong)",
+                  background: v === s ? "var(--green-soft, #e7f1ea)" : "white",
+                  color: v === s ? "var(--green-deep, #185538)" : "var(--ink)",
+                  fontWeight: v === s ? 600 : 400,
                 }}
               >
                 {s}
@@ -70,10 +82,10 @@ export function GoalStep() {
 
       <div className="mt-2 flex justify-between">
         <button type="button" className="btn btn-ghost" onClick={() => dispatch({ type: "BACK" })}>
-          ← Back
+          &larr; Back
         </button>
-        <button type="button" className="btn" onClick={next} disabled={v.trim().length < 8}>
-          Continue → Brief the agents
+        <button type="button" className="btn btn-accent" onClick={next} disabled={v.trim().length < 8}>
+          Continue &rarr; Brief the agents
         </button>
       </div>
     </div>

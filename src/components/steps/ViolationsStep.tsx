@@ -78,10 +78,22 @@ export function ViolationsStep() {
 
   return (
     <div className="flex flex-col gap-5">
-      <header className="flex flex-wrap items-end justify-between gap-3">
+      <header className="flex flex-wrap items-end justify-between gap-3 fade-in">
         <div>
-          <h2 className="text-[22px] font-semibold tracking-tight">Potential law violations</h2>
-          <p className="muted text-[13px]">
+          <span
+            className="inline-block rounded-full border px-3 py-1 text-[10px] font-semibold uppercase tracking-[0.22em]"
+            style={{
+              borderColor: "var(--negative)",
+              color: "var(--negative)",
+              background: "#fdecea",
+            }}
+          >
+            Step &middot; Compliance
+          </span>
+          <h2 className="mt-2 text-[24px] font-semibold tracking-tight">
+            Potential law violations
+          </h2>
+          <p className="subhead text-[13px]">
             {violations.length} cross-jurisdiction risk{violations.length === 1 ? "" : "s"} flagged.
             Toggle français for the same blurb in French.
           </p>
@@ -124,14 +136,14 @@ export function ViolationsStep() {
 
       <div className="mt-2 flex justify-between">
         <button type="button" className="btn btn-ghost" onClick={() => dispatch({ type: "BACK" })}>
-          ← Back
+          &larr; Back
         </button>
         <button
           type="button"
-          className="btn"
+          className="btn btn-accent"
           onClick={() => dispatch({ type: "GOTO", step: "workflow" })}
         >
-          Continue → Build the workflow
+          Continue &rarr; Build the workflow
         </button>
       </div>
     </div>
@@ -155,8 +167,8 @@ function ViolationAlert({
         : { color: "var(--ink-soft)", bg: "var(--accent-soft)" };
   return (
     <article
-      className={`card fade-in stagger-${(index % 5) + 1} px-5 py-4`}
-      style={{ borderLeft: `3px solid ${tone.color}` }}
+      className={`card lift-on-hover fade-in stagger-${(index % 5) + 1} px-5 py-4`}
+      style={{ borderLeft: `4px solid ${tone.color}` }}
     >
       <div className="flex flex-wrap items-baseline gap-2">
         <span

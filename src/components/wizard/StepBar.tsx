@@ -5,56 +5,68 @@ import { STEPS, stepIndex, stepLabel, useWizard } from "./state";
 export function StepBar() {
   const { state } = useWizard();
   const current = stepIndex(state.step);
+  const total = STEPS.length;
+  // Fill width: at step 1 we still want a tiny sliver, at last step it caps at 100%.
+  const fillPct = total <= 1 ? 100 : (current / (total - 1)) * 100;
 
   return (
-    <ol className="flex w-full flex-wrap items-center gap-2 text-[12px]">
-      {STEPS.map((s, i) => {
-        const isActive = i === current;
-        const isDone = i < current;
-        const tone = isActive
-          ? { bg: "var(--ink)", color: "white", border: "var(--ink)" }
-          : isDone
-            ? {
-                bg: "white",
-                color: "var(--ink)",
-                border: "var(--line-strong)",
-              }
-            : {
-                bg: "transparent",
-                color: "var(--muted)",
-                border: "var(--line)",
-              };
-        return (
-          <li
-            key={s}
-            className="flex items-center gap-2"
-            aria-current={isActive ? "step" : undefined}
+    <div className="stepbar">
+      <div className="mb-3 flex items-end justify-between gap-3">
+        <div className="flex items-baseline gap-2">
+          <span className="stepbar-label" style={{ color: "var(--muted)" }}>
+            Step
+          </span>
+          <span
+            className="text-[15px] font-semibold tabular-nums"
+            style={{ color: "var(--ink)" }}
           >
-            <span
-              className="grid h-6 w-6 place-items-center rounded-full border text-[11px] font-medium tabular-nums"
-              style={{
-                background: tone.bg,
-                color: tone.color,
-                borderColor: tone.border,
-              }}
-            >
-              {i + 1}
+            {current + 1}
+            <span className="muted text-[12px] font-normal"> of {total}</span>
+          </span>
+          <span className="mx-1 h-3 w-px" style={{ background: "var(--line-strong)" }} />
+          <span
+            key={state.step}
+            className="fade-in text-[13px] font-semibold"
+            style={{ color: "var(--green-deep, #185538)" }}
+          >
+            {stepLabel(state.step)}
+          </span>
+        </div>
+        <div className="hidden items-center gap-2 sm:flex">
+          {current > 0 ? (
+            <span className="muted text-[11px]">
+              ← {stepLabel(STEPS[current - 1])}
             </span>
-            <span
-              className="font-medium"
-              style={{ color: isActive ? "var(--ink)" : "var(--muted)" }}
-            >
-              {stepLabel(s)}
+          ) : null}
+          {current < total - 1 ? (
+            <span className="text-[11px]" style={{ color: "var(--ink-soft)" }}>
+              next: <strong className="font-semibold" style={{ color: "var(--ink)" }}>{stepLabel(STEPS[current + 1])}</strong> →
             </span>
-            {i < STEPS.length - 1 ? (
-              <span
-                className="mx-1 inline-block h-px w-6"
-                style={{ background: "var(--line)" }}
-              />
-            ) : null}
-          </li>
-        );
-      })}
-    </ol>
+          ) : (
+            <span className="text-[11px]" style={{ color: "var(--green-deep, #185538)" }}>
+              final step
+            </span>
+          )}
+        </div>
+      </div>
+
+      <div className="stepbar-track" role="progressbar" aria-valuemin={1} aria-valuemax={total} aria-valuenow={current + 1}>
+        <div className="stepbar-fill" style={{ width: `${fillPct}%` }} />
+        {STEPS.map((s, i) => {
+          const left = total <= 1 ? 100 : (i / (total - 1)) * 100;
+          const isDone = i < current;
+          const isCurrent = i === current;
+          return (
+            <span
+              key={s}
+              className={`stepbar-pip ${isDone ? "is-done" : ""} ${isCurrent ? "is-current" : ""}`}
+              style={{ left: `${left}%` }}
+              aria-label={stepLabel(s)}
+              title={stepLabel(s)}
+            />
+          );
+        })}
+      </div>
+    </div>
   );
 }

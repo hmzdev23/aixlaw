@@ -59,22 +59,45 @@ export function DoneStep() {
 
   return (
     <div className="mx-auto flex max-w-[680px] flex-col gap-5 py-4">
-      <header className="text-center">
-        <h2 className="text-[26px] font-semibold tracking-tight">All done.</h2>
-        <p className="muted mt-2 text-[13px]">Here&apos;s the deal as you ran it.</p>
+      <header className="text-center fade-in">
+        <span
+          className="inline-block rounded-full border px-3 py-1 text-[10px] font-semibold uppercase tracking-[0.22em]"
+          style={{
+            borderColor: "var(--green)",
+            color: "white",
+            background: "var(--green)",
+          }}
+        >
+          &#10003; Wrap-up
+        </span>
+        <h2 className="mt-3 text-[28px] font-semibold tracking-tight">All done.</h2>
+        <p className="subhead mt-2 text-[13px]">Here&apos;s the deal as you ran it.</p>
       </header>
 
-      <ul className="card divide-y divide-[var(--line)] px-5">
-        {items.map((it) => (
-          <li key={it.label} className="flex items-center justify-between gap-4 py-3 text-[13px]">
+      <ul className="card divide-y divide-[var(--line)] px-5 fade-in stagger-1">
+        {items.map((it, i) => (
+          <li
+            key={it.label}
+            className="flex items-center justify-between gap-4 py-3 text-[13px]"
+            style={{
+              borderLeft:
+                i === 0
+                  ? "3px solid var(--green)"
+                  : "3px solid transparent",
+              paddingLeft: 8,
+              marginLeft: -8,
+            }}
+          >
             <span className="muted">{it.label}</span>
-            <span className="text-right font-medium">{it.value}</span>
+            <span className="text-right font-medium" style={{ color: "var(--ink)" }}>
+              {it.value}
+            </span>
           </li>
         ))}
       </ul>
 
-      <div className="flex justify-center">
-        <button type="button" className="btn" onClick={() => dispatch({ type: "RESET" })}>
+      <div className="flex justify-center fade-in stagger-2">
+        <button type="button" className="btn btn-accent" onClick={() => dispatch({ type: "RESET" })}>
           Start a new document
         </button>
       </div>
