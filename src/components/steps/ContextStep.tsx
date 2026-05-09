@@ -3,8 +3,11 @@
 import { useEffect, useMemo, useState } from "react";
 import { useWizard } from "@/components/wizard/state";
 import { getAgent } from "@/lib/agents";
+import { Typewriter } from "@/components/ui/Typewriter";
 import type { ContextAnswer } from "@/lib/types";
 import type { ScenarioHint } from "@/lib/scenarios/types";
+
+const HINT_REVEAL_MS = 3000;
 
 interface QuestionsPayload {
   questions: string[];
@@ -48,10 +51,11 @@ export function ContextStep() {
         if (!alive) return;
         setQuestions(j.data.questions);
         setHints(j.data.hints);
-        // Reveal hints after a short delay so it feels like they're being generated.
+        // Reveal hints after a slightly longer delay so it feels like the
+        // model is composing them in the background.
         setTimeout(() => {
           if (alive) setHintsRevealed(true);
-        }, 1300);
+        }, HINT_REVEAL_MS);
       })
       .catch((e) => {
         if (alive) setError((e as Error).message);
@@ -240,43 +244,68 @@ function HintCard({
   onApply: (text: string) => void;
 }) {
   if (!visible || !hint) {
-    return (
-      <aside className="rounded-md border px-3 py-3" style={{ borderColor: "var(--line-strong)", background: "var(--accent-soft)" }}>
-        <p className="text-[11px] uppercase tracking-widest muted">Hint for Q{qIndex + 1}</p>
-        <p className="mt-2 flex items-center gap-2 text-[12px] muted">
-          <span className="spinner" /> Drafting hint…
-        </p>
-      </aside>
-    );
+    return <HintLoadingCard qIndex={qIndex} />;
   }
+
+  // Chain the streams: headline -> detail -> suggested answer.
+  const headStart = 80 + qIndex * 180;
+  const headDur = hint.headline.length * 12; // ~80 cps on headlines
+  const detailStart = headStart + headDur + 100;
+  const detailDur = hint.detail.length * 6; // ~160 cps on detail
+  const suggestStart = detailStart + detailDur + 80;
+
   return (
     <aside
       className={`fade-in stagger-${(qIndex % 5) + 1} rounded-lg border px-3 py-3 lift-on-hover`}
       style={{
         borderColor: "var(--green-line, #b9d6c4)",
-        background: "linear-gradient(180deg, var(--green-soft, #e7f1ea) 0%, white 80%)",
+        background:
+          "linear-gradient(180deg, var(--green-soft, #e7f1ea) 0%, white 80%)",
         borderLeft: "3px solid var(--green)",
       }}
     >
-      <p
-        className="text-[10px] font-semibold uppercase tracking-[0.2em]"
-        style={{ color: "var(--green-deep, #185538)" }}
-      >
-        Hint for Q{qIndex + 1}
+      <div className="flex items-center justify-between">
+        <p
+          className="text-[10px] font-semibold uppercase tracking-[0.2em]"
+          style={{ color: "var(--green-deep, #185538)" }}
+        >
+          Hint for Q{qIndex + 1}
+        </p>
+        <span
+          className="text-[9px] font-mono uppercase tracking-[0.18em]"
+          style={{ color: "var(--muted)" }}
+        >
+          composed
+        </span>
+      </div>
+      <p className="mt-1 text-[13px] font-semibold leading-snug">
+        <Typewriter
+          text={hint.headline}
+          startMs={headStart}
+          cps={80}
+          cursor
+        />
       </p>
-      <p className="mt-1 text-[13px] font-semibold">{hint.headline}</p>
       <p
         className="mt-2 text-[12px] leading-relaxed"
         style={{ color: "var(--ink-soft)" }}
       >
-        {hint.detail}
+        <Typewriter text={hint.detail} startMs={detailStart} cps={160} />
       </p>
       <div
         className="mt-3 rounded-md border p-2"
         style={{ borderColor: "var(--line-strong)", background: "white" }}
       >
-        <p className="text-[10px] uppercase tracking-widest muted">Suggested answer</p>
-        <p className="mt-1 text-[12px] leading-relaxed">{hint.suggestedAnswer}</p>
+        <p className="text-[10px] uppercase tracking-widest muted">
+          Suggested answer
+        </p>
+        <p className="mt-1 text-[12px] leading-relaxed">
+          <Typewriter
+            text={hint.suggestedAnswer}
+            startMs={suggestStart}
+            cps={200}
+          />
+        </p>
         <button
           type="button"
           className="btn btn-accent mt-2"
@@ -288,4 +317,69 @@ function HintCard({
       </div>
     </aside>
   );
+}
+
+const HINT_STAGES = [
+  "Reading context",
+  "Pulling precedent",
+  "Drafting suggestion",
+];
+
+function HintLoadingCard({ qIndex }: { qIndex: number }) {
+  // Cycle through stage labels while we wait, so the side panel feels alive.
+  const [stage, setStage] = useState(0);
+  useEffect(() => {
+    const t = setInterval(() => {
+      setStage((s) => (s + 1) % HINT_STAGES.length);
+    }, 700);
+    return () => clearInterval(t);
+  }, []);
+  return (
+    <aside
+      className="rounded-lg border px-3 py-3"
+      style={{
+        borderColor: "var(--line-strong)",
+        background: "var(--accent-soft)",
+        borderLeft: "3px solid var(--line-strong)",
+      }}
+    >
+      <p className="text-[11px] uppercase tracking-widest muted">
+        Hint for Q{qIndex + 1}
+      </p>
+      <p
+        className="mt-2 flex items-center gap-2 text-[12px]"
+        style={{ color: "var(--ink-soft)" }}
+      >
+        <span className="spinner" />
+        <span className="font-mono">
+          {HINT_STAGES[stage]}
+          <DotPulse />
+        </span>
+      </p>
+      <div className="mt-3 flex flex-col gap-1.5">
+        <span
+          className="block h-1.5 w-3/4 animate-pulse rounded-sm"
+          style={{ background: "var(--line-strong)" }}
+        />
+        <span
+          className="block h-1.5 w-1/2 animate-pulse rounded-sm"
+          style={{ background: "var(--line-strong)" }}
+        />
+        <span
+          className="block h-1.5 w-2/3 animate-pulse rounded-sm"
+          style={{ background: "var(--line-strong)" }}
+        />
+      </div>
+    </aside>
+  );
+}
+
+function DotPulse() {
+  // Animated "..." that does its own visual rhythm.
+  const [n, setN] = useState(0);
+  useEffect(() => {
+    const t = setInterval(() => setN((v) => (v + 1) % 4), 280);
+    return () => clearInterval(t);
+  }, []);
+  return <span style={{ display: "inline-block", width: "1.4em" }}>{".".repeat(n)}</span>;
 }

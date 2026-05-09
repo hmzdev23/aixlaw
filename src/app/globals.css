@@ -330,6 +330,12 @@ button {
 }
 @keyframes spin { to { transform: rotate(360deg); } }
 
+/* Caret used by the in-line "typewriter" component (violations + hints). */
+@keyframes blinkCaret {
+  0%, 49%   { opacity: 1; }
+  50%, 100% { opacity: 0; }
+}
+
 /* ========== StepBar (sleek progress) ========== */
 
 .stepbar {

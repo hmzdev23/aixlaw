@@ -190,10 +190,6 @@ export function UploadStep() {
         </p>
       ) : null}
 
-      <p className="muted text-center text-[11px] fade-in stagger-2">
-        Drop a Dunder &middot; Initech sample or a Nimbus Health &middot; OHSN
-        sample to see the council adapt automatically.
-      </p>
     </div>
   );
 }

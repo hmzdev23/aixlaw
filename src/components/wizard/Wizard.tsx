@@ -23,12 +23,12 @@ function SideLogo() {
       aria-hidden
       className="hidden xl:flex flex-col items-center justify-start gap-4 pt-24 select-none"
     >
-      <div className="relative h-[140px] w-[140px] fade-in">
+      <div className="relative h-[150px] w-[120px] fade-in">
         <Image
           src="/gambit-logo.png"
           alt=""
           fill
-          sizes="140px"
+          sizes="120px"
           priority
           style={{ objectFit: "contain" }}
         />
