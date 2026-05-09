@@ -1,0 +1,132 @@
+{
+  "msa": [
+    {
+      "id": "R01",
+      "clauseRef": "2.1 Provision of Services",
+      "severity": "medium",
+      "title": "Uptime SLA tightened to 99.9% with 10-business-day notice",
+      "detail": "Initech raised the uptime requirement from 99.5% to 99.9% and stretched maintenance notice from 48 hours to ten business days, with a hard exclusion on business-hours maintenance. Operationally heavy for a startup ops team."
+    },
+    {
+      "id": "R02",
+      "clauseRef": "2.4 Support",
+      "severity": "high",
+      "title": "Support upgraded to 24/7/365 with 1h critical response",
+      "detail": "Replaces business-hours support with 24/7 coverage, tiered response/resolution SLAs (1h response, 4h resolution for critical). Requires a pager rotation Dunder does not currently staff."
+    },
+    {
+      "id": "R03",
+      "clauseRef": "9.1 Limitation of Liability",
+      "severity": "high",
+      "title": "Liability cap carve-out renders breach exposure uncapped",
+      "detail": "Cap of 12 months' fees is preserved, but data-breach and §9 claims are explicitly excluded from the cap, leaving Vendor with effectively uncapped exposure on the highest-frequency claim type for a SaaS deal. Existential risk for a startup balance sheet."
+    },
+    {
+      "id": "R04",
+      "clauseRef": "9.2 Consequential Damages",
+      "severity": "high",
+      "title": "Consequential damages carve-outs for breach + gross negligence",
+      "detail": "Mutual exclusion of consequentials retained, but with carve-outs for data breach and gross negligence. Layered with R03 this compounds breach exposure."
+    },
+    {
+      "id": "R05",
+      "clauseRef": "8 IP Ownership",
+      "severity": "high",
+      "title": "Client claims ownership of all custom-built deliverables",
+      "detail": "Client takes ownership of any feature built or funded by Client, including improvements that would otherwise generalize across the Vendor's roadmap. Erodes Vendor's product moat."
+    },
+    {
+      "id": "R06",
+      "clauseRef": "8.4 Feedback",
+      "severity": "low",
+      "title": "Feedback usage gated by Client consent",
+      "detail": "Vendor cannot use Client feedback to build features for other clients without consent. Manageable but slows the iteration loop."
+    },
+    {
+      "id": "R07",
+      "clauseRef": "4.2 Payment Terms / 4.5 Disputed Invoices",
+      "severity": "medium",
+      "title": "Net 60 + full-invoice withholding during dispute",
+      "detail": "Stretches payment to Net 60, drops late-payment interest to 0.5%/mo, and allows Client to withhold the entire invoice (not just disputed portion) during a good-faith dispute, while requiring Vendor to keep services running."
+    },
+    {
+      "id": "R08",
+      "clauseRef": "4.4 Fee Increases",
+      "severity": "low",
+      "title": "Fee increase capped at 3% with 90-day notice",
+      "detail": "Drops the renewal fee-increase ceiling from 5% to 3% and stretches notice from 60 to 90 days. Modest commercial drag."
+    },
+    {
+      "id": "R09",
+      "clauseRef": "5.2 Termination",
+      "severity": "high",
+      "title": "Convenience termination + 15-day cure for material breach",
+      "detail": "Adds a Client-only convenience termination on 30 days' notice and shortens the cure period for material breach from 30 to 15 days. Forecasting risk for the Vendor."
+    },
+    {
+      "id": "R10",
+      "clauseRef": "9.3 Audit Rights",
+      "severity": "medium",
+      "title": "Bi-annual audit rights with 48 hours notice",
+      "detail": "Adds 2x/year on-site audit rights with 48-hour notice. Standard for regulated FIs, operationally heavy for a small Vendor."
+    },
+    {
+      "id": "R11",
+      "clauseRef": "6 Data Location",
+      "severity": "medium",
+      "title": "Ontario-only data residency",
+      "detail": "Restricts data residency from 'Canada' to 'Ontario only', with an outright bar on cross-border without consent. Constrains DR/HA topology and any analytics subprocessor in another province or jurisdiction."
+    },
+    {
+      "id": "R12",
+      "clauseRef": "10 Insurance",
+      "severity": "medium",
+      "title": "Insurance minimums: $5M CGL, $5M E&O, $10M cyber",
+      "detail": "Sets insurance minimums well above what most Series-A vendors carry. Cyber liability at $10M is the binding constraint."
+    },
+    {
+      "id": "R13",
+      "clauseRef": "5.4 Step-in Rights",
+      "severity": "high",
+      "title": "Client step-in rights on Vendor performance failure",
+      "detail": "Grants Client the right to assume control of Services on Vendor performance failure. Effectively a takeover trigger; existential governance issue for Vendor."
+    }
+  ],
+  "nda": [
+    {
+      "id": "N01",
+      "clauseRef": "1 Mutuality",
+      "severity": "medium",
+      "title": "Converted to one-way NDA (Vendor as recipient only)",
+      "detail": "Initech replaced the mutual NDA with a one-way structure under which only the Vendor accepts confidentiality obligations."
+    },
+    {
+      "id": "N02",
+      "clauseRef": "2 Definition of Confidential Information",
+      "severity": "medium",
+      "title": "Confidential information scope expanded to all disclosures",
+      "detail": "Removed the 'reasonable person' standard. Confidential information now includes everything disclosed, marked or unmarked, oral or written."
+    },
+    {
+      "id": "N03",
+      "clauseRef": "5 Injunctive Relief",
+      "severity": "medium",
+      "title": "Injunctive relief without bond for Initech",
+      "detail": "Removes the bond requirement for Initech only when seeking injunctive relief. Asymmetric remedy."
+    },
+    {
+      "id": "N04",
+      "clauseRef": "6 Term & Survival",
+      "severity": "low",
+      "title": "Term + survival stretched to 3 + 5 years",
+      "detail": "Stretches the NDA term from 2 years to 3 years and survival from 2 to 5 years, with asymmetric termination."
+    },
+    {
+      "id": "N05",
+      "clauseRef": "7 Return / Destruction",
+      "severity": "low",
+      "title": "No archival copy without consent + written certification",
+      "detail": "Eliminates the standard backup/archival carve-out and requires written certification of destruction."
+    }
+  ]
+}
