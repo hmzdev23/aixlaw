@@ -1,0 +1,25 @@
+{
+  "dealId": "demo",
+  "chosenMoveId": "n_a_brilliant",
+  "counterpartyId": "initech_procurement",
+  "summaryLegal": "Counter to Initech's redlined MSA: hold Section 7.1 aggregate liability cap at CAD $5,000,000 with a Section 9 (Data Protection) sub-cap of CAD $3,000,000; accept Section 2 SLA tier and Section 9.3 audit cadence as drafted; concede Section 4.2 to Net 60 payment with 0.75% / month interest; reject Section 5.2 convenience termination beyond a 60-day wind-down; agree to Section 6.1 custom-IP transfer language as drafted.",
+  "summaryPlain": "We give them the SLA tier, audit access, Net 60 payment, and let them own custom builds they pay for. We hold a hard line on liability — uncapped data exposure would end the company in a single incident. We give them a 60-day exit on convenience termination so they're not locked in. Net retained value vs accepting their full markup: ~CAD $280,000.",
+  "financials": {
+    "currency": "CAD",
+    "monthlyAmount": 7500,
+    "netDays": 60,
+    "months": 24,
+    "tier": "Enterprise",
+    "seats": 50,
+    "totalContractCad": 180000
+  },
+  "complianceFlags": [
+    "OSFI third-party risk themes triggered (insurance minimums, breach window, audit, step-in)",
+    "PIPEDA accountability themes triggered (cross-border, retention)"
+  ],
+  "citationsUsed": [
+    { "title": "CoreBank Identity Verification (2022)", "citation": "MSA §7.1 Limitation of Liability" },
+    { "title": "PaymentsAPI Co. (2023)",                 "citation": "MSA §9.2 Data Location" },
+    { "title": "Cloud Analytics Vendor (2024)",          "citation": "MSA §9.1 Breach Notification" }
+  ]
+}

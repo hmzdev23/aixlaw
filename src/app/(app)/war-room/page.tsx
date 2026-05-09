@@ -4,7 +4,24 @@ import { useEffect, useState, useCallback } from "react";
 import { CouncilRing } from "@/components/war-room/CouncilRing";
 import { DebateBubble } from "@/components/war-room/DebateBubble";
 import { DEMO_DEBATE_EVENTS } from "@/lib/fixtures/demo";
-import type { CouncilRole, DebateEvent, VoteValue } from "@/lib/contracts/models";
+import type {
+  CouncilRole,
+  DebateAgent,
+  DebateEvent,
+  VoteValue,
+} from "@/lib/contracts/models";
+
+const COUNCIL_ROLES: readonly CouncilRole[] = [
+  "counsel",
+  "closer",
+  "counterpart",
+  "compliance",
+  "crown",
+] as const;
+
+function isCouncilRole(agent: DebateAgent): agent is CouncilRole {
+  return (COUNCIL_ROLES as readonly string[]).includes(agent);
+}
 import { Play, RotateCcw, Users } from "lucide-react";
 
 export default function WarRoomPage() {
@@ -30,21 +47,27 @@ export default function WarRoomPage() {
         return;
       }
       const ev = DEMO_DEBATE_EVENTS[i];
+      const agent = ev.agent;
       setEvents((prev) => [...prev, ev]);
-      if (ev.vote) setVotes((prev) => ({ ...prev, [ev.agent]: ev.vote }));
-      if (ev.influenceDelta) {
+      if (ev.vote && isCouncilRole(agent)) {
+        const role = agent;
+        setVotes((prev) => ({ ...prev, [role]: ev.vote }));
+      }
+      if (ev.influenceDelta && isCouncilRole(agent)) {
+        const role = agent;
         setInfluences((prev) => ({
           ...prev,
-          [ev.agent]: (prev[ev.agent] ?? 0) + ev.influenceDelta!,
+          [role]: (prev[role] ?? 0) + ev.influenceDelta!,
         }));
       }
       i++;
     }, 1400);
   }, []);
 
-  const activeAgent = events.length > 0 && running
-    ? events[events.length - 1].agent
-    : undefined;
+  const lastAgent =
+    events.length > 0 && running ? events[events.length - 1].agent : undefined;
+  const activeAgent =
+    lastAgent && isCouncilRole(lastAgent) ? lastAgent : undefined;
 
   const finalEvent = events[events.length - 1];
   const isCrownjudgement = finalEvent?.agent === "crown" && finalEvent?.vote === "clear";

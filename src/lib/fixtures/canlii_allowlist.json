@@ -1,0 +1,35 @@
+{
+  "comment": "Offline allowlist of well-known Canadian decisions. Used when GAMBIT_DISABLE_CANLII=true (default for tests/demos) or when the live CanLII API is unavailable. Keys are normalized (lowercase, no punctuation).",
+  "cases": [
+    {
+      "match": ["bhasin v hrynew 2014 scc 71", "2014 scc 71"],
+      "title": "Bhasin v. Hrynew",
+      "neutralCitation": "2014 SCC 71",
+      "sourceUrl": "https://canlii.ca/t/gf842"
+    },
+    {
+      "match": ["sattva capital corp v creston moly corp 2014 scc 53", "2014 scc 53"],
+      "title": "Sattva Capital Corp. v. Creston Moly Corp.",
+      "neutralCitation": "2014 SCC 53",
+      "sourceUrl": "https://canlii.ca/t/g8gd2"
+    },
+    {
+      "match": ["tercon contractors ltd v british columbia transportation and highways 2010 scc 4", "2010 scc 4"],
+      "title": "Tercon Contractors Ltd. v. British Columbia (Transportation and Highways)",
+      "neutralCitation": "2010 SCC 4",
+      "sourceUrl": "https://canlii.ca/t/27wzg"
+    },
+    {
+      "match": ["hryniak v mauldin 2014 scc 7", "2014 scc 7"],
+      "title": "Hryniak v. Mauldin",
+      "neutralCitation": "2014 SCC 7",
+      "sourceUrl": "https://canlii.ca/t/g2s18"
+    },
+    {
+      "match": ["wallace v united grain growers ltd 1997 canlii 332", "1997 canlii 332"],
+      "title": "Wallace v. United Grain Growers Ltd.",
+      "neutralCitation": "1997 CanLII 332 (SCC)",
+      "sourceUrl": "https://canlii.ca/t/1fr0d"
+    }
+  ]
+}

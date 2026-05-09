@@ -23,9 +23,9 @@
       }
     ],
     "paths": {
-      "@/*": [
-        "./src/*"
-      ]
+      "@/contracts": ["./src/lib/contracts"],
+      "@/contracts/*": ["./src/lib/contracts/*"],
+      "@/*": ["./src/*"]
     }
   },
   "include": [

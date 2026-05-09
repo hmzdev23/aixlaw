@@ -1,0 +1,37 @@
+{
+  "id": "pb_default",
+  "name": "Gambit Default Playbook",
+  "version": "1.0.0",
+  "createdBy": "system",
+  "updatedAt": "2026-05-09T00:00:00.000Z",
+  "blocks": [
+    { "id": "b_spellbook",  "type": "spellbook_issue_detector", "position": { "x":   80, "y": 200 }, "params": { "minSeverity": "low" } },
+    { "id": "b_osfi",       "type": "osfi_vendor_management",   "position": { "x":  280, "y": 100 }, "params": { "weight": 1.0 } },
+    { "id": "b_pipeda",     "type": "pipeda_watcher",           "position": { "x":  280, "y": 200 }, "params": { "weight": 1.0 } },
+    { "id": "b_law25",      "type": "law25",                    "position": { "x":  280, "y": 300 }, "params": { "weight": 0.5 } },
+    { "id": "b_ghost",      "type": "ghost",                    "position": { "x":  520, "y": 200 }, "params": {} },
+    { "id": "b_tree",       "type": "tree",                     "position": { "x":  720, "y": 200 }, "params": { "closeProbabilityTarget": 0.8, "riskTolerance": 0.5 } },
+    { "id": "b_counsel",    "type": "counsel",                  "position": { "x":  920, "y":  60 }, "params": { "riskAversion": 0.7 } },
+    { "id": "b_closer",     "type": "closer",                   "position": { "x":  920, "y": 160 }, "params": { "urgency": 0.6 } },
+    { "id": "b_counterpart","type": "counterpart",              "position": { "x":  920, "y": 260 }, "params": {} },
+    { "id": "b_compliance", "type": "compliance",               "position": { "x":  920, "y": 360 }, "params": {} },
+    { "id": "b_crown",      "type": "crown",                    "position": { "x": 1140, "y": 200 }, "params": {} },
+    { "id": "b_supervisor", "type": "supervisor_pdf",           "position": { "x": 1340, "y": 200 }, "params": { "mode": "legal" } }
+  ],
+  "edges": [
+    { "id": "e1",  "source": "b_spellbook",  "target": "b_ghost" },
+    { "id": "e2",  "source": "b_osfi",       "target": "b_ghost" },
+    { "id": "e3",  "source": "b_pipeda",     "target": "b_ghost" },
+    { "id": "e4",  "source": "b_law25",      "target": "b_ghost" },
+    { "id": "e5",  "source": "b_ghost",      "target": "b_tree" },
+    { "id": "e6",  "source": "b_tree",       "target": "b_counsel" },
+    { "id": "e7",  "source": "b_tree",       "target": "b_closer" },
+    { "id": "e8",  "source": "b_tree",       "target": "b_counterpart" },
+    { "id": "e9",  "source": "b_tree",       "target": "b_compliance" },
+    { "id": "e10", "source": "b_counsel",    "target": "b_crown" },
+    { "id": "e11", "source": "b_closer",     "target": "b_crown" },
+    { "id": "e12", "source": "b_counterpart","target": "b_crown" },
+    { "id": "e13", "source": "b_compliance", "target": "b_crown" },
+    { "id": "e14", "source": "b_crown",      "target": "b_supervisor" }
+  ]
+}

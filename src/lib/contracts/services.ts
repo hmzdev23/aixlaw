@@ -1,8 +1,8 @@
 /**
- * Cross-team integration seams. Mirrors docs/INTEGRATION_CONTRACTS.md.
+ * Service interfaces (INTEGRATION_CONTRACTS.md).
  *
- * Implementations live under src/lib/integrations/* (Will), src/lib/engine/*
- * (Aditya), src/lib/workproduct/* (Will), src/lib/execution/* (Will).
+ * These are the cross-team seams. Each owner implements one or more of these;
+ * everyone else imports the interface only.
  */
 
 import type {
@@ -10,51 +10,43 @@ import type {
   ComplianceReport,
   Decision,
   DealSession,
+  DebateEvent,
   GameTree,
   GhostProfile,
   InboundDocumentFocus,
   InboundEvent,
   Locale,
-  Persona,
   Playbook,
   PlaybookSummary,
   SpellbookIssue,
   TimelineEvent,
   WalkawayLine,
-  DebateEvent,
 } from "./models";
 
-// -----------------------------------------------------------------------------
-// Fixture path
-// -----------------------------------------------------------------------------
+// Re-export the fixture root constant so importers don't string-duplicate it.
+export const FIXTURE_DIR = "Example Scenario (Optional)";
 
-/** Spellbook pack location — read-only source files. */
-export const FIXTURE_DIR = "Example Scenario (Optional)" as const;
-
-// -----------------------------------------------------------------------------
-// Inbound (Will -> App store)
-// -----------------------------------------------------------------------------
-
-export type { InboundSource, InboundAttachment, InboundCalendarContext } from "./models";
+// ---------------------------------------------------------------------------
+// Inbound (Will / T7)
+// ---------------------------------------------------------------------------
 
 export interface InboundService {
   watchGmail(): AsyncIterable<InboundEvent>;
   handleSlackPayload(body: unknown): Promise<InboundEvent | null>;
-  /** Optional: which doc to load for manual demo. */
   triggerManualDemo(opts?: {
     documentFocus?: InboundDocumentFocus;
   }): Promise<InboundEvent>;
 }
 
-// -----------------------------------------------------------------------------
-// Engine (Aditya — T4..T6)
-// -----------------------------------------------------------------------------
+// ---------------------------------------------------------------------------
+// Engine (Aditya / T4-T6)
+// ---------------------------------------------------------------------------
 
 export interface GhostEngine {
   generate(session: DealSession): Promise<GhostProfile>;
   refreshFromIssues(
     session: DealSession,
-    issues: SpellbookIssue[],
+    issues: SpellbookIssue[]
   ): Promise<GhostProfile>;
 }
 
@@ -63,15 +55,16 @@ export interface TreeEngine {
   predictCounterMove(
     nodeId: string,
     session: DealSession,
-    ghost: GhostProfile,
+    ghost: GhostProfile
   ): Promise<string>;
 }
 
 export interface EvalService {
+  /** Score in pawns-like units (-4..+4), negative = counterparty favor */
   scorePosition(
     session: DealSession,
     ghost: GhostProfile,
-    selectedNodeId: string,
+    selectedNodeId: string
   ): Promise<number>;
 }
 
@@ -80,7 +73,6 @@ export interface WalkawayService {
 }
 
 export interface ComplianceService {
-  /** TrueSight + OSFI + PIPEDA + Law25 in one call. */
   checkProposedText(text: string, locale: Locale): Promise<ComplianceReport>;
 }
 
@@ -89,13 +81,17 @@ export interface CouncilService {
     moveId: string,
     session: DealSession,
     ghost: GhostProfile,
-    options?: { stream?: boolean },
+    options?: { stream?: boolean }
   ): AsyncIterable<DebateEvent>;
 }
 
 export interface AiVsAiService {
   runClauseNegotiation(input: AiVsAiInput): AsyncIterable<DebateEvent>;
 }
+
+// ---------------------------------------------------------------------------
+// Architect runtime (Aditya / T5)
+// ---------------------------------------------------------------------------
 
 export interface PlaybookRepository {
   list(): Promise<PlaybookSummary[]>;
@@ -107,20 +103,15 @@ export interface ArchitectRuntime {
   execute(playbook: Playbook, session: DealSession): Promise<Decision>;
 }
 
-export interface Translator {
-  toFr(text: string): Promise<string>;
-  toEn(text: string): Promise<string>;
-}
-
-// -----------------------------------------------------------------------------
-// Outbound (Will — T8 / T9)
-// -----------------------------------------------------------------------------
+// ---------------------------------------------------------------------------
+// Outbound + execution (Will / T8-T9)
+// ---------------------------------------------------------------------------
 
 export interface WorkProductService {
   buildCounterRedlineDocx(decision: Decision): Promise<Uint8Array>;
   buildSupervisorPdf(
     decision: Decision,
-    mode: "legal" | "plain",
+    mode: "legal" | "plain"
   ): Promise<Uint8Array>;
 }
 
@@ -129,7 +120,9 @@ export type SignoffState = "pending" | "playing" | "signed" | "rejected";
 export interface VoiceSignoffService {
   startPlayback(dealId: string): Promise<void>;
   completeSignoff(dealId: string, approved: boolean): Promise<void>;
-  getState(dealId: string): Promise<{ state: SignoffState; signedBy?: string }>;
+  getState(
+    dealId: string
+  ): Promise<{ state: SignoffState; signedBy?: string }>;
 }
 
 export interface SlackDealPayload {
@@ -158,14 +151,15 @@ export interface ExecutionEngine {
 export interface SpellbookClient {
   detectIssues(
     fullText: string,
-    meta?: { kind: "nda" | "msa" },
+    meta?: { kind: "nda" | "msa" }
   ): Promise<SpellbookIssue[]>;
 }
 
-// -----------------------------------------------------------------------------
-// Personas API (Will — T7)
-// -----------------------------------------------------------------------------
+// ---------------------------------------------------------------------------
+// Translator (Aditya / T6)
+// ---------------------------------------------------------------------------
 
-export interface PersonasResponse {
-  personas: Persona[];
+export interface Translator {
+  toFr(text: string): Promise<string>;
+  toEn(text: string): Promise<string>;
 }

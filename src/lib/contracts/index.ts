@@ -1,7 +1,8 @@
 /**
- * Public contract surface for Gambit (types + Zod + integration seams).
+ * Public contract surface for Gambit (types + Zod + service seams).
  */
 
 export * from "./models";
-export * from "./integration";
+export * from "./services";
+export { CONTRACT_VERSION } from "./version";
 export * from "./decisionSchema";

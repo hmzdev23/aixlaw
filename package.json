@@ -8,7 +8,8 @@
     "start": "next start",
     "lint": "eslint .",
     "typecheck": "tsc --noEmit",
-    "demo:smoke": "node scripts/smoke-demo.mjs"
+    "demo:smoke": "node scripts/smoke-demo.mjs",
+    "test": "vitest run"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.32.1",

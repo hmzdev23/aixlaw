@@ -1,0 +1,57 @@
+{
+  "rootId": "n_root",
+  "primaryBranchIds": ["n_a_brilliant", "n_b_risky", "n_c_blunder"],
+  "evalScore": -2.4,
+  "nodes": {
+    "n_root": {
+      "id": "n_root",
+      "parentId": null,
+      "childrenIds": ["n_a_brilliant", "n_b_risky", "n_c_blunder"]
+    },
+    "n_a_brilliant": {
+      "id": "n_a_brilliant",
+      "parentId": "n_root",
+      "childrenIds": [],
+      "ghostReplyPreview": "Initech accepts the carve-out language if breach notification stays at 24h and Ontario-only residency is non-negotiable. Counter likely focuses on insurance minimums.",
+      "move": {
+        "id": "n_a_brilliant",
+        "label": "Concede SLA + audit cadence; hold a $5M aggregate cap with a $3M Section 9 sub-cap; accept Net 60",
+        "notation": "!!",
+        "summary": "Trade what we can survive (24/7 SLA tier, audit cadence, payment timing) for the only existential ask we can't take: uncapped breach liability.",
+        "closeProbability": 0.82,
+        "retainedValueCad": 280000,
+        "riskNote": "Initech will counter on insurance and may push the sub-cap up to $5M; pre-negotiate the ceiling with our broker."
+      }
+    },
+    "n_b_risky": {
+      "id": "n_b_risky",
+      "parentId": "n_root",
+      "childrenIds": [],
+      "ghostReplyPreview": "Initech will route to GC review and almost certainly pause the deal for 2-3 weeks. They have walked from comparable vendors at this stage.",
+      "move": {
+        "id": "n_b_risky",
+        "label": "Reject Section 9 uncapped carve-out outright; counter every enterprise ask with vendor-friendly language",
+        "notation": "?!",
+        "summary": "Hardball: defend the existential risk allocation but signal we may be unwilling to do business with regulated FIs at all.",
+        "closeProbability": 0.31,
+        "retainedValueCad": 420000,
+        "riskNote": "High potential value preserved if it lands; high probability the deal dies in committee."
+      }
+    },
+    "n_c_blunder": {
+      "id": "n_c_blunder",
+      "parentId": "n_root",
+      "childrenIds": [],
+      "ghostReplyPreview": "Initech accepts in 24 hours, signs within the week. The deal closes — and lights a slow fuse on a balance-sheet event.",
+      "move": {
+        "id": "n_c_blunder",
+        "label": "Accept Initech's full markup as drafted",
+        "notation": "??",
+        "summary": "Sign the redlined MSA exactly as Initech sent it.",
+        "closeProbability": 0.96,
+        "retainedValueCad": -2000000,
+        "riskNote": "One Section 9 incident wipes the company — uncapped liability + step-in + 24/7 ops without staffing."
+      }
+    }
+  }
+}

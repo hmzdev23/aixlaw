@@ -1,4 +1,14 @@
-export const CONTRACT_VERSION = "1.1.0";
+/**
+ * Canonical Gambit data models (DATA_MODELS.md).
+ *
+ * This file is the **single source of truth** for cross-team types.
+ * - Editing here without updating docs/DATA_MODELS.md is a contract break.
+ * - All branches (hamza/aditya/will) import from here, never re-declare.
+ */
+
+// ---------------------------------------------------------------------------
+// Identity & personas
+// ---------------------------------------------------------------------------
 
 export type PersonaRole =
   | "cofounder_coo"
@@ -17,15 +27,25 @@ export interface Persona {
   avatarUrl?: string;
 }
 
+// ---------------------------------------------------------------------------
+// Currency & regulatory tags
+// ---------------------------------------------------------------------------
+
 export type Currency = "CAD" | "USD";
 export type Locale = "en" | "fr";
 export type RegulatoryRegime = "osfi_b13" | "pipeda" | "law25";
+
+// ---------------------------------------------------------------------------
+// Contract documents & redlines
+// ---------------------------------------------------------------------------
+
 export type ContractKind = "nda" | "msa" | "spa";
 
 export interface ContractDocument {
   id: string;
   type: ContractKind;
   label: string;
+  /** Path key under FIXTURE_DIR, e.g. "msa_initech_redlines.md" */
   originalRef?: string;
   redlinedRef?: string;
 }
@@ -39,9 +59,32 @@ export interface RedlineChange {
   comment?: string;
 }
 
+// ---------------------------------------------------------------------------
+// Deal session
+// ---------------------------------------------------------------------------
+
+export interface DealSession {
+  dealId: string;
+  /** Dunder AI side */
+  vendorId: string;
+  /** Initech procurement / legal posture */
+  counterpartyId: string;
+  documents: ContractDocument[];
+  /** Synthetic precedent JSON keys (Aditya / T4) */
+  precedentRefs: string[];
+  locale: Locale;
+  /** Active pile source — usually msa_initech_redlines */
+  activeDocumentId?: string;
+}
+
+// ---------------------------------------------------------------------------
+// Ghost (counterparty model)
+// ---------------------------------------------------------------------------
+
 export interface GhostProfile {
   counterpartyId: string;
   displayName: string;
+  /** Composite stubbornness/hardness metric for demo flavor (see GhostEngine notes). */
   elo: number;
   styleLabel: string;
   playstyle: string;
@@ -52,6 +95,10 @@ export interface GhostProfile {
   precedentDealIds: string[];
 }
 
+// ---------------------------------------------------------------------------
+// Game tree & moves
+// ---------------------------------------------------------------------------
+
 export type ChessNotation = "!!" | "!" | "!?" | "?!" | "??";
 
 export interface CandidateMove {
@@ -59,7 +106,8 @@ export interface CandidateMove {
   label: string;
   notation: ChessNotation;
   summary: string;
-  closeProbability: number;
+  closeProbability: number; // 0..1
+  /** Retained value in CAD for this deal narrative */
   retainedValueCad?: number;
   riskNote?: string;
 }
@@ -69,6 +117,7 @@ export interface GameTreeNode {
   parentId: string | null;
   move?: CandidateMove;
   childrenIds: string[];
+  /** Pre-staged ghost reply for hover */
   ghostReplyPreview?: string;
 }
 
@@ -76,6 +125,7 @@ export interface GameTree {
   rootId: string;
   nodes: Record<string, GameTreeNode>;
   primaryBranchIds: [string, string, string];
+  /** Position score for the user (negative = behind). */
   evalScore: number;
 }
 
@@ -89,6 +139,10 @@ export interface WalkawayLine {
   thresholdSummary: string;
   citations: WalkawayCitation[];
 }
+
+// ---------------------------------------------------------------------------
+// Decision (engine -> work product / execution)
+// ---------------------------------------------------------------------------
 
 export interface Decision {
   dealId: string;
@@ -112,6 +166,10 @@ export interface Decision {
   /** Optional locale for outbound + bilingual artifacts (Zod-validated). */
   locale?: Locale;
 }
+
+// ---------------------------------------------------------------------------
+// TrueSight & multi-regime compliance
+// ---------------------------------------------------------------------------
 
 export interface CitationClaim {
   raw: string;
@@ -139,17 +197,17 @@ export interface PipedaResult {
   notes?: string[];
 }
 
+export interface Law25Result {
+  triggered: boolean;
+  triggers: string[];
+  pia?: PIA;
+}
+
 export interface PIA {
   id: string;
   generatedAt: string;
   sectionsEn: Record<string, string>;
   sectionsFr: Record<string, string>;
-}
-
-export interface Law25Result {
-  triggered: boolean;
-  triggers: string[];
-  pia?: PIA;
 }
 
 export interface ComplianceReport {
@@ -159,12 +217,22 @@ export interface ComplianceReport {
   law25: Law25Result;
 }
 
+// ---------------------------------------------------------------------------
+// Council / War Room
+// ---------------------------------------------------------------------------
+
 export type CouncilRole =
   | "counsel"
   | "closer"
   | "counterpart"
   | "compliance"
   | "crown";
+
+/** AI-vs-AI sides — used by `AiVsAiService`. Same UI lane as Council. */
+export type AiVsAiSide = "counterpart_left" | "counterpart_right";
+
+/** Any speaker that can appear in a `DebateEvent`. */
+export type DebateAgent = CouncilRole | AiVsAiSide;
 
 export type VoteValue =
   | "accept"
@@ -175,7 +243,7 @@ export type VoteValue =
 
 export interface DebateEvent {
   t: number;
-  agent: CouncilRole;
+  agent: DebateAgent;
   message: string;
   vote?: VoteValue;
   influenceDelta?: number;
@@ -183,9 +251,18 @@ export interface DebateEvent {
 
 export interface CouncilResult {
   moveId: string;
-  tally: Record<CouncilRole, VoteValue | undefined>;
+  tally: Partial<Record<CouncilRole, VoteValue>>;
+  /**
+   * One-line synthesis from Crown.
+   * Convention: starts with "Following <agent>(s): <ACCEPT|REJECT> Move <X>."
+   * so the UI can highlight which agents won.
+   */
   finalRecommendation: string;
 }
+
+// ---------------------------------------------------------------------------
+// Architect / Playbook
+// ---------------------------------------------------------------------------
 
 export type AgentBlockType =
   | "spellbook_issue_detector"
@@ -238,6 +315,10 @@ export interface PlaybookSummary {
   updatedAt: string;
 }
 
+// ---------------------------------------------------------------------------
+// Spellbook
+// ---------------------------------------------------------------------------
+
 export interface SpellbookIssue {
   id: string;
   clauseRef: string;
@@ -245,6 +326,10 @@ export interface SpellbookIssue {
   title: string;
   detail: string;
 }
+
+// ---------------------------------------------------------------------------
+// Execution timeline
+// ---------------------------------------------------------------------------
 
 export type TimelineStep =
   | "email_received"
@@ -260,12 +345,20 @@ export interface TimelineEvent {
   detail?: string;
 }
 
+// ---------------------------------------------------------------------------
+// AI vs AI (optional, T5)
+// ---------------------------------------------------------------------------
+
 export interface AiVsAiInput {
   clauseText: string;
   leftGhostId: string;
   rightGhostId: string;
   maxRounds: number;
 }
+
+// ---------------------------------------------------------------------------
+// Inbound (Will / T7) — shared with engine session context
+// ---------------------------------------------------------------------------
 
 export type InboundSource = "gmail" | "slack" | "calendar" | "manual_demo";
 export type InboundDocumentFocus = "nda" | "msa";
@@ -295,14 +388,12 @@ export interface InboundEvent {
   calendarContext?: InboundCalendarContext;
 }
 
-export interface DealSession {
-  dealId: string;
-  vendorId: string;
-  counterpartyId: string;
-  documents: ContractDocument[];
-  precedentRefs: string[];
-  locale: Locale;
-  activeDocumentId?: string;
+// ---------------------------------------------------------------------------
+// API response wrappers
+// ---------------------------------------------------------------------------
+
+export interface PersonasResponse {
+  personas: Persona[];
 }
 
 export interface ApiError {
