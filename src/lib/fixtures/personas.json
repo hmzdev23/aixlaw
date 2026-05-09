@@ -1,0 +1,25 @@
+{
+  "personas": [
+    {
+      "id": "persona_sarah",
+      "displayName": "Sarah Chen",
+      "email": "sarah@dunderai.demo",
+      "role": "cofounder_coo",
+      "org": "Dunder AI Inc."
+    },
+    {
+      "id": "persona_marc",
+      "displayName": "Marc Tremblay",
+      "email": "marc@dunderai.demo",
+      "role": "gc",
+      "org": "Dunder AI Inc."
+    },
+    {
+      "id": "persona_initech",
+      "displayName": "Initech Procurement Counsel",
+      "email": "procurement-legal@initechfg.demo",
+      "role": "counterparty_legal",
+      "org": "Initech Financial Group Inc."
+    }
+  ]
+}

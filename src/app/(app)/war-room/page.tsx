@@ -149,13 +149,13 @@ export default function WarRoomPage() {
                     <div className="bg-white border border-[#e7e5e4] rounded-xl p-3">
                       <p className="text-xs font-bold text-[#0c0a09]">Dunder Founder</p>
                       <p className="text-xs mt-1 text-[#4e4e4e]">
-                        "24-month cap is our maximum exposure ceiling. We can offer uncapped exclusion for gross negligence only."
+                        &ldquo;24-month cap is our maximum exposure ceiling. We can offer uncapped exclusion for gross negligence only.&rdquo;
                       </p>
                     </div>
                     <div className="bg-[#f0efed] border border-[#e7e5e4] rounded-xl p-3">
                       <p className="text-xs font-bold text-[#0c0a09]">Initech Hardline</p>
                       <p className="text-xs mt-1 text-[#4e4e4e]">
-                        "Data breach liability cannot be capped. Our OSFI posture requires uncapped exposure for AI vendors."
+                        &ldquo;Data breach liability cannot be capped. Our OSFI posture requires uncapped exposure for AI vendors.&rdquo;
                       </p>
                     </div>
                   </div>

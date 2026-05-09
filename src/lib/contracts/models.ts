@@ -1,21 +1,24 @@
 export const CONTRACT_VERSION = "1.1.0";
 
+export type PersonaRole =
+  | "cofounder_coo"
+  | "ae"
+  | "gc"
+  | "counterparty_legal"
+  | "ceo"
+  | "demo_admin";
+
 export interface Persona {
   id: string;
   displayName: string;
   email: string;
-  role:
-    | "cofounder_coo"
-    | "ae"
-    | "gc"
-    | "counterparty_legal"
-    | "ceo"
-    | "demo_admin";
+  role: PersonaRole;
   org: string;
   avatarUrl?: string;
 }
 
 export type Currency = "CAD" | "USD";
+export type Locale = "en" | "fr";
 export type RegulatoryRegime = "osfi_b13" | "pipeda" | "law25";
 export type ContractKind = "nda" | "msa" | "spa";
 
@@ -106,6 +109,8 @@ export interface Decision {
   citationsUsed: { title: string; citation: string }[];
   generatedRedlineDocxRef?: string;
   supervisorPdfRef?: string;
+  /** Optional locale for outbound + bilingual artifacts (Zod-validated). */
+  locale?: Locale;
 }
 
 export interface CitationClaim {
@@ -265,6 +270,18 @@ export interface AiVsAiInput {
 export type InboundSource = "gmail" | "slack" | "calendar" | "manual_demo";
 export type InboundDocumentFocus = "nda" | "msa";
 
+export interface InboundAttachment {
+  name: string;
+  mime: string;
+  storageKey: string;
+}
+
+export interface InboundCalendarContext {
+  nextHardStop: string;
+  eventTitle: string;
+  conflict: boolean;
+}
+
 export interface InboundEvent {
   id: string;
   source: InboundSource;
@@ -272,14 +289,10 @@ export interface InboundEvent {
   personaId: string;
   dealId: string;
   subject?: string;
-  attachments: { name: string; mime: string; storageKey: string }[];
+  attachments: InboundAttachment[];
   rawSnippet?: string;
   documentFocus?: InboundDocumentFocus;
-  calendarContext?: {
-    nextHardStop: string;
-    eventTitle: string;
-    conflict: boolean;
-  };
+  calendarContext?: InboundCalendarContext;
 }
 
 export interface DealSession {
@@ -288,7 +301,7 @@ export interface DealSession {
   counterpartyId: string;
   documents: ContractDocument[];
   precedentRefs: string[];
-  locale: "en" | "fr";
+  locale: Locale;
   activeDocumentId?: string;
 }
 
