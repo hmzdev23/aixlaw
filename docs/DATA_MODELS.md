@@ -227,6 +227,11 @@ export type CouncilRole =
   | "compliance"
   | "crown";
 
+/** AI-vs-AI sides — used by AiVsAiService; share the DebateEvent stream. */
+export type AiVsAiSide = "counterpart_left" | "counterpart_right";
+
+export type DebateAgent = CouncilRole | AiVsAiSide;
+
 export type VoteValue =
   | "accept"
   | "reject"
@@ -236,7 +241,7 @@ export type VoteValue =
 
 export interface DebateEvent {
   t: number;
-  agent: CouncilRole;
+  agent: DebateAgent;
   message: string;
   vote?: VoteValue;
   influenceDelta?: number;
@@ -244,7 +249,8 @@ export interface DebateEvent {
 
 export interface CouncilResult {
   moveId: string;
-  tally: Record<CouncilRole, VoteValue | undefined>;
+  tally: Partial<Record<CouncilRole, VoteValue>>;
+  /** Convention: starts with "Following <agent>(s): ..." so UI highlights winners. */
   finalRecommendation: string;
 }
 ```

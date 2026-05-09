@@ -37,6 +37,10 @@ yarn-error.log*
 # vercel
 .vercel
 
+# Playbook persistence (filesystem-backed PlaybookRepository in dev).
+# Default playbook lives in src/lib/fixtures/playbook_default.json instead.
+data/playbooks/
+
 # typescript
 *.tsbuildinfo
 

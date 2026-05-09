@@ -225,6 +225,12 @@ export type CouncilRole =
   | "compliance"
   | "crown";
 
+/** AI-vs-AI sides — used by `AiVsAiService`. Same UI lane as Council. */
+export type AiVsAiSide = "counterpart_left" | "counterpart_right";
+
+/** Any speaker that can appear in a `DebateEvent`. */
+export type DebateAgent = CouncilRole | AiVsAiSide;
+
 export type VoteValue =
   | "accept"
   | "reject"
@@ -234,7 +240,7 @@ export type VoteValue =
 
 export interface DebateEvent {
   t: number;
-  agent: CouncilRole;
+  agent: DebateAgent;
   message: string;
   vote?: VoteValue;
   influenceDelta?: number;
@@ -243,6 +249,11 @@ export interface DebateEvent {
 export interface CouncilResult {
   moveId: string;
   tally: Partial<Record<CouncilRole, VoteValue>>;
+  /**
+   * One-line synthesis from Crown.
+   * Convention: starts with "Following <agent>(s): <ACCEPT|REJECT> Move <X>."
+   * so the UI can highlight which agents won.
+   */
   finalRecommendation: string;
 }
 

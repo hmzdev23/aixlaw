@@ -251,5 +251,9 @@ export interface Translator {
 
 ## Versioning
 
-- Bump contract version in code: `export const CONTRACT_VERSION = "1.1.0"`.  
+- Bump contract version in code: `export const CONTRACT_VERSION = "1.2.0"`.
+
+  Changelog:
+  - **1.2.0** (T5) — `DebateEvent.agent` widened from `CouncilRole` to `DebateAgent` (`CouncilRole | "counterpart_left" | "counterpart_right"`) so AI-vs-AI shares the War Room stream lane.
+  - **1.1.0** — Multi-doc `DealSession`, `OsfiResult`, `PipedaResult`, broader `ComplianceReport`, `Currency`.  
 - Breaking changes: PR must update this file + notify all three owners.
