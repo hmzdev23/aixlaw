@@ -4,7 +4,7 @@ import { useEffect, useMemo, useState } from "react";
 import { useWizard } from "@/components/wizard/state";
 import { getAgent } from "@/lib/agents";
 import { getScenario } from "@/lib/scenarios";
-import { redact } from "@/lib/redact";
+import { redactToHtml } from "@/lib/redact";
 import type { DocumentEdit } from "@/lib/types";
 
 export function EditedDocStep() {
@@ -51,7 +51,6 @@ export function EditedDocStep() {
 
   if (!scenario) return <p className="muted">No scenario loaded.</p>;
 
-  // Apply edits → produce final paragraphs (locale-aware).
   const editsByPara = new Map<number, DocumentEdit>();
   for (const e of edits) editsByPara.set(e.paragraphId, e);
 
@@ -61,18 +60,39 @@ export function EditedDocStep() {
     const frText = e ? e.replacementFr : p.fr;
     return {
       id: p.id,
-      en: state.locale === "fr" ? frText : enText,
-      originalEn: state.locale === "fr" ? p.fr : p.en,
+      text: state.locale === "fr" ? frText : enText,
+      original: state.locale === "fr" ? p.fr : p.en,
       edited: !!e,
       sensitive: e?.sensitive ?? false,
       isSig: !!p.isSignatureBlock,
+      party: p.party,
     };
   });
 
   const summaryItems = state.decisionTree.filter((n) => state.decisionPath.includes(n.id));
 
+  function renderRedactable(text: string): { __html: string } {
+    if (redactOn) {
+      return { __html: redactToHtml(text, extraNames).html };
+    }
+    return {
+      __html: text
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;"),
+    };
+  }
+
   function maybeRedact(s: string): string {
-    return redactOn ? redact(s, extraNames).text : s;
+    if (!redactOn) return s;
+    // Plain-text version for the summary panel; still strips emails/etc.
+    // The HTML render uses redactToHtml directly.
+    let out = s;
+    for (const n of extraNames) {
+      const re = new RegExp(`\\b${escapeRegExp(n)}\\b`, "gi");
+      out = out.replace(re, "■■■■■■");
+    }
+    return out;
   }
 
   return (
@@ -81,13 +101,16 @@ export function EditedDocStep() {
         <div>
           <h2 className="text-[22px] font-semibold tracking-tight">Edited contract + summary</h2>
           <p className="muted text-[13px]">
-            {scenario.headline} — {edits.length} edit{edits.length === 1 ? "" : "s"} applied.
-            Toggle redaction to see what would ship internally.
+            {scenario.headline}, {edits.length} edit{edits.length === 1 ? "" : "s"} applied,
+            {state.signatures.length}/{scenario.paragraphs.filter((p) => p.isSignatureBlock).length} signatures captured.
           </p>
         </div>
         <div className="flex items-center gap-2">
           <span className="muted text-[12px]">Display:</span>
-          <div className="flex overflow-hidden rounded-full border" style={{ borderColor: "var(--line-strong)" }}>
+          <div
+            className="flex overflow-hidden rounded-full border"
+            style={{ borderColor: "var(--line-strong)" }}
+          >
             {(["en", "fr"] as const).map((loc) => (
               <button
                 key={loc}
@@ -112,7 +135,7 @@ export function EditedDocStep() {
           Redact personal / sensitive info
         </label>
         <span className="muted text-[12px]">
-          When ON, edited paragraphs flagged sensitive are blurred-out and names you list are stripped.
+          When ON, sensitive substrings render as opaque black bars and flagged paragraphs are fully blacked out.
         </span>
       </div>
 
@@ -131,8 +154,13 @@ export function EditedDocStep() {
               type="button"
               onClick={() =>
                 setExtraNamesText((s) =>
-                  s.split(",").map((x) => x.trim()).filter(Boolean).concat(n)
-                    .filter((v, i, arr) => arr.indexOf(v) === i).join(", "),
+                  s
+                    .split(",")
+                    .map((x) => x.trim())
+                    .filter(Boolean)
+                    .concat(n)
+                    .filter((v, i, arr) => arr.indexOf(v) === i)
+                    .join(", "),
                 )
               }
               className="rounded-full border px-2 py-0.5 text-[11px]"
@@ -145,7 +173,9 @@ export function EditedDocStep() {
       </div>
 
       {busy ? (
-        <p className="flex items-center gap-2 text-[13px]"><span className="spinner" /> Applying edits…</p>
+        <p className="flex items-center gap-2 text-[13px]">
+          <span className="spinner" /> Applying edits…
+        </p>
       ) : error ? (
         <p className="text-[13px]" style={{ color: "var(--negative)" }}>{error}</p>
       ) : null}
@@ -160,7 +190,7 @@ export function EditedDocStep() {
                     className="cursor-pointer text-[11px] font-medium"
                     style={{ color: "var(--positive)" }}
                   >
-                    ✎ EDITED — view original
+                    ✎ EDITED, view original
                   </summary>
                   <p
                     className="mt-2 text-[12px]"
@@ -169,24 +199,27 @@ export function EditedDocStep() {
                       textDecoration: "line-through",
                     }}
                   >
-                    {p.originalEn}
+                    {p.original}
                   </p>
                 </details>
               ) : null}
-              <p
-                className={`text-[14px] leading-relaxed ${p.edited ? "" : ""}`}
-                style={{
-                  color: "var(--ink)",
-                  background: p.edited ? "var(--accent-soft)" : "transparent",
-                  padding: p.edited ? "8px 10px" : 0,
-                  borderRadius: 6,
-                  filter: redactOn && p.sensitive ? "blur(4px)" : "none",
-                }}
-              >
-                {redactOn && p.sensitive ? p.en : maybeRedact(p.en)}
-              </p>
               {redactOn && p.sensitive ? (
-                <p className="muted mt-1 text-[11px]">⛔ Redacted as sensitive — toggle off to inspect.</p>
+                <p className="redact-block text-[14px]">{p.text}</p>
+              ) : (
+                <p
+                  className="text-[14px] leading-relaxed"
+                  style={{
+                    color: "var(--ink)",
+                    background: p.edited ? "var(--accent-soft)" : "transparent",
+                    padding: p.edited ? "8px 10px" : 0,
+                    borderRadius: 6,
+                    whiteSpace: "pre-wrap",
+                  }}
+                  dangerouslySetInnerHTML={renderRedactable(p.text)}
+                />
+              )}
+              {p.isSig ? (
+                <SignatureView state={state} paragraphId={p.id} party={p.party} />
               ) : null}
             </div>
           ))}
@@ -195,14 +228,43 @@ export function EditedDocStep() {
         <aside className="card flex flex-col gap-3 px-5 py-5">
           <p className="label">What you decided</p>
           {summaryItems.length === 0 ? (
-            <p className="muted text-[12px]">No decisions taken — original contract shown unchanged.</p>
+            <p className="muted text-[12px]">
+              No decisions taken, original contract shown unchanged.
+            </p>
           ) : (
             <ol className="space-y-3 text-[12px]">
               {summaryItems.map((n, i) => (
-                <li key={n.id} className="rounded-md border px-3 py-2" style={{ borderColor: "var(--line-strong)" }}>
-                  <p className="text-[11px] muted">Step {i + 1} · Δ {n.delta > 0 ? "+" : ""}{n.delta}</p>
-                  <p className="mt-1 text-[13px] font-medium">{maybeRedact(n.label)}</p>
-                  <p className="muted mt-1 text-[11px]">{maybeRedact(n.detail)}</p>
+                <li
+                  key={n.id}
+                  className="rounded-md border px-3 py-2"
+                  style={{
+                    borderColor: n.cumulativeScore <= -3 ? "var(--negative)" : "var(--line-strong)",
+                    background: n.cumulativeScore <= -3 ? "#fef5f4" : "white",
+                  }}
+                >
+                  <p className="text-[11px] muted">
+                    Step {i + 1} · Δ {n.delta > 0 ? "+" : ""}{n.delta} · cum {n.cumulativeScore.toFixed(1)}
+                  </p>
+                  {redactOn ? (
+                    <p
+                      className="mt-1 text-[13px] font-medium"
+                      dangerouslySetInnerHTML={{
+                        __html: redactToHtml(n.label, extraNames).html,
+                      }}
+                    />
+                  ) : (
+                    <p className="mt-1 text-[13px] font-medium">{n.label}</p>
+                  )}
+                  {redactOn ? (
+                    <p
+                      className="muted mt-1 text-[11px]"
+                      dangerouslySetInnerHTML={{
+                        __html: redactToHtml(n.detail, extraNames).html,
+                      }}
+                    />
+                  ) : (
+                    <p className="muted mt-1 text-[11px]">{n.detail}</p>
+                  )}
                 </li>
               ))}
             </ol>
@@ -214,7 +276,8 @@ export function EditedDocStep() {
               className="mt-1 text-[24px] font-semibold tabular-nums"
               style={{ color: state.score >= 0 ? "var(--positive)" : "var(--negative)" }}
             >
-              {state.score > 0 ? "+" : ""}{state.score.toFixed(1)} / ±10
+              {state.score > 0 ? "+" : ""}
+              {state.score.toFixed(1)} / ±10
             </p>
           </div>
 
@@ -225,7 +288,16 @@ export function EditedDocStep() {
                 const a = getAgent(t.agentId);
                 return (
                   <li key={t.id} className="muted">
-                    <strong style={{ color: "var(--ink)" }}>{a?.name}</strong>: {maybeRedact(t.text)}
+                    <strong style={{ color: "var(--ink)" }}>{a?.name}</strong>:{" "}
+                    {redactOn ? (
+                      <span
+                        dangerouslySetInnerHTML={{
+                          __html: redactToHtml(t.text, extraNames).html,
+                        }}
+                      />
+                    ) : (
+                      maybeRedact(t.text)
+                    )}
                   </li>
                 );
               })}
@@ -235,11 +307,52 @@ export function EditedDocStep() {
       </div>
 
       <div className="mt-2 flex justify-between">
-        <button type="button" className="btn btn-ghost" onClick={() => dispatch({ type: "BACK" })}>← Back</button>
+        <button type="button" className="btn btn-ghost" onClick={() => dispatch({ type: "BACK" })}>
+          ← Back
+        </button>
         <button type="button" className="btn" onClick={() => dispatch({ type: "GOTO", step: "done" })}>
           Continue → Wrap up
         </button>
       </div>
     </div>
   );
+}
+
+function SignatureView({
+  state,
+  paragraphId,
+  party,
+}: {
+  state: ReturnType<typeof useWizard>["state"];
+  paragraphId: number;
+  party?: "vendor" | "client";
+}) {
+  const sig = state.signatures.find((s) => s.paragraphIndex === paragraphId);
+  if (!sig) {
+    return (
+      <p className="muted mt-2 text-[11px]">
+        ✘ no signature captured for this {party ?? "party"} block
+      </p>
+    );
+  }
+  return (
+    <div
+      className="mt-2 inline-block rounded-md border bg-white px-3 py-2"
+      style={{ borderColor: "var(--line-strong)" }}
+    >
+      <p className="muted text-[10px] uppercase tracking-widest">
+        signed {party ?? sig.party} · {new Date(sig.signedAt).toLocaleString()}
+      </p>
+      {/* eslint-disable-next-line @next/next/no-img-element */}
+      <img
+        src={sig.dataUrl}
+        alt={`${party ?? sig.party} signature`}
+        style={{ height: 56, width: "auto", maxWidth: 280 }}
+      />
+    </div>
+  );
+}
+
+function escapeRegExp(s: string): string {
+  return s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 }

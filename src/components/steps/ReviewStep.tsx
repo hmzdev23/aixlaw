@@ -40,7 +40,7 @@ export function ReviewStep() {
   function setLocale(loc: "en" | "fr") {
     setTranslateError(null);
     if (loc === "fr" && state.locale !== "fr") {
-      // Translation is hardcoded — instant. Show booking nudge.
+      // Translation is hardcoded , instant. Show booking nudge.
       dispatch({ type: "SET_LOCALE", locale: "fr" });
       if (state.bookingFromTranslate?.booked == null) {
         setShowBookingModal(true);
@@ -193,7 +193,7 @@ function FrenchBookingModal({
       onClick={onClose}
     >
       <div className="card w-full max-w-md p-6" onClick={(e) => e.stopPropagation()}>
-        <h3 className="text-[16px] font-semibold">Heads up — this is a machine translation</h3>
+        <h3 className="text-[16px] font-semibold">Heads up , this is a machine translation</h3>
         <p className="muted mt-2 text-[13px]">
           For binding legal documents we recommend a human professional translator,
           especially for clauses you intend to sign in Quebec. Want to book a 30-minute

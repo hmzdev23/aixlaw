@@ -5,6 +5,7 @@ import { StepBar } from "./StepBar";
 import { UploadStep } from "@/components/steps/UploadStep";
 import { ReviewStep } from "@/components/steps/ReviewStep";
 import { EsigStep } from "@/components/steps/EsigStep";
+import { ViolationsStep } from "@/components/steps/ViolationsStep";
 import { WorkflowStep } from "@/components/steps/WorkflowStep";
 import { GoalStep } from "@/components/steps/GoalStep";
 import { ContextStep } from "@/components/steps/ContextStep";
@@ -35,6 +36,7 @@ function Inner() {
         {state.step === "upload" && <UploadStep />}
         {state.step === "review" && <ReviewStep />}
         {state.step === "esig" && <EsigStep />}
+        {state.step === "violations" && <ViolationsStep />}
         {state.step === "workflow" && <WorkflowStep />}
         {state.step === "goal" && <GoalStep />}
         {state.step === "context" && <ContextStep />}

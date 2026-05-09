@@ -15,7 +15,7 @@ export function MeetingStep() {
   const { state, dispatch } = useWizard();
   const [needed, setNeeded] = useState<boolean | null>(state.meetingNeeded);
   const [when, setWhen] = useState<string>(defaultWhen());
-  const [title, setTitle] = useState<string>(`Negotiation review — ${state.doc?.filename ?? "contract"}`);
+  const [title, setTitle] = useState<string>(`Negotiation review , ${state.doc?.filename ?? "contract"}`);
   const [attendee, setAttendee] = useState("");
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);

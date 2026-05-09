@@ -4,7 +4,7 @@ import { useMemo, useState } from "react";
 import { useWizard } from "@/components/wizard/state";
 import { getAgent } from "@/lib/agents";
 import { getScenario } from "@/lib/scenarios";
-import { redact } from "@/lib/redact";
+import { redact, redactToHtml } from "@/lib/redact";
 
 function buildHighlights(state: ReturnType<typeof useWizard>["state"]): string[] {
   const out: string[] = [];
@@ -13,7 +13,7 @@ function buildHighlights(state: ReturnType<typeof useWizard>["state"]): string[]
     out.push(
       state.esig.qcAvailable
         ? "E-sig: available in Quebec under CQLR c. C-1.1 / UECA."
-        : "E-sig: restricted — wet-ink or notary may be required.",
+        : "E-sig: restricted , wet-ink or notary may be required.",
     );
   }
   if (state.bookingFromTranslate?.booked) {
@@ -51,20 +51,32 @@ export function MemoStep() {
     [extraNamesText],
   );
   const highlights = useMemo(() => buildHighlights(state), [state]);
-  const previewBody = useMemo(() => {
-    const block = [
+  const memoPlain = useMemo(() => {
+    return [
       `Goal: ${state.goal || "(not stated)"}`,
       "",
       `Decisions: ${state.decisionTree
         .filter((n) => state.decisionPath.includes(n.id))
         .map((d) => `${d.label} (${d.delta > 0 ? "+" : ""}${d.delta})`)
-        .join(" → ") || "(none)"}`,
+        .join(" -> ") || "(none)"}`,
       "",
       "Highlights:",
-      ...highlights.map((h) => `• ${h}`),
+      ...highlights.map((h) => `* ${h}`),
     ].join("\n");
-    return redactOn ? redact(block, extraNames).text : block;
-  }, [state, highlights, redactOn, extraNames]);
+  }, [state, highlights]);
+
+  const previewBody = useMemo(
+    () => (redactOn ? redact(memoPlain, extraNames).text : memoPlain),
+    [memoPlain, redactOn, extraNames],
+  );
+
+  const previewHtml = useMemo(() => {
+    if (redactOn) return redactToHtml(memoPlain, extraNames).html;
+    return memoPlain
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;");
+  }, [memoPlain, redactOn, extraNames]);
 
   function setAnswer(v: boolean) {
     setNeeded(v);
@@ -79,7 +91,7 @@ export function MemoStep() {
         method: "POST",
         headers: { "content-type": "application/json" },
         body: JSON.stringify({
-          title: scenario?.summaryTitle ?? `Gambit memo — ${state.doc?.filename ?? "contract"}`,
+          title: scenario?.summaryTitle ?? `Gambit memo , ${state.doc?.filename ?? "contract"}`,
           goal: state.goal,
           finalScore: state.score,
           decisions: state.decisionTree
@@ -116,7 +128,7 @@ export function MemoStep() {
         method: "POST",
         headers: { "content-type": "application/json" },
         body: JSON.stringify({
-          memoTitle: scenario?.summaryTitle ?? `Gambit memo — ${state.doc?.filename ?? "contract"}`,
+          memoTitle: scenario?.summaryTitle ?? `Gambit memo , ${state.doc?.filename ?? "contract"}`,
           text: previewBody,
         }),
       });
@@ -194,9 +206,8 @@ export function MemoStep() {
           <pre
             className="card scroll-y px-5 py-5 font-mono text-[12px]"
             style={{ maxHeight: 240, whiteSpace: "pre-wrap" }}
-          >
-            {previewBody}
-          </pre>
+            dangerouslySetInnerHTML={{ __html: previewHtml }}
+          />
 
           {error ? (
             <p className="text-[13px]" style={{ color: "var(--negative)" }}>{error}</p>

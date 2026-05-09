@@ -3,24 +3,30 @@ import type { EsigResult } from "@/lib/types";
 export type ScenarioId = "dunder" | "nimbus";
 
 export interface ScenarioParagraph {
-  /** Stable index — used as primary key everywhere. */
   id: number;
   en: string;
   fr: string;
-  /** Optional UI tag for highlight chips. */
   flag?: "warn" | "bad" | "info";
   flagReason?: string;
-  /** If true, this paragraph contains a signature block to draw on. */
   isSignatureBlock?: boolean;
+  /** Which party signs this block. */
+  party?: "vendor" | "client";
+}
+
+/** One context hint, shown next to a single question. */
+export interface ScenarioHint {
+  headline: string;
+  detail: string;
+  suggestedAnswer: string;
 }
 
 export interface ScenarioAgentBrief {
   agentId: "pierre" | "marie" | "etienne" | "sophie" | "antoine";
-  /** 1-2 questions the agent will ask. */
+  /** 2 questions, paired 1:1 with `hints`. */
   questions: string[];
-  /** Side-panel hint that appears while briefing this agent. */
-  hint: { headline: string; detail: string; suggestedAnswer: string };
-  /** Two rounds of one-paragraph debate lines. */
+  /** 2 hints, paired 1:1 with `questions`. */
+  hints: ScenarioHint[];
+  /** N rounds of debate lines (one or more lines per round). */
   debateRounds: { text: string; delta: number }[][];
 }
 
@@ -29,31 +35,46 @@ export interface ScenarioDecisionOption {
   label: string;
   detail: string;
   delta: number;
-  /** Edits this option introduces to the contract paragraphs (overrides paragraph EN/FR). */
-  edits: { paragraphId: number; replacement: string; replacementFr?: string; sensitive?: boolean }[];
-  /** Children options shown after this one is picked. */
+  /** Mark a path that ends in a "walk away / loss" outcome. */
+  losePath?: boolean;
+  edits: {
+    paragraphId: number;
+    replacement: string;
+    replacementFr?: string;
+    sensitive?: boolean;
+  }[];
   children?: ScenarioDecisionOption[];
+}
+
+export interface LawViolation {
+  id: string;
+  jurisdiction: string;
+  shortName: string;
+  fullName: string;
+  fullNameFr: string;
+  blurb: string;
+  blurbFr: string;
+  severity: "low" | "medium" | "high";
+  /** Article or section reference for the citation chip. */
+  citation?: string;
 }
 
 export interface Scenario {
   id: ScenarioId;
   vendor: string;
   counterparty: string;
-  /** Single-line headline shown across the wizard. */
   headline: string;
-  /** ARR + key context shown on upload. */
   context: string;
   filenameMarkers: string[];
   paragraphs: ScenarioParagraph[];
   esig: EsigResult;
-  /** Goal sample buttons. */
+  /** Hardcoded law violations surfaced after e-sig. */
+  lawViolations: LawViolation[];
   goalSamples: string[];
-  /** Five-agent brief data. */
   agents: ScenarioAgentBrief[];
-  /** Root decision options; each option can have children for branching. */
   decisionRoot: ScenarioDecisionOption[];
-  /** Markdown-style summary headline used by the post-memo edited-doc step. */
+  /** Number of debate rounds available; tree depth equals this. */
+  maxDebateRounds: number;
   summaryTitle: string;
-  /** Hint chips for the redaction (extra names) input. */
   sensitiveNames: string[];
 }

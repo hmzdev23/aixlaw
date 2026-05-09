@@ -31,5 +31,5 @@ export async function POST(req: Request): Promise<Response> {
   const a = s.agents.find((x) => x.agentId === parsed.data.agentId);
   if (!a) return fail("unknown_agent", "Agent not in this scenario.", 404);
 
-  return ok({ questions: a.questions, hint: a.hint });
+  return ok({ questions: a.questions, hints: a.hints });
 }

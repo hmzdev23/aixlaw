@@ -4,11 +4,11 @@ import { useEffect, useMemo, useState } from "react";
 import { useWizard } from "@/components/wizard/state";
 import { getAgent } from "@/lib/agents";
 import type { ContextAnswer } from "@/lib/types";
+import type { ScenarioHint } from "@/lib/scenarios/types";
 
-interface AgentHint {
-  headline: string;
-  detail: string;
-  suggestedAnswer: string;
+interface QuestionsPayload {
+  questions: string[];
+  hints: ScenarioHint[];
 }
 
 export function ContextStep() {
@@ -16,11 +16,11 @@ export function ContextStep() {
   const order = state.workflow;
   const [idx, setIdx] = useState(0);
   const [questions, setQuestions] = useState<string[]>([]);
-  const [hint, setHint] = useState<AgentHint | null>(null);
+  const [hints, setHints] = useState<ScenarioHint[]>([]);
+  const [hintsRevealed, setHintsRevealed] = useState(false);
   const [answers, setAnswers] = useState<string[]>(["", ""]);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [hintOpen, setHintOpen] = useState(true);
 
   const current = order[idx];
   const agent = useMemo(() => (current ? getAgent(current) : undefined), [current]);
@@ -30,9 +30,11 @@ export function ContextStep() {
     setBusy(true);
     setError(null);
     setQuestions([]);
-    setHint(null);
+    setHints([]);
     setAnswers(["", ""]);
-    setHintOpen(true);
+    setHintsRevealed(false);
+
+    let alive = true;
     void fetch("/api/agents/questions", {
       method: "POST",
       headers: { "content-type": "application/json" },
@@ -40,14 +42,27 @@ export function ContextStep() {
     })
       .then(async (r) => {
         const j = (await r.json()) as
-          | { ok: true; data: { questions: string[]; hint: AgentHint } }
+          | { ok: true; data: QuestionsPayload }
           | { ok: false; error: { message: string } };
         if (!j.ok) throw new Error(j.error.message);
+        if (!alive) return;
         setQuestions(j.data.questions);
-        setHint(j.data.hint);
+        setHints(j.data.hints);
+        // Reveal hints after a short delay so it feels like they're being generated.
+        setTimeout(() => {
+          if (alive) setHintsRevealed(true);
+        }, 1300);
       })
-      .catch((e) => setError((e as Error).message))
-      .finally(() => setBusy(false));
+      .catch((e) => {
+        if (alive) setError((e as Error).message);
+      })
+      .finally(() => {
+        if (alive) setBusy(false);
+      });
+
+    return () => {
+      alive = false;
+    };
   }, [agent, state.scenarioId]);
 
   if (order.length === 0) {
@@ -56,11 +71,10 @@ export function ContextStep() {
 
   if (!agent) return null;
 
-  function applyHintToAnswer() {
-    if (!hint) return;
+  function applyHintToAnswer(qIndex: number, suggested: string) {
     setAnswers((arr) => {
       const cp = [...arr];
-      cp[0] = hint.suggestedAnswer;
+      cp[qIndex] = suggested;
       return cp;
     });
   }
@@ -85,42 +99,42 @@ export function ContextStep() {
   }
 
   return (
-    <div className="relative flex flex-col gap-5">
+    <div className="flex flex-col gap-5">
       <header>
         <h2 className="text-[22px] font-semibold tracking-tight">Brief the agents</h2>
         <p className="muted text-[13px]">
-          Each agent asks for what they need. Use the hint panel on the right —
+          Each agent asks for what they need. Use the hint cards on the right;
           you can drop our suggestion straight into the textbox.
         </p>
       </header>
 
       <ProgressChips order={order} idx={idx} />
 
-      <div className="grid gap-4 lg:grid-cols-[1fr_320px]">
-        <div className="card grid gap-3 px-5 py-5 md:grid-cols-[180px_1fr]">
-          <div>
-            <p className="text-[18px] font-semibold">{agent.name}</p>
-            <p className="muted text-[12px]">{agent.role}</p>
-            <p className="mt-3 text-[13px]">{agent.blurb}</p>
-            <p className="muted mt-2 text-[12px]">
-              <strong>Specialty:</strong> {agent.speciality}
+      <div className="card grid gap-3 px-5 py-5 md:grid-cols-[200px_1fr]">
+        <div>
+          <p className="text-[18px] font-semibold">{agent.name}</p>
+          <p className="muted text-[12px]">{agent.role}</p>
+          <p className="mt-3 text-[13px]">{agent.blurb}</p>
+          <p className="muted mt-2 text-[12px]">
+            <strong>Specialty:</strong> {agent.speciality}
+          </p>
+        </div>
+        <div className="flex flex-col gap-5">
+          {busy ? (
+            <p className="flex items-center gap-2 text-[13px]">
+              <span className="spinner" /> Loading {agent.name}&apos;s questions…
             </p>
-          </div>
-          <div className="flex flex-col gap-3">
-            {busy ? (
-              <p className="flex items-center gap-2 text-[13px]">
-                <span className="spinner" /> Thinking…
-              </p>
-            ) : error ? (
-              <p className="text-[13px]" style={{ color: "var(--negative)" }}>{error}</p>
-            ) : (
-              questions.map((q, i) => (
-                <label key={`${current}-${i}`} className="block">
-                  <span className="label">Q{i + 1}</span>
+          ) : error ? (
+            <p className="text-[13px]" style={{ color: "var(--negative)" }}>{error}</p>
+          ) : (
+            questions.map((q, i) => (
+              <div key={`${current}-${i}`} className="grid gap-3 md:grid-cols-[1fr_280px]">
+                <div>
+                  <p className="label">Q{i + 1}</p>
                   <p className="mt-1 text-[13px]">{q}</p>
                   <textarea
                     className="textarea mt-2"
-                    rows={i === 0 ? 4 : 2}
+                    rows={3}
                     value={answers[i] ?? ""}
                     onChange={(e) => {
                       const cp = [...answers];
@@ -128,23 +142,18 @@ export function ContextStep() {
                       setAnswers(cp);
                     }}
                   />
-                </label>
-              ))
-            )}
-          </div>
+                </div>
+                <HintCard
+                  agentName={agent.name}
+                  qIndex={i}
+                  hint={hints[i]}
+                  visible={hintsRevealed}
+                  onApply={(text) => applyHintToAnswer(i, text)}
+                />
+              </div>
+            ))
+          )}
         </div>
-
-        {hint ? (
-          <HintPanel
-            hint={hint}
-            agentName={agent.name}
-            open={hintOpen}
-            onToggle={() => setHintOpen((o) => !o)}
-            onApply={applyHintToAnswer}
-          />
-        ) : (
-          <div />
-        )}
       </div>
 
       <div className="flex justify-between">
@@ -194,55 +203,52 @@ function ProgressChips({ order, idx }: { order: string[]; idx: number }) {
   );
 }
 
-function HintPanel({
-  hint,
+function HintCard({
   agentName,
-  open,
-  onToggle,
+  qIndex,
+  hint,
+  visible,
   onApply,
 }: {
-  hint: AgentHint;
   agentName: string;
-  open: boolean;
-  onToggle: () => void;
-  onApply: () => void;
+  qIndex: number;
+  hint: ScenarioHint | undefined;
+  visible: boolean;
+  onApply: (text: string) => void;
 }) {
+  if (!visible || !hint) {
+    return (
+      <aside className="rounded-md border px-3 py-3" style={{ borderColor: "var(--line-strong)", background: "var(--accent-soft)" }}>
+        <p className="text-[11px] uppercase tracking-widest muted">Hint for Q{qIndex + 1}</p>
+        <p className="mt-2 flex items-center gap-2 text-[12px] muted">
+          <span className="spinner" /> Drafting hint…
+        </p>
+      </aside>
+    );
+  }
   return (
     <aside
-      className="card sticky top-2 h-fit transition-all"
-      style={{
-        borderColor: open ? "var(--ink)" : "var(--line-strong)",
-        background: open ? "white" : "var(--accent-soft)",
-        padding: open ? 18 : 12,
-      }}
+      className={`fade-in stagger-${(qIndex % 5) + 1} rounded-md border px-3 py-3`}
+      style={{ borderColor: "var(--ink)", background: "white" }}
     >
-      <button
-        type="button"
-        onClick={onToggle}
-        className="flex w-full items-start justify-between gap-3 text-left"
+      <p className="text-[11px] uppercase tracking-widest muted">Hint for Q{qIndex + 1}</p>
+      <p className="mt-1 text-[13px] font-semibold">{hint.headline}</p>
+      <p className="muted mt-2 text-[12px] leading-relaxed">{hint.detail}</p>
+      <div
+        className="mt-3 rounded-md border p-2"
+        style={{ borderColor: "var(--line)", background: "var(--accent-soft)" }}
       >
-        <div>
-          <p className="text-[11px] uppercase tracking-widest muted">Hint for {agentName}</p>
-          <p className="mt-1 text-[14px] font-semibold">{hint.headline}</p>
-        </div>
-        <span className="muted text-[14px]">{open ? "−" : "+"}</span>
-      </button>
-      {open ? (
-        <>
-          <p className="mt-3 text-[13px] leading-relaxed" style={{ color: "var(--ink-soft)" }}>
-            {hint.detail}
-          </p>
-          <div className="mt-4 rounded-md border p-3" style={{ borderColor: "var(--line)", background: "var(--accent-soft)" }}>
-            <p className="text-[11px] uppercase tracking-widest muted">Suggested answer</p>
-            <p className="mt-1 text-[12px] leading-relaxed" style={{ color: "var(--ink)" }}>
-              {hint.suggestedAnswer}
-            </p>
-            <button type="button" className="btn mt-3" style={{ height: 32, padding: "0 14px" }} onClick={onApply}>
-              Say this to {agentName} →
-            </button>
-          </div>
-        </>
-      ) : null}
+        <p className="text-[10px] uppercase tracking-widest muted">Suggested answer</p>
+        <p className="mt-1 text-[12px] leading-relaxed">{hint.suggestedAnswer}</p>
+        <button
+          type="button"
+          className="btn mt-2"
+          style={{ height: 28, padding: "0 12px", fontSize: 12 }}
+          onClick={() => onApply(hint.suggestedAnswer)}
+        >
+          Say this to {agentName} →
+        </button>
+      </div>
     </aside>
   );
 }

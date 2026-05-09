@@ -3,7 +3,8 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useWizard } from "@/components/wizard/state";
 import { getAgent } from "@/lib/agents";
-import type { DebateTurn, DecisionNode, DecisionOption } from "@/lib/types";
+import { getScenario } from "@/lib/scenarios";
+import type { DebateTurn, DecisionNode } from "@/lib/types";
 
 interface ApiOption {
   id: string;
@@ -12,10 +13,13 @@ interface ApiOption {
   delta: number;
   modifiesDoc: boolean;
   hasChildren: boolean;
+  losePath?: boolean;
 }
 
 export function WarRoomStep() {
   const { state, dispatch } = useWizard();
+  const scenario = state.scenarioId ? getScenario(state.scenarioId) : null;
+  const maxRounds = scenario?.maxDebateRounds ?? 3;
   const [busyDebate, setBusyDebate] = useState(false);
   const [busyOptions, setBusyOptions] = useState(false);
   const [options, setOptions] = useState<ApiOption[]>([]);
@@ -23,7 +27,7 @@ export function WarRoomStep() {
   const ranOnce = useRef(false);
   const chatBottomRef = useRef<HTMLDivElement>(null);
 
-  // Auto-start the debate the first time we land here.
+  // Auto-run round 0 the first time we land here.
   useEffect(() => {
     if (ranOnce.current) return;
     ranOnce.current = true;
@@ -31,13 +35,12 @@ export function WarRoomStep() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  // Auto-scroll chat as new turns arrive
   useEffect(() => {
     chatBottomRef.current?.scrollIntoView({ behavior: "smooth", block: "end" });
   }, [state.debate.length, state.activeAgentId]);
 
   async function runRound() {
-    if (!state.scenarioId) return;
+    if (!state.scenarioId || state.debateRound >= maxRounds) return;
     setBusyDebate(true);
     setError(null);
     try {
@@ -54,7 +57,6 @@ export function WarRoomStep() {
         | { ok: true; data: { turns: DebateTurn[]; round: number } }
         | { ok: false; error: { message: string } };
       if (!j.ok) throw new Error(j.error.message);
-      // Reveal turns one by one with a speaker indicator
       for (const t of j.data.turns) {
         dispatch({ type: "SET_ACTIVE_AGENT", agentId: t.agentId });
         await sleep(280);
@@ -93,17 +95,16 @@ export function WarRoomStep() {
     }
   }
 
-  // Reload options whenever the path changes (e.g. after rewind)
+  // Reload options whenever the path changes (e.g. after rewind).
   useEffect(() => {
     void loadOptions();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [state.decisionPath.join("/")]);
 
-  function chooseOption(opt: ApiOption) {
+  async function chooseOption(opt: ApiOption) {
     const parent = state.decisionTree.find((n) => n.id === lastOf(state.decisionPath));
-    const cumulative = (parent?.cumulativeScore ?? 0) + opt.delta;
+    const cumulative = (parent?.cumulativeScore ?? state.score) + opt.delta;
     const depth = state.decisionPath.length;
-    // siblingIndex computed from current options list at this level
     const siblingIndex = options.findIndex((o) => o.id === opt.id);
     const node: DecisionNode = {
       id: opt.id,
@@ -116,11 +117,23 @@ export function WarRoomStep() {
       depth,
     };
     dispatch({ type: "PUSH_DECISION", node });
+    // Run the next debate round automatically if we still have rounds left.
+    if (state.debateRound < maxRounds) {
+      // Slight pause so the user sees the new node land in the tree first.
+      await sleep(450);
+      void runRound();
+    }
   }
 
   function rewindTo(nodeId: string | null) {
     dispatch({ type: "REWIND_TO", nodeId });
   }
+
+  const finished =
+    state.debateRound >= maxRounds && options.length === 0 && !busyDebate;
+  const onLosePath = state.decisionTree
+    .filter((n) => state.decisionPath.includes(n.id))
+    .some((n) => n.cumulativeScore <= -3);
 
   return (
     <div className="flex flex-col gap-5">
@@ -130,23 +143,19 @@ export function WarRoomStep() {
           <p className="muted text-[13px]">
             Goal: <em>&ldquo;{state.goal}&rdquo;</em>
             {state.activeAgentId ? (
-              <span className="ml-2 inline-flex items-center gap-1.5 rounded-full px-2.5 py-0.5 text-[11px] font-semibold" style={{ background: "var(--ink)", color: "white" }}>
-                <span className="inline-block h-1.5 w-1.5 animate-pulse rounded-full" style={{ background: "white" }} />
+              <span
+                className="ml-2 inline-flex items-center gap-1.5 rounded-full px-2.5 py-0.5 text-[11px] font-semibold"
+                style={{ background: "var(--ink)", color: "white" }}
+              >
+                <span className="pulse-dot" style={{ background: "white" }} />
                 {getAgent(state.activeAgentId)?.name} is speaking…
               </span>
             ) : null}
           </p>
         </div>
         <div className="flex items-center gap-3">
-          <WinBar score={state.score} />
-          <button
-            type="button"
-            className="btn btn-secondary"
-            disabled={busyDebate}
-            onClick={() => void runRound()}
-          >
-            {busyDebate ? "Running…" : `Run round ${state.debateRound + 1}`}
-          </button>
+          <RoundIndicator round={state.debateRound} max={maxRounds} />
+          <WinBar score={state.score} losing={onLosePath} />
         </div>
       </header>
 
@@ -155,12 +164,19 @@ export function WarRoomStep() {
       ) : null}
 
       <div className="grid gap-4 lg:grid-cols-[1fr_320px]">
-        <ChatPane turns={state.debate} activeAgentId={state.activeAgentId} bottomRef={chatBottomRef} />
+        <ChatPane
+          turns={state.debate}
+          activeAgentId={state.activeAgentId}
+          bottomRef={chatBottomRef}
+          busy={busyDebate}
+        />
         <DecisionPane
           options={options}
-          busy={busyOptions}
+          busy={busyOptions || busyDebate}
           onChoose={chooseOption}
           chosenCount={state.decisionPath.length}
+          finished={finished}
+          onContinue={() => dispatch({ type: "GOTO", step: "export" })}
         />
       </div>
 
@@ -171,8 +187,15 @@ export function WarRoomStep() {
       />
 
       <div className="mt-2 flex justify-between">
-        <button type="button" className="btn btn-ghost" onClick={() => dispatch({ type: "BACK" })}>← Back</button>
-        <button type="button" className="btn" onClick={() => dispatch({ type: "GOTO", step: "export" })} disabled={state.debate.length === 0}>
+        <button type="button" className="btn btn-ghost" onClick={() => dispatch({ type: "BACK" })}>
+          ← Back
+        </button>
+        <button
+          type="button"
+          className="btn"
+          onClick={() => dispatch({ type: "GOTO", step: "export" })}
+          disabled={state.debate.length === 0}
+        >
           Continue → Export the chat
         </button>
       </div>
@@ -184,7 +207,29 @@ function lastOf<T>(a: T[]): T | undefined {
   return a.length === 0 ? undefined : a[a.length - 1];
 }
 
-function WinBar({ score }: { score: number }) {
+function RoundIndicator({ round, max }: { round: number; max: number }) {
+  return (
+    <div className="flex flex-col items-end gap-1">
+      <span className="muted text-[11px] uppercase tracking-widest">Round</span>
+      <div className="flex items-center gap-1">
+        {Array.from({ length: max }, (_, i) => (
+          <span
+            key={i}
+            className="h-1.5 w-6 rounded-full"
+            style={{
+              background: i < round ? "var(--ink)" : "var(--line-strong)",
+            }}
+          />
+        ))}
+        <span className="muted ml-2 text-[11px] tabular-nums">
+          {round}/{max}
+        </span>
+      </div>
+    </div>
+  );
+}
+
+function WinBar({ score, losing }: { score: number; losing: boolean }) {
   const positive = score >= 0;
   const widthPct = Math.min(50, Math.abs(score) * 5);
   return (
@@ -208,7 +253,9 @@ function WinBar({ score }: { score: number }) {
         className="text-[14px] font-semibold tabular-nums"
         style={{ color: positive ? "var(--positive)" : "var(--negative)" }}
       >
-        {positive ? "+" : ""}{score.toFixed(1)}
+        {positive ? "+" : ""}
+        {score.toFixed(1)}
+        {losing ? <span className="ml-2 text-[10px] uppercase">walk-away zone</span> : null}
       </span>
     </div>
   );
@@ -218,10 +265,12 @@ function ChatPane({
   turns,
   activeAgentId,
   bottomRef,
+  busy,
 }: {
   turns: DebateTurn[];
   activeAgentId: string | null;
   bottomRef: React.RefObject<HTMLDivElement | null>;
+  busy: boolean;
 }) {
   return (
     <div className="card scroll-y px-5 py-5" style={{ height: 380 }}>
@@ -230,13 +279,7 @@ function ChatPane({
           const a = getAgent(t.agentId);
           const isActive = activeAgentId === t.agentId;
           return (
-            <div
-              key={t.id}
-              className="flex animate-in gap-3"
-              style={{
-                animation: "fadeUp 0.32s ease-out",
-              }}
-            >
+            <div key={t.id} className="flex gap-3 fade-in">
               <span
                 className="grid h-7 w-7 shrink-0 place-items-center rounded-full text-[12px] font-semibold transition-transform"
                 style={{
@@ -269,20 +312,18 @@ function ChatPane({
             </div>
           );
         })}
-        {activeAgentId ? (
+        {busy && activeAgentId ? (
           <p className="flex items-center gap-2 text-[13px] muted">
             <span className="spinner" />
             {getAgent(activeAgentId)?.name} preparing…
           </p>
+        ) : busy ? (
+          <p className="flex items-center gap-2 text-[13px] muted">
+            <span className="spinner" /> council deliberating…
+          </p>
         ) : null}
         <div ref={bottomRef} />
       </div>
-      <style jsx>{`
-        @keyframes fadeUp {
-          from { opacity: 0; transform: translateY(6px); }
-          to   { opacity: 1; transform: translateY(0); }
-        }
-      `}</style>
     </div>
   );
 }
@@ -292,11 +333,15 @@ function DecisionPane({
   busy,
   onChoose,
   chosenCount,
+  finished,
+  onContinue,
 }: {
   options: ApiOption[];
   busy: boolean;
   onChoose: (o: ApiOption) => void;
   chosenCount: number;
+  finished: boolean;
+  onContinue: () => void;
 }) {
   return (
     <div className="card flex flex-col gap-3 px-5 py-5">
@@ -305,27 +350,38 @@ function DecisionPane({
         <p className="muted mt-1 text-[11px]">
           {chosenCount === 0
             ? "Pick the opening counter."
-            : options.length === 0
-              ? "End of branch — no further options. Click a node in the tree to rewind and pick differently."
-              : `You're at depth ${chosenCount}. Pick the next move or rewind in the tree below.`}
+            : finished
+              ? "Final round complete. Continue to export the chat."
+              : `Depth ${chosenCount}. Pick the next move.`}
         </p>
       </div>
       {busy ? (
-        <p className="flex items-center gap-2 text-[13px] muted"><span className="spinner" /> Drafting…</p>
+        <p className="flex items-center gap-2 text-[13px] muted">
+          <span className="spinner" /> Drafting next options…
+        </p>
+      ) : finished && options.length === 0 ? (
+        <button type="button" className="btn" onClick={onContinue}>
+          Continue → Export
+        </button>
       ) : options.length === 0 ? (
-        <p className="muted text-[12px]">Decision branch ended. Use the tree below to revisit a node.</p>
+        <p className="muted text-[12px]">
+          Branch ended. Click a node in the tree to rewind and pick differently.
+        </p>
       ) : (
-        options.map((o) => (
+        options.map((o, i) => (
           <button
             key={o.id}
             type="button"
             onClick={() => onChoose(o)}
-            className="rounded-lg border px-3 py-3 text-left text-[13px] transition hover:bg-[var(--accent-soft)]"
-            style={{ borderColor: "var(--line-strong)" }}
+            className={`fade-in stagger-${(i % 5) + 1} rounded-lg border px-3 py-3 text-left text-[13px] transition hover:bg-[var(--accent-soft)]`}
+            style={{
+              borderColor: o.losePath ? "var(--negative)" : "var(--line-strong)",
+              background: o.losePath ? "#fef5f4" : "white",
+            }}
           >
             <p className="font-medium">{o.label}</p>
             <p className="muted mt-1 text-[12px]">{o.detail}</p>
-            <div className="mt-2 flex items-center gap-2 text-[11px] font-semibold">
+            <div className="mt-2 flex flex-wrap items-center gap-2 text-[11px] font-semibold">
               <span
                 style={{
                   color: o.delta > 0 ? "var(--positive)" : o.delta < 0 ? "var(--negative)" : "var(--ink-soft)",
@@ -349,6 +405,14 @@ function DecisionPane({
                   branches
                 </span>
               ) : null}
+              {o.losePath ? (
+                <span
+                  className="rounded-full px-2 py-0.5"
+                  style={{ background: "#fdecea", color: "var(--negative)" }}
+                >
+                  walk-away path
+                </span>
+              ) : null}
             </div>
           </button>
         ))
@@ -367,10 +431,7 @@ function layoutTree(
   tree: DecisionNode[],
   activePath: string[],
 ): { nodes: LayoutNode[]; width: number; height: number } {
-  // Layout strategy: x = depth, y = sibling index per depth (compact vertical fan)
-  if (tree.length === 0) {
-    return { nodes: [], width: 0, height: 0 };
-  }
+  if (tree.length === 0) return { nodes: [], width: 0, height: 0 };
   const COL = 240;
   const ROW = 72;
   const PAD = 24;
@@ -417,7 +478,10 @@ function DecisionTreeView({
     return (
       <div className="card px-5 py-4">
         <p className="label">Decision tree</p>
-        <p className="muted mt-2 text-[12px]">No picks yet — choose an option above and a tree builds here.</p>
+        <p className="muted mt-2 text-[12px]">
+          No picks yet. Choose an option above and a tree builds here, click any
+          past node to rewind and try a different branch.
+        </p>
       </div>
     );
   }
@@ -443,17 +507,16 @@ function DecisionTreeView({
           aria-label="Decision tree"
           style={{ display: "block" }}
         >
-          {/* Root marker */}
           <circle cx={ROOT_X} cy={ROOT_Y} r={6} fill="var(--ink)" />
           <text x={ROOT_X + 12} y={ROOT_Y + 4} fontSize={11} fill="var(--ink-soft)">
             start
           </text>
-          {/* Edges */}
           {layout.nodes.map((n) => {
             const parent = n.parentId ? layout.nodes.find((x) => x.id === n.parentId) : null;
             const px = parent ? parent.x + 90 : ROOT_X;
             const py = parent ? parent.y + 18 : ROOT_Y;
-            const onActive = activePath.includes(n.id) && (parent ? activePath.includes(parent.id) : true);
+            const onActive =
+              activePath.includes(n.id) && (parent ? activePath.includes(parent.id) : true);
             return (
               <line
                 key={`e_${n.id}`}
@@ -466,46 +529,50 @@ function DecisionTreeView({
               />
             );
           })}
-          {/* Nodes */}
-          {layout.nodes.map((n) => (
-            <g
-              key={n.id}
-              transform={`translate(${n.x},${n.y})`}
-              style={{ cursor: "pointer" }}
-              onClick={() => onRewind(n.id)}
-            >
-              <rect
-                width={200}
-                height={36}
-                rx={8}
-                fill={n.active ? "var(--ink)" : "white"}
-                stroke={n.active ? "var(--ink)" : "var(--line-strong)"}
-                strokeWidth={1}
-              />
-              <text
-                x={10}
-                y={14}
-                fontSize={10}
-                fontWeight={600}
-                fill={n.active ? "white" : "var(--ink-soft)"}
+          {layout.nodes.map((n) => {
+            const lose = n.cumulativeScore <= -3;
+            return (
+              <g
+                key={n.id}
+                transform={`translate(${n.x},${n.y})`}
+                style={{ cursor: "pointer" }}
+                onClick={() => onRewind(n.id)}
               >
-                {n.delta > 0 ? "+" : ""}{n.delta} · cum {n.cumulativeScore.toFixed(1)}
-              </text>
-              <text
-                x={10}
-                y={28}
-                fontSize={11}
-                fontWeight={500}
-                fill={n.active ? "white" : "var(--ink)"}
-              >
-                {truncate(n.label, 28)}
-              </text>
-            </g>
-          ))}
+                <rect
+                  width={200}
+                  height={36}
+                  rx={8}
+                  fill={n.active ? "var(--ink)" : lose ? "#fef5f4" : "white"}
+                  stroke={n.active ? "var(--ink)" : lose ? "var(--negative)" : "var(--line-strong)"}
+                  strokeWidth={1}
+                />
+                <text
+                  x={10}
+                  y={14}
+                  fontSize={10}
+                  fontWeight={600}
+                  fill={n.active ? "white" : lose ? "var(--negative)" : "var(--ink-soft)"}
+                >
+                  {n.delta > 0 ? "+" : ""}{n.delta} · cum {n.cumulativeScore.toFixed(1)}
+                </text>
+                <text
+                  x={10}
+                  y={28}
+                  fontSize={11}
+                  fontWeight={500}
+                  fill={n.active ? "white" : "var(--ink)"}
+                >
+                  {truncate(n.label, 28)}
+                </text>
+              </g>
+            );
+          })}
         </svg>
       </div>
       <p className="muted mt-2 text-[11px]">
-        Click any node to rewind. Picks made after that node are dropped — choose a different next option to branch the path.
+        Click any node to rewind. Picks made after that node are dropped, choose
+        a different next option to branch the path. Red nodes are walk-away
+        territory.
       </p>
     </div>
   );
@@ -518,5 +585,3 @@ function truncate(s: string, n: number): string {
 function sleep(ms: number) {
   return new Promise((r) => setTimeout(r, ms));
 }
-
-export type { DecisionOption };

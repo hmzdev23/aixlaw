@@ -4,11 +4,11 @@ export const NIMBUS: Scenario = {
   id: "nimbus",
   vendor: "Nimbus Health AI Inc.",
   counterparty: "Ontario Health Sciences Network (OHSN)",
-  headline: "Nimbus Health AI ↔ OHSN — Mutual NDA + Master Service Agreement",
+  headline: "Nimbus Health AI / OHSN: Mutual NDA + Master Service Agreement",
   context:
-    "Seed-stage clinical AI × 14-hospital consortium. $240K CAD ARR · 3-year initial term. Patient safety, PHIPA, and Health Canada licensure all in scope.",
+    "Seed-stage clinical AI vs 14-hospital consortium. $240K CAD ARR, 3-year initial term. Patient safety, PHIPA, and Health Canada licensure all in scope.",
   filenameMarkers: ["nimbus", "ohsn"],
-  summaryTitle: "Nimbus Health AI — counter package for OHSN MSA / NDA",
+  summaryTitle: "Nimbus Health AI: counter package for the OHSN MSA / NDA",
   sensitiveNames: [
     "Nimbus Health AI",
     "OHSN",
@@ -16,11 +16,12 @@ export const NIMBUS: Scenario = {
     "Dr. Patel",
     "HIROC",
   ],
+  maxDebateRounds: 3,
   paragraphs: [
     {
       id: 0,
-      en: "NIMBUS HEALTH AI INC. & ONTARIO HEALTH SCIENCES NETWORK — Mutual Non-Disclosure Agreement and Master Service Agreement.",
-      fr: "NIMBUS HEALTH AI INC. & RÉSEAU ONTARIEN DES SCIENCES DE LA SANTÉ — Entente mutuelle de non-divulgation et Contrat-cadre de services.",
+      en: "NIMBUS HEALTH AI INC. and ONTARIO HEALTH SCIENCES NETWORK: Mutual Non-Disclosure Agreement and Master Service Agreement.",
+      fr: "NIMBUS HEALTH AI INC. et RÉSEAU ONTARIEN DES SCIENCES DE LA SANTÉ : Entente mutuelle de non-divulgation et Contrat-cadre de services.",
     },
     {
       id: 1,
@@ -34,17 +35,17 @@ export const NIMBUS: Scenario = {
     },
     {
       id: 3,
-      en: "2.3 PHI Carve-Out. \"Personal Health Information\" under PHIPA is NOT \"Confidential Information\" under this Agreement. PHI encountered by Vendor is governed exclusively by PHIPA, the Data Sharing Agreement, and OHSN's information governance policies.",
+      en: "2.3 PHI Carve-Out. 'Personal Health Information' under PHIPA is NOT 'Confidential Information' under this Agreement. PHI encountered by Vendor is governed exclusively by PHIPA, the Data Sharing Agreement, and OHSN's information governance policies.",
       fr: "2.3 Exclusion des RPS. Les « renseignements personnels sur la santé » au sens de la LPRPS ne sont PAS des « Renseignements confidentiels » aux termes de la présente entente. Les RPS rencontrés par le Fournisseur sont régis exclusivement par la LPRPS, l'entente de partage de données et les politiques de gouvernance d'OHSN.",
       flag: "info",
-      flagReason: "PHI carve-out — PHIPA governs separately",
+      flagReason: "PHI carve-out, PHIPA governs separately.",
     },
     {
       id: 4,
       en: "4.2 Survival. Confidentiality survives termination for four (4) years, except obligations relating to Vendor's model architecture and training methodology, which survive indefinitely.",
       fr: "4.2 Survie. Les obligations de confidentialité survivent quatre (4) ans après la résiliation, sauf celles relatives à l'architecture du modèle et à la méthodologie d'entraînement du Fournisseur, qui survivent indéfiniment.",
       flag: "info",
-      flagReason: "Indefinite survival for model IP",
+      flagReason: "Indefinite survival for model IP.",
     },
     {
       id: 5,
@@ -53,94 +54,94 @@ export const NIMBUS: Scenario = {
     },
     {
       id: 6,
-      en: "2.1 Provision of Services. Vendor will use commercially reasonable efforts to ensure 99.99% uptime in any calendar month (≈ 52.6 minutes of unplanned downtime / month). Scheduled maintenance only between 22:00 and 06:00 ET.",
-      fr: "2.1 Prestation des services. Le Fournisseur déploie ses efforts commercialement raisonnables pour assurer une disponibilité de 99,99 % par mois civil (≈ 52,6 minutes d'indisponibilité non planifiée / mois). Entretien planifié uniquement entre 22 h et 6 h HE.",
+      en: "2.1 Provision of Services. Vendor will use commercially reasonable efforts to ensure 99.99% uptime in any calendar month (around 52.6 minutes of unplanned downtime per month). Scheduled maintenance only between 22:00 and 06:00 ET.",
+      fr: "2.1 Prestation des services. Le Fournisseur déploie ses efforts commercialement raisonnables pour assurer une disponibilité de 99,99 % par mois civil (environ 52,6 minutes d'indisponibilité non planifiée par mois). Entretien planifié uniquement entre 22 h et 6 h HE.",
       flag: "bad",
-      flagReason: "99.99% uptime — seed-stage Vendor cannot guarantee",
+      flagReason: "99.99% uptime is unreachable for a seed-stage Vendor.",
     },
     {
       id: 7,
       en: "2.2 Decision Support Only. NimbusAlert is a clinical decision support tool, NOT a diagnostic device. Vendor makes no representation that any Clinical Alert constitutes medical advice. Treating clinicians retain decision authority.",
       fr: "2.2 Aide à la décision uniquement. NimbusAlert est un outil d'aide à la décision clinique, et NON un dispositif diagnostique. Le Fournisseur ne déclare pas qu'une alerte constitue un avis médical. Le clinicien traitant conserve l'autorité décisionnelle.",
       flag: "info",
-      flagReason: "Decision-support framing protects against device classification",
+      flagReason: "Decision-support framing protects against device classification.",
     },
     {
       id: 8,
-      en: "2.3 Physician Override Documentation. Client (OHSN) shall maintain a workflow requiring clinicians to document, in the EHR, whether each Clinical Alert was acted upon, overridden, or unseen. Vendor provides the data field; OHSN enforces use.",
-      fr: "2.3 Documentation des dérogations médicales. Le Client (OHSN) maintient un flux de travail exigeant que les cliniciens documentent dans le DSE si chaque alerte a été suivie, dérogée ou non vue. Le Fournisseur fournit le champ de données ; OHSN en assure l'application.",
+      en: "2.3 Physician Override Documentation. Client (OHSN) shall maintain a workflow requiring clinicians to document, in the EHR, whether each Clinical Alert was acted upon, overridden, or unseen. Vendor provides the data field, OHSN enforces use.",
+      fr: "2.3 Documentation des dérogations médicales. Le Client (OHSN) maintient un flux de travail exigeant que les cliniciens documentent dans le DSE si chaque alerte a été suivie, dérogée ou non vue. Le Fournisseur fournit le champ de données, OHSN en assure l'application.",
       flag: "warn",
-      flagReason: "OHSN enforces — Vendor provides only the field",
+      flagReason: "OHSN enforces, Vendor provides only the field.",
     },
     {
       id: 9,
       en: "2.4 Health Canada Status. Vendor operates under Health Canada's Digital Health Software Interim Policy and has submitted a Class II Medical Device Licence application. Vendor warrants Regulatory Approval within twenty-four (24) months of the Effective Date.",
       fr: "2.4 Statut Santé Canada. Le Fournisseur opère sous la politique provisoire des logiciels de santé numérique et a soumis une demande de licence d'instrument médical de Classe II. Le Fournisseur garantit l'obtention de l'approbation réglementaire dans les vingt-quatre (24) mois suivant la date d'entrée en vigueur.",
       flag: "bad",
-      flagReason: "24-month forward warranty — risk if Health Canada delays",
+      flagReason: "24-month forward warranty risks regulator delay.",
     },
     {
       id: 10,
       en: "2.5 Explainability. Vendor shall provide, for each Clinical Alert, a structured summary of the top-three contributing data inputs. Roadmap commitments toward richer explainability are set out in Schedule B.",
       fr: "2.5 Explicabilité. Pour chaque alerte clinique, le Fournisseur fournit un résumé structuré des trois principales variables contributrices. Les engagements de feuille de route relatifs à une explicabilité enrichie figurent à l'annexe B.",
       flag: "warn",
-      flagReason: "Roadmap milestones are material breach if missed",
+      flagReason: "Roadmap milestones are material breach if missed.",
     },
     {
       id: 11,
       en: "2.6 Support. Patient-Safety Critical: 30 minutes 24/7. Platform Unavailable: 1 hour 24/7. High Priority: 4 business hours. Standard: 1 business day.",
       fr: "2.6 Soutien. Critique pour la sécurité des patients : 30 minutes 24/7. Plateforme indisponible : 1 heure 24/7. Priorité élevée : 4 heures ouvrables. Standard : 1 jour ouvrable.",
       flag: "warn",
-      flagReason: "30-minute critical SLA — pager rotation required",
+      flagReason: "30-minute critical SLA requires pager rotation.",
     },
     {
       id: 12,
       en: "4.2 Payment Terms. Net forty-five (45) days from invoice date. Overdue amounts bear interest at 1.0% per month.",
       fr: "4.2 Modalités de paiement. Net quarante-cinq (45) jours à compter de la facturation. Tout solde impayé porte intérêt à 1,0 % par mois.",
       flag: "info",
-      flagReason: "Net-45 — hospital AP cycle compromise",
+      flagReason: "Net-45 hospital AP cycle compromise.",
     },
     {
       id: 13,
-      en: "5.3 Convenience Termination. Client may terminate for convenience upon ninety (90) days' written notice plus an early-termination fee equal to fifty percent (50%) of fees that would have been payable for remaining months in the then-current contract year.",
+      en: "5.3 Convenience Termination. Client may terminate for convenience on ninety (90) days' written notice plus an early-termination fee equal to fifty percent (50%) of fees that would have been payable for remaining months in the then-current contract year.",
       fr: "5.3 Résiliation pour convenance. Le Client peut résilier pour convenance moyennant un préavis écrit de quatre-vingt-dix (90) jours, plus des frais de résiliation anticipée égaux à 50 % des frais qui auraient été dus pour les mois restants de l'année contractuelle en cours.",
       flag: "info",
-      flagReason: "ETF protects clinical implementation investment",
+      flagReason: "ETF protects clinical implementation investment.",
     },
     {
       id: 14,
       en: "6.3 Model Retraining Rights. Vendor may use anonymized derivatives of Client Clinical Data to retrain NimbusAlert, subject to anonymization standards (Schedule C), no patient re-identifiability, and an annual written retraining summary to Client.",
       fr: "6.3 Droits de réentraînement du modèle. Le Fournisseur peut utiliser des dérivés anonymisés des Données cliniques du Client pour réentraîner NimbusAlert, sous réserve des normes d'anonymisation (annexe C), de l'absence de ré-identification possible et d'un résumé annuel écrit des activités de réentraînement remis au Client.",
       flag: "warn",
-      flagReason: "Core IP asset — strict anonymization required",
+      flagReason: "Core IP asset, strict anonymization required.",
     },
     {
       id: 15,
-      en: "7.1 Limitation of Liability. Capped at greater of (a) fees paid in 36 months, or (b) $720,000 CAD. UNCAPPED for: (i) gross negligence causing patient death/serious harm, (ii) PHIPA violations, (iii) indemnification — but with a $5M CAD per-event ceiling on (i).",
-      fr: "7.1 Limitation de responsabilité. Plafonnée au plus élevé de (a) les frais payés dans les 36 mois ou (b) 720 000 $ CAD. NON PLAFONNÉE pour : (i) la négligence grave causant le décès ou des lésions graves d'un patient, (ii) les violations de la LPRPS, (iii) les indemnisations — avec un plafond de 5 M$ CAD par événement pour (i).",
+      en: "7.1 Limitation of Liability. Capped at greater of (a) fees paid in 36 months, or (b) $720,000 CAD. UNCAPPED for: (i) gross negligence causing patient death/serious harm, (ii) PHIPA violations, (iii) indemnification, but with a $5M CAD per-event ceiling on (i).",
+      fr: "7.1 Limitation de responsabilité. Plafonnée au plus élevé de (a) les frais payés dans les 36 mois ou (b) 720 000 $ CAD. NON PLAFONNÉE pour : (i) la négligence grave causant le décès ou des lésions graves d'un patient, (ii) les violations de la LPRPS, (iii) les indemnisations, avec un plafond de 5 M$ CAD par événement pour (i).",
       flag: "bad",
-      flagReason: "Clinical liability — $5M per-event ceiling MUST be insurable",
+      flagReason: "Clinical liability $5M per-event ceiling MUST be insurable.",
     },
     {
       id: 16,
       en: "7.3 Insurance. Vendor must carry: $5M CGL, $10M cyber, and $5M clinical professional liability (NOT standard tech E&O). HIROC compatibility required.",
       fr: "7.3 Assurance. Le Fournisseur maintient : RCG 5 M$, cyber 10 M$ et responsabilité professionnelle clinique 5 M$ (différente de l'E&O technique standard). Compatibilité HIROC exigée.",
       flag: "warn",
-      flagReason: "Clinical PL ≠ tech E&O — separate underwriting required",
+      flagReason: "Clinical PL is not tech E&O, separate underwriting required.",
     },
     {
       id: 17,
       en: "9. Data Protection. Subject to PHIPA. Data residency: Canadian region. Breach notification within twenty-four (24) hours to OHSN's Privacy Officer and the Information and Privacy Commissioner of Ontario as required.",
       fr: "9. Protection des données. Assujettie à la LPRPS. Hébergement : région canadienne. Notification d'atteinte dans les vingt-quatre (24) heures au responsable de la vie privée d'OHSN et au Commissaire à l'information et à la vie privée de l'Ontario, selon les exigences.",
       flag: "info",
-      flagReason: "PHIPA + 24-hour breach clock",
+      flagReason: "PHIPA plus 24-hour breach clock.",
     },
     {
       id: 18,
-      en: "10.4 Step-In Rights. Limited to patient-safety emergencies declared by OHSN's Chief Medical Officer. Vendor cooperates fully with transition; Vendor may be reimbursed for transition costs.",
-      fr: "10.4 Droits d'intervention. Limités aux urgences relatives à la sécurité des patients déclarées par le médecin en chef d'OHSN. Le Fournisseur coopère pleinement à la transition ; il peut être remboursé pour les coûts de transition.",
+      en: "10.4 Step-In Rights. Limited to patient-safety emergencies declared by OHSN's Chief Medical Officer. Vendor cooperates fully with transition. Vendor may be reimbursed for transition costs.",
+      fr: "10.4 Droits d'intervention. Limités aux urgences relatives à la sécurité des patients déclarées par le médecin en chef d'OHSN. Le Fournisseur coopère pleinement à la transition. Il peut être remboursé pour les coûts de transition.",
       flag: "info",
-      flagReason: "Step-in narrowed to patient-safety emergencies",
+      flagReason: "Step-in narrowed to patient-safety emergencies.",
     },
     {
       id: 19,
@@ -152,19 +153,21 @@ export const NIMBUS: Scenario = {
       en: "Counterparts. This Agreement may be executed in counterparts, including by electronic signature, each of which is deemed an original.",
       fr: "Exemplaires. La présente entente peut être signée en exemplaires, y compris par signature électronique, chacun étant considéré comme un original.",
       flag: "info",
-      flagReason: "Electronic signature contemplated",
+      flagReason: "Electronic signature contemplated.",
     },
     {
       id: 21,
-      en: "SIGNATURES — NIMBUS HEALTH AI INC. (Vendor)\n\nSignature: ______________________________  Name: ______________________________  Title: ______________________________  Date: ______________________________",
-      fr: "SIGNATURES — NIMBUS HEALTH AI INC. (Fournisseur)\n\nSignature : ______________________________  Nom : ______________________________  Titre : ______________________________  Date : ______________________________",
+      en: "SIGNATURES, NIMBUS HEALTH AI INC. (Vendor)\n\nSignature: ______________________________\nName: ______________________________  Title: ______________________________  Date: ______________________________",
+      fr: "SIGNATURES, NIMBUS HEALTH AI INC. (Fournisseur)\n\nSignature : ______________________________\nNom : ______________________________  Titre : ______________________________  Date : ______________________________",
       isSignatureBlock: true,
+      party: "vendor",
     },
     {
       id: 22,
-      en: "SIGNATURES — ONTARIO HEALTH SCIENCES NETWORK (Client)\n\nSignature: ______________________________  Name: ______________________________  Title: ______________________________  Date: ______________________________",
-      fr: "SIGNATURES — RÉSEAU ONTARIEN DES SCIENCES DE LA SANTÉ (Client)\n\nSignature : ______________________________  Nom : ______________________________  Titre : ______________________________  Date : ______________________________",
+      en: "SIGNATURES, ONTARIO HEALTH SCIENCES NETWORK (Client)\n\nSignature: ______________________________\nName: ______________________________  Title: ______________________________  Date: ______________________________",
+      fr: "SIGNATURES, RÉSEAU ONTARIEN DES SCIENCES DE LA SANTÉ (Client)\n\nSignature : ______________________________\nNom : ______________________________  Titre : ______________________________  Date : ______________________________",
       isSignatureBlock: true,
+      party: "client",
     },
   ],
   esig: {
@@ -172,7 +175,7 @@ export const NIMBUS: Scenario = {
     signatureBlocksFound: 2,
     notes: [
       "Section 7.5 (NDA) and the MSA counterparts clause both contemplate electronic signature explicitly.",
-      "Two signature blocks detected (Vendor + Client) — both wired up below for live drawing.",
+      "Two signature blocks detected (Vendor + Client), both wired up below for live drawing.",
       "Healthcare e-signature is well-established in Ontario for vendor procurement; PHIPA has no separate signature formality.",
       "Quebec recognises e-signatures under CQLR c. C-1.1 and UECA, provided the signer's identity and intent are reliably linked to the document.",
     ],
@@ -187,10 +190,39 @@ export const NIMBUS: Scenario = {
       },
     ],
   },
+  lawViolations: [
+    {
+      id: "law25",
+      jurisdiction: "Quebec",
+      shortName: "Law 25",
+      fullName: "Act respecting the protection of personal information in the private sector (Law 25)",
+      fullNameFr: "Loi sur la protection des renseignements personnels dans le secteur privé (Loi 25)",
+      blurb:
+        "NimbusAlert generates clinical alerts about patients, which is automated decision-making using personal information. Section 12.1 requires telling individuals about exclusively-automated decisions and offering human review. If any alert auto-routes care without a clinician in the loop, this clause kicks in hard. Penalties up to $25M or 4% of global turnover.",
+      blurbFr:
+        "NimbusAlert produit des alertes cliniques concernant des patients, ce qui constitue une prise de décision automatisée fondée sur des renseignements personnels. L'article 12.1 oblige à informer les personnes des décisions exclusivement automatisées et à offrir une révision humaine. Si une alerte oriente des soins sans intervention clinicienne, cette disposition s'applique pleinement. Pénalités jusqu'à 25 M$ ou 4 % du chiffre d'affaires mondial.",
+      severity: "high",
+      citation: "Law 25, art. 12.1",
+    },
+    {
+      id: "law5",
+      jurisdiction: "Quebec",
+      shortName: "Law 5",
+      fullName: "Act respecting health and social services information (Law 5)",
+      fullNameFr: "Loi sur les renseignements de santé et de services sociaux (Loi 5)",
+      blurb:
+        "Quebec's direct equivalent of Ontario's PHIPA, fully in force July 2024. Every PHIPA reference (NDA Section 2.3 carve-out, MSA Sections 9.x) needs Law 5 plus CAI replacements. Schedule C anonymization standards must match Quebec / CAI guidelines, not Ontario IPC. Penalties up to $150,000 per violation.",
+      blurbFr:
+        "Équivalent direct québécois de la LPRPS ontarienne, pleinement en vigueur en juillet 2024. Chaque référence à la LPRPS (article 2.3 de l'entente de non-divulgation, articles 9.x du contrat-cadre) doit être remplacée par la Loi 5 et le CAI. Les normes d'anonymisation de l'annexe C doivent suivre les lignes directrices du CAI, et non celles du CIPVP de l'Ontario. Pénalités jusqu'à 150 000 $ par violation.",
+      severity: "high",
+      citation: "Loi 5 (Quebec)",
+    },
+  ],
   goalSamples: [
     "Cap clinical liability at insurable levels and ship to OHSN within 60 days.",
-    "Protect model IP and retraining rights — they're our entire moat.",
+    "Protect model IP and retraining rights, they're our entire moat.",
     "Get a 6-month ramp on the 99.99% SLA so we can survive go-live.",
+    "Lock in §6.3 retraining as drafted, walk if they refuse.",
   ],
   agents: [
     {
@@ -199,32 +231,51 @@ export const NIMBUS: Scenario = {
         "Which clauses are non-negotiable for legal counsel? (e.g. liability ceiling, IP)",
         "Does our cyber + clinical PL insurance currently cover the $5M-per-event ceiling in §7.1?",
       ],
-      hint: {
-        headline: "Pierre's read",
-        detail:
-          "§7.1 is workable IF the $5M per-event ceiling is insurable. §6.3 (model retraining) is your moat — do not concede on anonymized derivatives. The 24-month Health Canada warranty in §2.4 needs a force-majeure carve-out for regulator delay.",
-        suggestedAnswer:
-          "Non-negotiable: keep §6.3 retraining rights with anonymization as drafted, add a force-majeure carve-out to §2.4 for Health Canada delay, and confirm $5M per-event clinical liability is insurable (we have an in-principle quote from CFC).",
-      },
+      hints: [
+        {
+          headline: "Pierre's non-negotiables",
+          detail:
+            "§6.3 (model retraining) is your moat. The 24-month Health Canada warranty in §2.4 needs a force-majeure carve-out for regulator delay. §7.1 holds together IF the $5M per-event ceiling is genuinely insurable.",
+          suggestedAnswer:
+            "Non-negotiable: keep §6.3 retraining rights with anonymization as drafted, add a force-majeure carve-out to §2.4 for Health Canada delay, and confirm §7.1 cap holds with the $5M ceiling.",
+        },
+        {
+          headline: "Pierre's insurance read",
+          detail:
+            "We have an in-principle quote from CFC for $5M clinical PL specifically structured to back the §7.1 per-event ceiling. Tech E&O alone does NOT cover this. The quote conditional on annual independent clinical validation reports, which Schedule B already commits to.",
+          suggestedAnswer:
+            "Yes, CFC in-principle quote for $5M clinical PL, conditional on annual independent clinical validation (already in Schedule B). Tech E&O alone does not cover. Bind before signing.",
+        },
+      ],
       debateRounds: [
         [
           {
-            text: "Counsel: §7.1 holds together IF — and only if — the $5M per-event ceiling is genuinely insurable. Without a clinical PL binder, this clause is a balance-sheet risk.",
+            text: "Counsel: §7.1 holds together IF, and only if, the $5M per-event ceiling is genuinely insurable. Without a clinical PL binder, this clause is a balance-sheet risk.",
             delta: -1,
           },
           {
-            text: "I'll add a force-majeure carve-out to §2.4 — Health Canada Class II processing routinely slips past 24 months and we shouldn't be in default for the regulator's queue.",
+            text: "I'll add a force-majeure carve-out to §2.4. Health Canada Class II processing routinely slips past 24 months and we shouldn't be in default for the regulator's queue.",
             delta: 1,
           },
         ],
         [
           {
-            text: "On §6.3 retraining — we cannot concede the right to anonymized derivatives. That clause is the moat.",
+            text: "On §6.3 retraining, we cannot concede the right to anonymized derivatives. That clause is the moat.",
             delta: 1,
           },
           {
-            text: "Add a confidential expert-determination clause for adverse-event disputes — keeps clinical fights out of public courtrooms.",
+            text: "Add a confidential expert-determination clause for adverse-event disputes. Keeps clinical fights out of public courtrooms.",
             delta: 1,
+          },
+        ],
+        [
+          {
+            text: "Final pass: insurance binder before signing, force-majeure on §2.4, expert-determination for §7.1 disputes, §6.3 untouched. That's the legal close.",
+            delta: 2,
+          },
+          {
+            text: "If they reopen §6.3, we walk. There's no version of NimbusAlert that survives without the right to retrain on anonymized derivatives.",
+            delta: -1,
           },
         ],
       ],
@@ -235,31 +286,50 @@ export const NIMBUS: Scenario = {
         "Where will OHSN clinical data physically reside? Confirm Canadian region + tenant isolation.",
         "Have we mapped the 24-hour PHIPA breach notification path into our incident playbook?",
       ],
-      hint: {
-        headline: "Marie's compliance read",
-        detail:
-          "PHIPA + IPC of Ontario + HIROC are all in scope. Data residency must be Canadian region (no cross-border secondary processing). The 24-hour breach clock is non-negotiable. Add an explicit Schedule D referencing OHSN's information governance policies.",
-        suggestedAnswer:
-          "All clinical data hosted in AWS Canada Central (Montréal). PHIPA breach notification path mapped (Privacy Officer → IPC of Ontario within 24h via PagerDuty). Schedule D references OHSN's Information Governance Policy v3.1.",
-      },
+      hints: [
+        {
+          headline: "Marie's residency posture",
+          detail:
+            "All clinical data hosted in AWS Canada Central (Montréal), single-tenant per OHSN member hospital, encryption keys held in AWS KMS Canada. No cross-border secondary processing under any circumstance, including model retraining.",
+          suggestedAnswer:
+            "AWS Canada Central (Montréal), single-tenant per member hospital, KMS keys held in Canada. No cross-border processing, including for retraining. Confirmed in writing with AWS account team.",
+        },
+        {
+          headline: "Marie's incident playbook",
+          detail:
+            "Mapped: PHIPA Privacy Officer + IPC of Ontario notification within 24 hours via PagerDuty escalation. Schedule D references OHSN Information Governance Policy v3.1. Tabletop exercise complete. Add Quebec CAI to the playbook in case OHSN later expands to Quebec hospitals.",
+          suggestedAnswer:
+            "Mapped via PagerDuty: PHIPA Privacy Officer + IPC of Ontario within 24 hours. Schedule D references OHSN Information Governance Policy v3.1, tabletop exercise complete. Adding CAI for future Quebec expansion.",
+        },
+      ],
       debateRounds: [
         [
           {
-            text: "Compliance: PHIPA + IPC + HIROC are all live. Hosting must be Canadian region only — no secondary processing in US-East under any circumstance.",
+            text: "Compliance: PHIPA + IPC + HIROC are all live. Hosting must be Canadian region only, no secondary processing in US-East under any circumstance.",
             delta: 0,
           },
           {
-            text: "The 24-hour PHIPA notification window in §9 is hard-wired to OHSN's existing IPC reporting workflow — we're aligned, but we need a tested runbook before go-live.",
+            text: "The 24-hour PHIPA notification window in §9 is hard-wired to OHSN's existing IPC reporting workflow. We're aligned, but we need a tested runbook before go-live.",
             delta: 1,
           },
         ],
         [
           {
-            text: "I'd flag that §6.3 anonymization references Schedule C — make sure that schedule cites the Information and Privacy Commissioner's de-identification guidelines explicitly.",
+            text: "I'd flag that §6.3 anonymization references Schedule C. Make sure that schedule cites the Information and Privacy Commissioner's de-identification guidelines explicitly.",
             delta: 1,
           },
           {
             text: "Step-in (§10.4) is well-scoped to patient-safety emergencies, but I want a 4-hour CMO-to-CTO escalation path before any access is granted.",
+            delta: 1,
+          },
+        ],
+        [
+          {
+            text: "If we later expand to Quebec hospitals through OHSN, Law 25 + Law 5 kick in. The current draft only references PHIPA. Add a forward-compatible clause.",
+            delta: 1,
+          },
+          {
+            text: "Final compliance check: residency confirmed, runbook tested, CAI noted as future-state. We are clean.",
             delta: 1,
           },
         ],
@@ -268,35 +338,54 @@ export const NIMBUS: Scenario = {
     {
       agentId: "etienne",
       questions: [
-        "What's the realistic close window — when does OHSN need this signed?",
+        "What is the realistic close window: when does OHSN need this signed?",
         "Which sites (Sunnybrook, SickKids, others) are first to deploy and where is our internal champion?",
       ],
-      hint: {
-        headline: "Étienne's commercial read",
-        detail:
-          "OHSN's clinical informatics committee meets June 26. Their CMO sponsor (Dr. Aisha Rahman) has been pushing this internally for 9 months. We have leverage on 99.9% (with a 6-month ramp) and Health Canada wording. Push: net-30, ramped SLA, ETF stays as drafted.",
-        suggestedAnswer:
-          "Close before June 26 (clinical informatics committee). First deploy: Sunnybrook (sponsor: Dr. Aisha Rahman). Push 6-month SLA ramp at 99.9% then 99.99%, accept §5.3 ETF as drafted, target Net-30.",
-      },
+      hints: [
+        {
+          headline: "Étienne's close window",
+          detail:
+            "OHSN's clinical informatics committee meets June 26. CMO sponsor (Dr. Aisha Rahman) has been pushing this internally for 9 months. We have leverage on 99.9% (with a 6-month ramp) and Health Canada wording. Push: net-30, ramped SLA, ETF stays as drafted.",
+          suggestedAnswer:
+            "Close before June 26 (clinical informatics committee). Push 6-month SLA ramp at 99.9% then 99.99%, accept §5.3 ETF as drafted, target Net-30.",
+        },
+        {
+          headline: "Étienne's first-site map",
+          detail:
+            "First deployment: Sunnybrook (sponsor: Dr. Aisha Rahman, CMO). SickKids in wave 2 with paediatric-specific validation gating. Mount Sinai wave 3. The first-site clinical evidence is what unlocks waves 2 and 3, so over-invest in onboarding at Sunnybrook.",
+          suggestedAnswer:
+            "Wave 1: Sunnybrook (sponsor Dr. Aisha Rahman, CMO). Wave 2: SickKids (paediatric validation gating). Wave 3: Mount Sinai. First-site clinical evidence unlocks the rest, over-invest in Sunnybrook onboarding.",
+        },
+      ],
       debateRounds: [
         [
           {
-            text: "Closer: their clinical informatics committee meets in 4 weeks — push for a 6-month ramp on the 99.99% SLA in §2.1 and they will trade.",
+            text: "Closer: their clinical informatics committee meets in 4 weeks. Push for a 6-month ramp on the 99.99% SLA in §2.1 and they will trade.",
             delta: 2,
           },
           {
-            text: "ETF in §5.3 is fine as drafted — protects our deployment cost. Don't waste leverage there.",
+            text: "ETF in §5.3 is fine as drafted, protects our deployment cost. Don't waste leverage there.",
             delta: 1,
           },
         ],
         [
           {
-            text: "On payment, push for net-30 — we have an active sponsor and they want this on the agenda. They'll take the friction over a delayed start.",
+            text: "On payment, push for net-30. We have an active sponsor and they want this on the agenda. They'll take the friction over a delayed start.",
             delta: 1,
           },
           {
-            text: "Frame the SLA ramp as \"clinical safety conservatism, not capability gap\" — that language gets through clinical governance untouched.",
+            text: "Frame the SLA ramp as 'clinical safety conservatism, not capability gap'. That language gets through clinical governance untouched.",
             delta: 2,
+          },
+        ],
+        [
+          {
+            text: "Sunnybrook first, paediatric next, Mount Sinai third. Over-invest in Sunnybrook onboarding because every later wave depends on its clinical evidence.",
+            delta: 2,
+          },
+          {
+            text: "If we slip past June 26, we lose CMO political cover and the deal pushes to Q+1. Lock the date in writing now.",
+            delta: 1,
           },
         ],
       ],
@@ -304,35 +393,54 @@ export const NIMBUS: Scenario = {
     {
       agentId: "sophie",
       questions: [
-        "What is OHSN's hardest internal audience — Legal, CMO's office, or HIROC?",
+        "What is OHSN's hardest internal audience: Legal, CMO's office, or HIROC?",
         "Which positions did OHSN hold even after concessions in similar past procurements?",
       ],
-      hint: {
-        headline: "Sophie's counterparty steelman",
-        detail:
-          "OHSN's HIROC liaison and CMO's office are louder than Legal. They WILL NOT move on §2.3 (physician override workflow ownership) or §7.1 PHIPA carve-out. They MAY move on uptime ramp, payment terms, and Health Canada warranty wording. Lead with the wins.",
-        suggestedAnswer:
-          "Hardest audience: HIROC liaison + CMO's office. Won't move: §2.3 physician override (clinical governance), §7.1 PHIPA carve-out. Will move: §2.1 SLA ramp, §4.2 payment terms, §2.4 Health Canada wording.",
-      },
+      hints: [
+        {
+          headline: "Sophie's audience read",
+          detail:
+            "Hardest audience is HIROC liaison plus CMO's office. OHSN Legal is reasonable. They WILL NOT move on §2.3 (physician override workflow ownership) or §7.1 PHIPA carve-out. They MAY move on uptime ramp, payment terms, and Health Canada wording.",
+          suggestedAnswer:
+            "Hardest: HIROC liaison + CMO's office. Won't move: §2.3 physician override (clinical governance), §7.1 PHIPA carve-out. Will move: §2.1 SLA ramp, §4.2 payment terms, §2.4 Health Canada wording.",
+        },
+        {
+          headline: "Sophie's history list",
+          detail:
+            "OHSN has held the line in past procurements on: clinical governance ownership, PHIPA scope, breach notification timing, and bond exemption for patient-safety injunctions. They've folded on: uptime ramp at go-live, payment cycle, Health Canada warranty wording, and convenience termination ETF size.",
+          suggestedAnswer:
+            "Past holds: clinical governance, PHIPA scope, breach notification timing, bond exemption. Past folds: uptime ramp, payment cycle, Health Canada wording, ETF size. Pattern is consistent across 3 prior tech vendors.",
+        },
+      ],
       debateRounds: [
         [
           {
-            text: "Counterparty (steelman): OHSN cannot move on §2.3 — physician override documentation is patient-safety governance, not procurement preference.",
+            text: "Counterparty (steelman): OHSN cannot move on §2.3. Physician override documentation is patient-safety governance, not procurement preference.",
             delta: -1,
           },
           {
-            text: "But — they will trade on uptime ramp, payment terms, and Health Canada warranty language. They've folded on all three in similar HIROC-covered deals.",
+            text: "But they will trade on uptime ramp, payment terms, and Health Canada warranty language. They've folded on all three in similar HIROC-covered deals.",
             delta: 0,
           },
         ],
         [
           {
-            text: "If you push on §6.3 model retraining too aggressively, you'll trigger the clinical ethics committee — that adds 2 months. Frame anonymization as \"already PHIPA-aligned\" and you skip the committee path.",
+            text: "If you push on §6.3 model retraining too aggressively, you'll trigger the clinical ethics committee. That adds 2 months. Frame anonymization as 'already PHIPA-aligned' and you skip the committee path.",
             delta: -1,
           },
           {
-            text: "Their CMO sponsor has internal political risk if this slips past June 26 — that's your real timing leverage.",
+            text: "Their CMO sponsor has internal political risk if this slips past June 26. That's your real timing leverage.",
             delta: 1,
+          },
+        ],
+        [
+          {
+            text: "Predicted final position: they'll accept the SLA ramp, the force-majeure on §2.4, and net-30. They'll fight on residency phrasing. Concede there.",
+            delta: 2,
+          },
+          {
+            text: "If their HIROC liaison surfaces a new ask in week 3, that's a stall, not a real position. Hold firm.",
+            delta: 0,
           },
         ],
       ],
@@ -341,33 +449,52 @@ export const NIMBUS: Scenario = {
       agentId: "antoine",
       questions: [
         "If you had to pick the single most important outcome, what is it?",
-        "What's the absolute walk-away condition?",
+        "What is the absolute walk-away condition?",
       ],
-      hint: {
-        headline: "Antoine's synthesis",
-        detail:
-          "Top outcome: insurable §7.1 + protected §6.3 retraining rights + 6-month SLA ramp. Walk only if §6.3 model retraining is denied entirely (without it the platform decays). Trade Health Canada warranty wording and audit cadence to get there.",
-        suggestedAnswer:
-          "Top outcome: keep §6.3 (model retraining) intact, insurable §7.1 ceiling, 6-month SLA ramp at §2.1. Walk if §6.3 retraining is fully denied — without it the model decays and the platform becomes a static feature.",
-      },
+      hints: [
+        {
+          headline: "Antoine's top outcome",
+          detail:
+            "Top outcome: insurable §7.1 + protected §6.3 retraining rights + 6-month SLA ramp. That's the survivable close. Everything else is trading currency.",
+          suggestedAnswer:
+            "Top outcome: insurable §7.1 ceiling, intact §6.3 retraining, 6-month SLA ramp at §2.1. Everything else is trading currency.",
+        },
+        {
+          headline: "Antoine's walk line",
+          detail:
+            "Walk only if §6.3 model retraining is denied entirely (without it the platform decays). Trade Health Canada warranty wording and audit cadence to get there.",
+          suggestedAnswer:
+            "Walk if §6.3 retraining is fully denied. The model decays and the platform becomes a static feature, no version of the deal survives that.",
+        },
+      ],
       debateRounds: [
         [
           {
-            text: "Crown: counter today with three asks — 6-month SLA ramp on §2.1, force-majeure carve-out on §2.4 Health Canada, confirmed insurability of the §7.1 ceiling.",
+            text: "Crown: counter today with three asks: 6-month SLA ramp on §2.1, force-majeure carve-out on §2.4 Health Canada, confirmed insurability of the §7.1 ceiling.",
             delta: 2,
           },
           {
-            text: "§6.3 stays as drafted — that's the line. If they refuse, walk.",
+            text: "§6.3 stays as drafted. That's the line. If they refuse, walk.",
             delta: -1,
           },
         ],
         [
           {
-            text: "Recommendation: align with the CMO sponsor before redlines hit Legal — get their pre-approval on the SLA ramp framing.",
+            text: "Recommendation: align with the CMO sponsor before redlines hit Legal. Get her pre-approval on the SLA ramp framing.",
             delta: 2,
           },
           {
-            text: "Goal alignment: insurable clinical liability + intact retraining + survivable SLA → that's the three-asks counter.",
+            text: "Goal alignment: insurable clinical liability + intact retraining + survivable SLA. That's the three-asks counter.",
+            delta: 1,
+          },
+        ],
+        [
+          {
+            text: "Closing recommendation: pre-brief Dr. Rahman, send the package Monday, request a signature window before June 26.",
+            delta: 2,
+          },
+          {
+            text: "If they ask for one more round of Schedule C tweaks, accept language only. Substance is locked.",
             delta: 1,
           },
         ],
@@ -385,9 +512,9 @@ export const NIMBUS: Scenario = {
         {
           paragraphId: 6,
           replacement:
-            "2.1 Provision of Services. For the first six (6) months following the Effective Date, Vendor will provide 99.9% uptime per calendar month. Beginning month seven (7), Vendor will provide 99.99% uptime per calendar month (≈ 52.6 minutes of unplanned downtime / month). Scheduled maintenance only between 22:00 and 06:00 ET.",
+            "2.1 Provision of Services. For the first six (6) months following the Effective Date, Vendor will provide 99.9% uptime per calendar month. Beginning month seven (7), Vendor will provide 99.99% uptime per calendar month (around 52.6 minutes of unplanned downtime per month). Scheduled maintenance only between 22:00 and 06:00 ET.",
           replacementFr:
-            "2.1 Prestation des services. Pendant les six (6) premiers mois suivant la date d'entrée en vigueur, le Fournisseur assure une disponibilité de 99,9 % par mois civil. À compter du septième (7e) mois, le Fournisseur assure une disponibilité de 99,99 % par mois civil (≈ 52,6 minutes d'indisponibilité non planifiée / mois). Entretien planifié uniquement entre 22 h et 6 h HE.",
+            "2.1 Prestation des services. Pendant les six (6) premiers mois suivant la date d'entrée en vigueur, le Fournisseur assure une disponibilité de 99,9 % par mois civil. À compter du septième (7e) mois, le Fournisseur assure une disponibilité de 99,99 % par mois civil (environ 52,6 minutes d'indisponibilité non planifiée par mois). Entretien planifié uniquement entre 22 h et 6 h HE.",
         },
       ],
       children: [
@@ -411,7 +538,7 @@ export const NIMBUS: Scenario = {
               id: "n_payment_30",
               label: "Push payment to net-30 with prompt-pay discount",
               detail:
-                "Recovers cashflow from net-45 to net-30; offer 1.5% prompt-pay incentive — typical for hospital procurement.",
+                "Recovers cashflow from net-45 to net-30, offer 1.5% prompt-pay incentive (typical for hospital procurement).",
               delta: 1,
               edits: [
                 {
@@ -425,9 +552,9 @@ export const NIMBUS: Scenario = {
             },
             {
               id: "n_keep_45",
-              label: "Keep net-45 — don't burn leverage on payment terms",
+              label: "Keep net-45, don't burn leverage on payment terms",
               detail:
-                "Hospitals run on 45-day cycles; trying to push to net-30 may not be worth the relationship cost late in the negotiation.",
+                "Hospitals run on 45-day cycles. Trying to push to net-30 may not be worth the relationship cost late in the negotiation.",
               delta: 0,
               edits: [],
             },
@@ -437,7 +564,7 @@ export const NIMBUS: Scenario = {
           id: "n_explainability_phased",
           label: "Convert §2.5 explainability roadmap to phased milestones",
           detail:
-            "Lock in the structured-summary baseline at go-live; richer feature-level explainability only at Month 12.",
+            "Lock in the structured-summary baseline at go-live, richer feature-level explainability only at Month 12.",
           delta: 1,
           edits: [
             {
@@ -448,6 +575,25 @@ export const NIMBUS: Scenario = {
                 "2.5 Explicabilité. Dès la mise en service, le Fournisseur fournit pour chaque alerte clinique un résumé structuré des trois principales variables contributrices. Au mois 12, le Fournisseur s'engage à fournir des scores directionnels par variable. L'annexe B fixe les jalons précis ; le non-respect du jalon du mois 12 constitue un manquement substantiel assorti d'un délai de remède de soixante (60) jours.",
             },
           ],
+          children: [
+            {
+              id: "n_close_phased",
+              label: "Close on the SLA ramp + phased explainability package",
+              detail:
+                "A working close. Health Canada language stays as drafted, explainability roadmap protects against month-12 breach risk.",
+              delta: 1,
+              edits: [],
+            },
+            {
+              id: "n_overcommit_explain",
+              label: "Promise full SHAP-value explainability at go-live",
+              detail:
+                "Sounds great in the boardroom, technically not implementable. Triggers a material breach risk.",
+              delta: -2,
+              edits: [],
+              losePath: true,
+            },
+          ],
         },
       ],
     },
@@ -455,7 +601,7 @@ export const NIMBUS: Scenario = {
       id: "n_hold_99_99",
       label: "Accept 99.99% from go-live and absorb the infra cost",
       detail:
-        "Higher close probability today, but burns ~ $80K in cloud + on-call costs in year 1. Risky for a seed-stage Vendor.",
+        "Higher close probability today, but burns around $80K in cloud + on-call costs in year 1. Risky for a seed-stage Vendor.",
       delta: -1,
       edits: [],
       children: [
@@ -463,15 +609,34 @@ export const NIMBUS: Scenario = {
           id: "n_etf_softer",
           label: "Soften §5.3 ETF to 25% in exchange",
           detail:
-            "Trades the convenience-termination cost down for OHSN — preserves Nimbus's commercial position elsewhere.",
+            "Trades the convenience-termination cost down for OHSN. Preserves Nimbus's commercial position elsewhere.",
           delta: 0,
           edits: [
             {
               paragraphId: 13,
               replacement:
-                "5.3 Convenience Termination. Client may terminate for convenience upon ninety (90) days' written notice plus an early-termination fee equal to twenty-five percent (25%) of fees that would have been payable for remaining months in the then-current contract year.",
+                "5.3 Convenience Termination. Client may terminate for convenience on ninety (90) days' written notice plus an early-termination fee equal to twenty-five percent (25%) of fees that would have been payable for remaining months in the then-current contract year.",
               replacementFr:
                 "5.3 Résiliation pour convenance. Le Client peut résilier pour convenance moyennant un préavis écrit de quatre-vingt-dix (90) jours, plus des frais de résiliation anticipée égaux à 25 % des frais qui auraient été dus pour les mois restants de l'année contractuelle en cours.",
+            },
+          ],
+          children: [
+            {
+              id: "n_close_softer",
+              label: "Sign with the SLA at full + softer ETF",
+              detail:
+                "Closes today. Cashflow squeeze year 1, ETF cushion year 2 onward.",
+              delta: 0,
+              edits: [],
+            },
+            {
+              id: "n_renegotiate_year_1",
+              label: "Plan to renegotiate after year 1 if infra costs over-run",
+              detail:
+                "OHSN's procurement does not reopen signed paper. This is wishful thinking.",
+              delta: -1,
+              edits: [],
+              losePath: true,
             },
           ],
         },
@@ -479,15 +644,34 @@ export const NIMBUS: Scenario = {
           id: "n_keep_etf",
           label: "Keep §5.3 ETF at 50% as drafted",
           detail:
-            "Pure absorption of SLA risk without offsetting commercial concession — hardest path for the Vendor.",
+            "Pure absorption of SLA risk without offsetting commercial concession. Hardest path for the Vendor.",
           delta: -1,
           edits: [],
+          children: [
+            {
+              id: "n_grit_through",
+              label: "Sign and grit through the year 1 squeeze",
+              detail:
+                "Painful but viable. Burn rate spikes around $120K through year 1 from infra plus on-call.",
+              delta: -1,
+              edits: [],
+            },
+            {
+              id: "n_walk_late",
+              label: "Walk away after Legal review",
+              detail:
+                "Late walk burns the CMO sponsor's political capital. Sets back future health-system deals 12 to 18 months.",
+              delta: -3,
+              edits: [],
+              losePath: true,
+            },
+          ],
         },
       ],
     },
     {
       id: "n_concede_retraining",
-      label: "Concede §6.3 model retraining — agree to OHSN data-use restriction",
+      label: "Concede §6.3 model retraining, agree to OHSN data-use restriction",
       detail:
         "Closes today, but kills Nimbus's product moat. Model decays. Strongly not recommended.",
       delta: -3,
@@ -498,7 +682,28 @@ export const NIMBUS: Scenario = {
             "6.3 Model Retraining Rights. Vendor may NOT use Client Clinical Data, in any form (anonymized or otherwise), to retrain, validate, or improve NimbusAlert's machine learning models. Vendor's models remain frozen as of the Effective Date for purposes of OHSN deployments.",
           replacementFr:
             "6.3 Droits de réentraînement du modèle. Le Fournisseur NE PEUT PAS utiliser les Données cliniques du Client, sous quelque forme que ce soit (anonymisée ou autre), pour réentraîner, valider ou améliorer les modèles d'apprentissage automatique de NimbusAlert. Les modèles du Fournisseur demeurent figés à la date d'entrée en vigueur pour les déploiements d'OHSN.",
-            sensitive: true,
+          sensitive: true,
+        },
+      ],
+      losePath: true,
+      children: [
+        {
+          id: "n_concede_signed",
+          label: "Sign and ship the static model",
+          detail:
+            "Banked revenue, but a 24-month decay window before clinical accuracy drops below contract minimums.",
+          delta: -2,
+          edits: [],
+          losePath: true,
+        },
+        {
+          id: "n_walk_post_concede",
+          label: "Reverse course, walk after concession is in writing",
+          detail:
+            "Burns trust completely. Makes future health-system deals materially harder.",
+          delta: -3,
+          edits: [],
+          losePath: true,
         },
       ],
     },

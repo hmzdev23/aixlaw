@@ -16,25 +16,25 @@ export const AGENTS: AgentDef[] = [
   },
   {
     id: "marie",
-    name: "Marie",
+    name: "Jayoma",
     role: "Compliance",
     speciality: "Quebec Law 25, PIPEDA, OSFI B-13",
     blurb:
       "Watches for personal-info, cross-border, and regulator-triggering clauses.",
-    emoji: "M",
+    emoji: "J",
   },
   {
     id: "etienne",
-    name: "Étienne",
+    name: "Saul",
     role: "Closer",
     speciality: "commercial outcomes & deal value",
     blurb:
       "Cares about timeline, dollars, leverage and getting the deal done this quarter.",
-    emoji: "E",
+    emoji: "S",
   },
   {
     id: "sophie",
-    name: "Sophie",
+    name: "Sid",
     role: "Counterparty",
     speciality: "opposing-side simulation",
     blurb:
@@ -43,12 +43,12 @@ export const AGENTS: AgentDef[] = [
   },
   {
     id: "antoine",
-    name: "Antoine",
+    name: "Wolfgang",
     role: "Crown",
     speciality: "final arbiter",
     blurb:
       "Synthesises the room into a single recommendation tied to your goal.",
-    emoji: "A",
+    emoji: "W",
   },
 ];
 

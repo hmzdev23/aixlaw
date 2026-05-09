@@ -7,8 +7,8 @@ export function DoneStep() {
   const { state, dispatch } = useWizard();
   const scenario = state.scenarioId ? getScenario(state.scenarioId) : null;
   const items: { label: string; value: string }[] = [
-    { label: "Scenario", value: scenario?.headline ?? "—" },
-    { label: "Document", value: state.doc?.filename ?? "—" },
+    { label: "Scenario", value: scenario?.headline ?? "," },
+    { label: "Document", value: state.doc?.filename ?? "," },
     { label: "Locale", value: state.locale.toUpperCase() },
     {
       label: "E-signature (Quebec)",
@@ -16,10 +16,10 @@ export function DoneStep() {
         ? state.esig.qcAvailable
           ? `Available · ${state.signatures.length}/${state.esig.signatureBlocksFound} signed`
           : "Restricted"
-        : "—",
+        : ",",
     },
-    { label: "Workflow", value: state.workflow.join(" → ") || "—" },
-    { label: "Goal", value: state.goal || "—" },
+    { label: "Workflow", value: state.workflow.join(" → ") || "," },
+    { label: "Goal", value: state.goal || "," },
     { label: "Final win bar", value: state.score.toFixed(1) },
     {
       label: "Decision path",
@@ -37,7 +37,7 @@ export function DoneStep() {
         ? `Booked ${new Date(state.bookingFromTranslate.whenIso!).toLocaleString()}`
         : state.bookingFromTranslate
           ? "Skipped"
-          : "—",
+          : ",",
     },
     {
       label: "Meeting",
@@ -45,7 +45,7 @@ export function DoneStep() {
         ? `Booked ${new Date(state.meeting.whenIso!).toLocaleString()}`
         : state.meetingNeeded === false
           ? "Skipped"
-          : "—",
+          : ",",
     },
     {
       label: "Memo",
@@ -53,7 +53,7 @@ export function DoneStep() {
         ? `${state.memo.postedToSlack ? "Posted to Slack" : "PDF generated"}${state.memo.redacted ? " · redacted" : ""}`
         : state.memoNeeded === false
           ? "Skipped"
-          : "—",
+          : ",",
     },
   ];
 

@@ -39,6 +39,7 @@ export async function POST(req: Request): Promise<Response> {
       delta: o.delta,
       modifiesDoc: (o.edits?.length ?? 0) > 0,
       hasChildren: (o.children?.length ?? 0) > 0,
+      losePath: !!o.losePath,
     })),
   });
 }

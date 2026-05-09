@@ -4,12 +4,12 @@ import { useMemo, useState } from "react";
 import { useWizard } from "@/components/wizard/state";
 import { getAgent } from "@/lib/agents";
 import { getScenario } from "@/lib/scenarios";
-import { redact } from "@/lib/redact";
+import { redact, redactToHtml } from "@/lib/redact";
 
 function buildTranscript(state: ReturnType<typeof useWizard>["state"]): string {
   const lines: string[] = [];
   const sc = state.scenarioId ? getScenario(state.scenarioId) : null;
-  lines.push(`# Gambit War Room — ${sc?.headline ?? state.doc?.filename ?? "untitled"}`);
+  lines.push(`# Gambit War Room , ${sc?.headline ?? state.doc?.filename ?? "untitled"}`);
   lines.push("");
   lines.push(`**Goal:** ${state.goal}`);
   lines.push("");
@@ -37,7 +37,7 @@ function buildTranscript(state: ReturnType<typeof useWizard>["state"]): string {
     lines.push("## Context provided");
     for (const c of state.context) {
       const a = getAgent(c.agentId);
-      lines.push(`- **${a?.name ?? c.agentId}** — Q: ${c.question}\n  A: ${c.answer}`);
+      lines.push(`- **${a?.name ?? c.agentId}** , Q: ${c.question}\n  A: ${c.answer}`);
     }
   }
   return lines.join("\n");
@@ -57,8 +57,19 @@ export function ExportStep() {
     [extraNames],
   );
   const preview = useMemo(() => {
-    const r = redact(transcript, extras);
-    return { text: redactOn ? r.text : transcript, count: r.total, byKind: r.countByKind };
+    const r = redactToHtml(transcript, extras);
+    const plain = redact(transcript, extras);
+    return {
+      html: redactOn
+        ? r.html
+        : transcript
+            .replace(/&/g, "&amp;")
+            .replace(/</g, "&lt;")
+            .replace(/>/g, "&gt;"),
+      count: redactOn ? r.total : 0,
+      byKind: redactOn ? r.countByKind : {},
+      plain: redactOn ? plain.text : transcript,
+    };
   }, [transcript, redactOn, extras]);
 
   async function download() {
@@ -150,9 +161,8 @@ export function ExportStep() {
       <pre
         className="card scroll-y px-5 py-5 font-mono text-[12px]"
         style={{ maxHeight: 360, whiteSpace: "pre-wrap" }}
-      >
-        {preview.text}
-      </pre>
+        dangerouslySetInnerHTML={{ __html: preview.html }}
+      />
 
       <div className="flex flex-wrap items-center justify-between gap-2">
         <button type="button" className="btn btn-ghost" onClick={() => dispatch({ type: "BACK" })}>← Back</button>

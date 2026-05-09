@@ -15,6 +15,7 @@ export const STEPS = [
   "upload",
   "review",
   "esig",
+  "violations",
   "workflow",
   "goal",
   "context",
@@ -52,9 +53,9 @@ export interface WizardState {
   debate: DebateTurn[];
   /** Number of debate rounds run so far. */
   debateRound: number;
-  /** Sequence of chosen decision option ids — drives the tree + edits. */
+  /** Sequence of chosen decision option ids , drives the tree + edits. */
   decisionPath: string[];
-  /** Materialised tree nodes for visual display (additive — new picks add nodes). */
+  /** Materialised tree nodes for visual display (additive , new picks add nodes). */
   decisionTree: DecisionNode[];
   /** Win bar score, clamped -10..+10 */
   score: number;
@@ -258,6 +259,8 @@ export function stepLabel(step: StepId): string {
       return "Review";
     case "esig":
       return "E-sig";
+    case "violations":
+      return "Violations";
     case "workflow":
       return "Workflow";
     case "goal":
