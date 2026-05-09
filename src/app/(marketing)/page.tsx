@@ -1,204 +1,197 @@
 "use client";
 
+import { useRef } from "react";
 import Link from "next/link";
+import { motion } from "framer-motion";
+import { ChevronRight } from "lucide-react";
 import { useLocale } from "@/contexts/LocaleContext";
-import { ArrowRight, Shield, GitBranch, Users, Clock } from "lucide-react";
 
 const HERO_VIDEO_URL =
   "https://d8j0ntlcm91z4.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/hf_20260505_101331_74f9b798-3f00-4e86-8a01-377aa16ffeaa.mp4";
 
-const FEATURES = [
-  {
-    icon: GitBranch,
-    title: "Ghost + Game Tree",
-    desc: "Model your counterparty's ELO, fighting style, and likely replies. Bloom three branches — brilliant to blunder.",
-  },
-  {
-    icon: Shield,
-    title: "Multi-Regime Compliance",
-    desc: "OSFI B-13, PIPEDA, and Law 25 — auto-flagged with bilingual PIA generation when triggered.",
-  },
-  {
-    icon: Users,
-    title: "Multi-Agent Council",
-    desc: "Counsel, Closer, Counterpart, Compliance, and Crown deliberate. 4–0 synthesis drives Play Best Line.",
-  },
-  {
-    icon: Clock,
-    title: "Full Execution Arc",
-    desc: "Stripe CAD invoicing, seat provisioning, notary queue, Gmail draft, and Slack approval — all from one decision.",
-  },
+const LOGOS = [
+  { src: "https://svgl.app/library/procure.svg",      alt: "Procure",      from: "#3B82F6", to: "#1D4ED8" },
+  { src: "https://svgl.app/library/shopify.svg",      alt: "Shopify",      from: "#F59E0B", to: "#D97706" },
+  { src: "https://svgl.app/library/blender.svg",      alt: "Blender",      from: "#60A5FA", to: "#2563EB" },
+  { src: "https://svgl.app/library/figma.svg",        alt: "Figma",        from: "#A78BFA", to: "#7C3AED" },
+  { src: "https://svgl.app/library/spotify.svg",      alt: "Spotify",      from: "#F472B6", to: "#DB2777" },
+  { src: "https://svgl.app/library/lottielab.svg",    alt: "Lottielab",    from: "#FBBF24", to: "#65A30D" },
+  { src: "https://svgl.app/library/google-cloud.svg", alt: "Google Cloud", from: "#7DD3FC", to: "#38BDF8" },
+  { src: "https://svgl.app/library/bing.svg",         alt: "Bing",         from: "#22D3EE", to: "#0D9488" },
 ];
+
+function MarqueeScroller() {
+  const doubled = [...LOGOS, ...LOGOS];
+
+  return (
+    <div className="mt-10 overflow-hidden" style={{
+      maskImage: "linear-gradient(90deg, transparent 0%, black 10%, black 90%, transparent 100%)",
+      WebkitMaskImage: "linear-gradient(90deg, transparent 0%, black 10%, black 90%, transparent 100%)",
+    }}>
+      <div className="flex gap-4 animate-marquee w-max">
+        {doubled.map((logo, i) => (
+          <div
+            key={i}
+            className="group relative h-24 w-40 shrink-0 flex items-center justify-center rounded-full bg-white border border-slate-200/60 shadow-sm hover:border-slate-300 transition-all overflow-hidden"
+          >
+            {/* Gradient reveal on hover */}
+            <div
+              className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-all duration-300 scale-150 group-hover:scale-100"
+              style={{ background: `linear-gradient(135deg, ${logo.from}, ${logo.to})` }}
+              aria-hidden="true"
+            />
+            <img
+              src={logo.src}
+              alt={logo.alt}
+              className="relative z-10 h-8 w-auto object-contain group-hover:brightness-0 group-hover:invert transition-all duration-300"
+              onError={(e) => {
+                (e.target as HTMLImageElement).style.display = "none";
+              }}
+            />
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
 
 export default function MarketingPage() {
   const { t } = useLocale();
+  const videoRef = useRef<HTMLVideoElement>(null);
 
   return (
-    <>
-      {/* Hero */}
-      <section
-        className="relative px-6 pt-20 pb-24 overflow-hidden"
-        style={{
-          background: "linear-gradient(160deg, #FFFFFF 0%, #FFF5F0 60%, #FFEAE0 100%)",
-        }}
-      >
-        <div className="max-w-5xl mx-auto text-center">
-          {/* Badge */}
-          <div className="inline-flex items-center gap-2 mb-8 px-3 py-1.5 rounded-full text-xs font-semibold uppercase tracking-widest"
-            style={{ background: "var(--color-brand-muted)", color: "var(--color-brand)", border: "1px solid rgba(255,75,0,0.15)" }}>
-            {t.hero.badge}
-          </div>
+    <div className="px-4 md:px-8 py-6">
+      {/* ── Hero container ── */}
+      <div className="relative w-full max-w-[1400px] mx-auto rounded-[48px] bg-white border border-slate-200/50 shadow-[0_40px_100px_-20px_rgba(0,0,0,0.03)] overflow-hidden h-[600px] flex flex-col">
 
-          {/* Headline */}
-          <h1
-            className="mb-6 font-bold"
-            style={{
-              fontSize: "clamp(2.5rem, 6vw, 4.5rem)",
-              lineHeight: 1.05,
-              letterSpacing: "-0.04em",
-              color: "var(--color-gray-900)",
-            }}
+        {/* Video background layer */}
+        <div className="absolute inset-0 pointer-events-none z-0 overflow-hidden select-none">
+          <video
+            ref={videoRef}
+            src={HERO_VIDEO_URL}
+            autoPlay
+            loop
+            muted
+            playsInline
+            className="w-full h-full object-cover scale-105 transition-transform duration-1000"
+            aria-label="Gambit product demo — AI-powered negotiation co-pilot"
+          />
+        </div>
+
+        {/* Hero text content */}
+        <div className="relative z-20 flex-1 px-8 md:px-16 pt-12 md:pt-16 flex flex-col items-start">
+          <motion.div
+            initial={{ opacity: 0, y: 16 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
           >
-            {t.hero.headline}
-          </h1>
-
-          {/* Sub-headline */}
-          <p
-            className="max-w-2xl mx-auto mb-10 text-lg"
-            style={{ color: "var(--color-gray-600)", lineHeight: 1.6, letterSpacing: "-0.01em" }}
-          >
-            {t.hero.subhead}
-          </p>
-
-          {/* CTAs */}
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-            <Link
-              href="/cockpit"
-              className="flex items-center gap-2 px-7 py-4 rounded-full font-semibold text-white transition-all hover:-translate-y-0.5"
+            {/* Badge */}
+            <div
+              className="inline-flex items-center gap-1.5 mb-6 px-3 py-1 rounded-full text-xs font-semibold tracking-widest uppercase"
               style={{
-                background: "linear-gradient(135deg, #FF4B00, #FF7A40)",
-                boxShadow: "0 4px 16px rgba(255,75,0,0.3)",
-                fontSize: "1rem",
+                background: "rgba(255,75,0,0.08)",
+                color: "#FF4B00",
+                border: "1px solid rgba(255,75,0,0.15)",
+                backdropFilter: "blur(8px)",
+              }}
+            >
+              Spellbook Challenge · Hackathon 2026
+            </div>
+
+            {/* Headline */}
+            <h1
+              className="font-display mb-4"
+              style={{
+                fontSize: "clamp(42px, 5vw, 56px)",
+                fontWeight: 500,
+                letterSpacing: "-0.03em",
+                lineHeight: 1.1,
+                color: "#0a1b33",
+                fontFamily: "var(--font-display)",
+              }}
+            >
+              Negotiate like you&apos;ve<br />
+              been here before.
+            </h1>
+
+            {/* Subheadline */}
+            <p
+              className="mb-8 max-w-[480px]"
+              style={{
+                fontSize: "clamp(14px, 1.5vw, 15px)",
+                color: "#64748b",
+                lineHeight: 1.65,
                 letterSpacing: "-0.01em",
               }}
             >
-              {t.hero.cta1}
-              <ArrowRight size={16} />
-            </Link>
-            <a
-              href="#video"
-              className="flex items-center gap-2 px-7 py-4 rounded-full font-medium transition-all"
-              style={{
-                border: "1.5px solid rgba(0,0,0,0.15)",
-                color: "var(--color-gray-900)",
-                fontSize: "1rem",
-              }}
-            >
-              {t.hero.cta2}
-            </a>
-          </div>
-        </div>
+              Ghost opponent modelling, game-tree analysis, multi-regime compliance,
+              and full execution arc — from Initech&apos;s redlines to signed in under two hours.
+            </p>
 
-        {/* Decorative gradient blob */}
-        <div
-          className="absolute -top-32 -right-32 w-96 h-96 rounded-full pointer-events-none"
-          style={{ background: "radial-gradient(circle, rgba(255,75,0,0.08) 0%, transparent 70%)" }}
-          aria-hidden="true"
-        />
-      </section>
-
-      {/* Hero video */}
-      <section id="video" className="px-6 py-16 max-w-5xl mx-auto">
-        <div
-          className="rounded-3xl overflow-hidden border shadow-2xl"
-          style={{ borderColor: "var(--color-gray-200)", boxShadow: "0 24px 80px rgba(0,0,0,0.12)" }}
-        >
-          <video
-            src={HERO_VIDEO_URL}
-            controls
-            muted
-            playsInline
-            className="w-full aspect-video object-cover"
-            aria-label="Gambit product demo — Dunder AI negotiating Initech MSA"
-          />
-        </div>
-      </section>
-
-      {/* Features */}
-      <section className="px-6 py-16" style={{ background: "var(--color-gray-50)" }}>
-        <div className="max-w-5xl mx-auto">
-          <h2
-            className="text-center mb-12 font-semibold"
-            style={{ fontSize: "2rem", letterSpacing: "-0.025em", color: "var(--color-gray-900)" }}
-          >
-            Everything in one arc
-          </h2>
-          <div className="grid sm:grid-cols-2 gap-6">
-            {FEATURES.map(({ icon: Icon, title, desc }) => (
-              <div
-                key={title}
-                className="p-8 rounded-2xl border transition-all hover:-translate-y-0.5"
+            {/* CTA */}
+            <motion.div whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.97 }}>
+              <Link
+                href="/cockpit"
+                className="inline-flex items-center gap-2 px-6 py-3 rounded-full font-semibold text-sm text-white"
                 style={{
-                  background: "white",
-                  borderColor: "rgba(0,0,0,0.08)",
-                  boxShadow: "0 2px 12px rgba(0,0,0,0.04)",
+                  background: "#0a152d",
+                  boxShadow: "0 4px 16px rgba(10,21,45,0.25)",
                 }}
               >
-                <div
-                  className="w-10 h-10 rounded-xl flex items-center justify-center mb-4"
-                  style={{ background: "var(--color-brand-muted)" }}
-                >
-                  <Icon size={20} style={{ color: "var(--color-brand)" }} />
-                </div>
-                <h3 className="font-semibold mb-2" style={{ fontSize: "1.1rem", color: "var(--color-gray-900)" }}>
-                  {title}
-                </h3>
-                <p style={{ color: "var(--color-gray-600)", lineHeight: 1.6, fontSize: "0.9375rem" }}>{desc}</p>
-              </div>
-            ))}
-          </div>
+                Enter Cockpit
+                <ChevronRight size={14} />
+              </Link>
+            </motion.div>
+          </motion.div>
         </div>
-      </section>
 
-      {/* Scenario callout */}
-      <section className="px-6 py-16 max-w-5xl mx-auto">
-        <div
-          className="rounded-3xl p-12 text-center relative overflow-hidden"
-          style={{ background: "linear-gradient(180deg, #0A0A0A 0%, #1A1A1A 100%)" }}
-        >
-          <div className="relative z-10">
-            <p className="text-sm font-semibold uppercase tracking-widest mb-4" style={{ color: "var(--color-brand)" }}>
-              Demo Scenario — Spellbook Fixture
-            </p>
-            <h2
-              className="font-bold mb-4 text-white"
-              style={{ fontSize: "clamp(1.5rem, 4vw, 2.5rem)", letterSpacing: "-0.03em" }}
-            >
-              Dunder AI vs Initech Financial Group
-            </h2>
-            <p className="max-w-xl mx-auto mb-8 text-base" style={{ color: "#A0A0A0", lineHeight: 1.6 }}>
-              First enterprise MSA. $180K CAD over 2 years. Initech&apos;s redlines: uncapped breach, 24/7 ops, Ontario-only residency, step-in.
-              Board readout at 6 PM. You have 1h 47m.
-            </p>
+        {/* ── Floating bottom navbar ── */}
+        <div className="absolute bottom-10 left-1/2 -translate-x-1/2 z-30">
+          <motion.nav
+            initial={{ opacity: 0, y: 12 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.25, ease: [0.16, 1, 0.3, 1] }}
+            className="flex items-center bg-white/90 backdrop-blur-2xl px-1.5 py-1.5 rounded-full shadow-[0_12px_40px_rgba(0,0,0,0.08)] border border-slate-200/40 gap-1"
+          >
+            {/* Logo mark */}
+            <div className="w-9 h-9 rounded-full bg-white border border-slate-100 shadow-sm flex items-center justify-center text-sm font-bold" style={{ color: "#FF4B00" }}>
+              ✦
+            </div>
+
+            {/* Nav links */}
             <Link
               href="/cockpit"
-              className="inline-flex items-center gap-2 px-7 py-4 rounded-full font-semibold text-white transition-all hover:-translate-y-0.5"
-              style={{
-                background: "linear-gradient(135deg, #FF4B00, #FF7A40)",
-                boxShadow: "0 4px 24px rgba(255,75,0,0.4)",
-              }}
+              className="px-4 py-2 text-[12px] font-semibold text-slate-500 hover:text-[#0a1b33] transition-colors rounded-full"
             >
-              Enter Cockpit
-              <ArrowRight size={16} />
+              Cockpit
             </Link>
-          </div>
-          <div
-            className="absolute inset-0 pointer-events-none"
-            style={{ background: "radial-gradient(circle at 50% 0%, rgba(255,75,0,0.12) 0%, transparent 60%)" }}
-            aria-hidden="true"
-          />
+            <Link
+              href="/war-room"
+              className="px-4 py-2 text-[12px] font-semibold text-slate-500 hover:text-[#0a1b33] transition-colors rounded-full"
+            >
+              War Room
+            </Link>
+            <Link
+              href="/architect"
+              className="px-4 py-2 text-[12px] font-semibold text-slate-500 hover:text-[#0a1b33] transition-colors rounded-full"
+            >
+              Architect
+            </Link>
+
+            {/* CTA button */}
+            <Link
+              href="/cockpit"
+              className="flex items-center gap-1.5 bg-white px-5 py-2 rounded-full text-[12px] font-semibold text-[#0a1b33] border border-slate-200/60 shadow-sm hover:border-slate-300 transition-all"
+            >
+              Get started
+              <ChevronRight size={12} />
+            </Link>
+          </motion.nav>
         </div>
-      </section>
-    </>
+      </div>
+
+      {/* ── Marquee logo scroller ── */}
+      <MarqueeScroller />
+    </div>
   );
 }
