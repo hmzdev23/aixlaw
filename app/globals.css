@@ -1,0 +1,19 @@
+/* Minimal globals — Hamza (T1) will replace with Tailwind v4 + shadcn tokens
+   sourced from /design.MD. Keep this file tiny so T1 can overwrite without
+   merge pain. */
+:root {
+  color-scheme: light;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+  background: #ffffff;
+  color: #111111;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
+}
+
+* {
+  box-sizing: border-box;
+}
