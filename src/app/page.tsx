@@ -1,5 +1,5 @@
-import { redirect } from "next/navigation";
+import { Wizard } from "@/components/wizard/Wizard";
 
 export default function Page() {
-  redirect("/login");
+  return <Wizard />;
 }

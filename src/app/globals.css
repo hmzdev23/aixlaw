@@ -1,112 +1,156 @@
 @import "tailwindcss";
 
 :root {
-  /* ── ElevenLabs design tokens ─────────────────────── */
-  --canvas:                #f5f5f5;
-  --canvas-soft:           #fafafa;
-  --canvas-deep:           #0c0a09;
-  --surface-card:          #ffffff;
-  --surface-strong:        #f0efed;
-  --surface-dark:          #0c0a09;
-  --surface-dark-elevated: #1c1917;
-
-  --ink:           #0c0a09;
-  --ink-primary:   #292524;
-  --body:          #4e4e4e;
-  --body-strong:   #292524;
-  --muted:         #777169;
-  --muted-soft:    #a8a29e;
-  --on-dark:       #ffffff;
-  --on-dark-soft:  #a8a29e;
-
-  --hairline:        #e7e5e4;
-  --hairline-soft:   #f0efed;
-  --hairline-strong: #d6d3d1;
-
-  --grad-mint:     #a7e5d3;
-  --grad-peach:    #f4c5a8;
-  --grad-lavender: #c8b8e0;
-  --grad-sky:      #a8c8e8;
-  --grad-rose:     #e8b8c4;
-
-  --color-success: #16a34a;
-  --color-error:   #dc2626;
-  --color-warning: #d97706;
-
-  /* Gambit brand — used only for eval bar functional states */
-  --color-brand:       #292524;
-  --color-brand-muted: #f0efed;
-
-  /* Next.js theme */
-  --background: var(--canvas);
-  --foreground: var(--ink);
-
-  /* Legacy compat for existing components */
-  --color-gray-50:  #fafafa;
-  --color-gray-100: #f0efed;
-  --color-gray-200: #e7e5e4;
-  --color-gray-300: #d6d3d1;
-  --color-gray-400: #a8a29e;
-  --color-gray-600: #777169;
-  --color-gray-900: #292524;
-
-  --font-sans:    'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-  --font-display: 'Georgia', 'Times New Roman', serif;
-  --font-mono:    'JetBrains Mono', 'Fira Code', monospace;
-
-  --radius-sm:   6px;
-  --radius-md:   8px;
-  --radius-lg:   12px;
-  --radius-xl:   16px;
-  --radius-xxl:  24px;
-  --radius-pill: 9999px;
+  --bg: #f7f7f5;
+  --panel: #ffffff;
+  --ink: #111111;
+  --ink-soft: #555555;
+  --muted: #8a8a8a;
+  --line: #e5e5e3;
+  --line-strong: #cfcfcc;
+  --accent: #111111;
+  --accent-soft: #f0f0ee;
+  --positive: #1f7a4d;
+  --negative: #b3261e;
+  --warning: #b97a00;
+  --link: #111111;
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.04);
+  --shadow: 0 8px 30px rgba(0, 0, 0, 0.06);
+  --radius: 10px;
+  --font-sans: ui-sans-serif, system-ui, -apple-system, "Segoe UI", "Inter",
+    "Helvetica Neue", Arial, sans-serif;
+  --font-mono: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
+* {
+  box-sizing: border-box;
 }
 
-* { box-sizing: border-box; }
-html { scroll-behavior: smooth; }
-
+html,
 body {
-  background: var(--canvas);
+  background: var(--bg);
   color: var(--ink);
   font-family: var(--font-sans);
-  font-size: 16px;
-  line-height: 1.5;
-  letter-spacing: 0.01em;
+  font-size: 15px;
+  line-height: 1.55;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
-.font-display { font-family: var(--font-display); font-weight: 300; }
-.caption-upper { font-size: 12px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); }
-
-*:focus-visible { outline: 2px solid var(--ink); outline-offset: 3px; border-radius: inherit; }
-::selection { background: rgba(12,10,9,0.08); }
-
-.skip-link {
-  position: absolute; top: -100%; left: 8px;
-  background: var(--ink); color: white;
-  padding: 8px 20px; border-radius: 9999px; font-weight: 500;
-  z-index: 9999; text-decoration: none;
+a {
+  color: var(--link);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  text-decoration-thickness: 1px;
 }
-.skip-link:focus { top: 8px; }
 
-::-webkit-scrollbar { width: 5px; height: 5px; }
-::-webkit-scrollbar-track { background: transparent; }
-::-webkit-scrollbar-thumb { background: var(--hairline-strong); border-radius: 3px; }
-::-webkit-scrollbar-thumb:hover { background: var(--muted-soft); }
-
-@keyframes marquee {
-  from { transform: translateX(0); }
-  to   { transform: translateX(-50%); }
+button {
+  font-family: inherit;
 }
-.animate-marquee { animation: marquee 30s linear infinite; }
-.animate-marquee:hover { animation-play-state: paused; }
 
-.react-flow__node { border-radius: 12px; }
-.react-flow__edge-path { stroke: var(--hairline-strong); }
-.react-flow__controls { border-radius: 8px; overflow: hidden; }
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  height: 38px;
+  padding: 0 16px;
+  border-radius: 999px;
+  font-size: 14px;
+  font-weight: 500;
+  border: 1px solid var(--ink);
+  background: var(--ink);
+  color: white;
+  cursor: pointer;
+  transition: filter 0.15s ease, transform 0.05s ease;
+}
+.btn:hover { filter: brightness(0.92); }
+.btn:active { transform: translateY(1px); }
+.btn:disabled { opacity: 0.45; cursor: not-allowed; }
+
+.btn-secondary {
+  background: white;
+  color: var(--ink);
+}
+.btn-ghost {
+  background: transparent;
+  border-color: transparent;
+  color: var(--ink-soft);
+}
+.btn-ghost:hover { color: var(--ink); background: var(--accent-soft); }
+
+.btn-danger {
+  background: white;
+  color: var(--negative);
+  border-color: var(--negative);
+}
+
+.input,
+.textarea,
+.select {
+  width: 100%;
+  border: 1px solid var(--line-strong);
+  background: white;
+  border-radius: 8px;
+  padding: 10px 12px;
+  font-size: 14px;
+  font-family: inherit;
+  color: var(--ink);
+  outline: none;
+}
+.input:focus,
+.textarea:focus,
+.select:focus {
+  border-color: var(--ink);
+  box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.08);
+}
+.textarea {
+  min-height: 96px;
+  resize: vertical;
+}
+
+.card {
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-sm);
+}
+
+.kbd {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  background: var(--accent-soft);
+  border: 1px solid var(--line);
+  border-radius: 4px;
+  padding: 1px 6px;
+}
+
+.label {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--ink);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.muted { color: var(--muted); }
+.soft  { color: var(--ink-soft); }
+
+.scroll-y { overflow-y: auto; }
+.scroll-y::-webkit-scrollbar { width: 8px; }
+.scroll-y::-webkit-scrollbar-thumb { background: var(--line-strong); border-radius: 4px; }
+
+/* Highlight chips used by Review step */
+.hl-warn  { background: #fff4d6; padding: 0 2px; border-radius: 3px; }
+.hl-bad   { background: #fde2df; padding: 0 2px; border-radius: 3px; }
+.hl-info  { background: #e1efff; padding: 0 2px; border-radius: 3px; }
+
+.spinner {
+  width: 14px;
+  height: 14px;
+  border: 2px solid var(--line-strong);
+  border-top-color: var(--ink);
+  border-radius: 50%;
+  animation: spin 0.7s linear infinite;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
