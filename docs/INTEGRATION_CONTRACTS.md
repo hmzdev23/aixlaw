@@ -5,26 +5,38 @@
 
 All types referenced below are defined canonically in [DATA_MODELS.md](./DATA_MODELS.md).
 
+**Spellbook fixtures (read-only):** `Example Scenario (Optional)/` — do not edit source `.md` / `.docx` files.
+
+---
+
+## 0. Fixture path
+
+```ts
+export const FIXTURE_DIR = "Example Scenario (Optional)";
+```
+
 ---
 
 ## 1. Inbound (Will → App store)
 
 ```ts
-// Will implements: lib/integrations/inbound.ts + API routes
-
 export type InboundSource = "gmail" | "slack" | "calendar" | "manual_demo";
+
+export type InboundDocumentFocus = "nda" | "msa";
 
 export interface InboundEvent {
   id: string;
   source: InboundSource;
-  receivedAt: string; // ISO
-  personaId: string; // links Persona
+  receivedAt: string;
+  personaId: string;
   dealId: string;
   subject?: string;
   attachments: { name: string; mime: string; storageKey: string }[];
   rawSnippet?: string;
+  /** Which contract drives the Cockpit pile for this session */
+  documentFocus?: InboundDocumentFocus;
   calendarContext?: {
-    nextHardStop: string; // ISO event end or start
+    nextHardStop: string;
     eventTitle: string;
     conflict: boolean;
   };
@@ -33,7 +45,8 @@ export interface InboundEvent {
 export interface InboundService {
   watchGmail(): AsyncIterable<InboundEvent>;
   handleSlackPayload(body: unknown): Promise<InboundEvent | null>;
-  triggerManualDemo(): Promise<InboundEvent>;
+  /** Optional: which doc to load for manual demo */
+  triggerManualDemo(opts?: { documentFocus?: InboundDocumentFocus }): Promise<InboundEvent>;
 }
 ```
 
@@ -42,13 +55,19 @@ export interface InboundService {
 ## 2. Deal session (shared)
 
 ```ts
+// ContractDocument — see DATA_MODELS.md; import from src/lib/contracts/models.ts in code
+
 export interface DealSession {
   dealId: string;
-  counterpartyId: string; // "megacorp"
-  baseMsaRef: string; // fixture key
-  redlinesRef: string; // fixture key (12 changes)
-  precedentRefs: string[]; // 3 MegaCorp MSAs
+  /** Dunder AI side */
+  vendorId: string; // "dunder_ai"
+  /** Initech procurement / legal posture */
+  counterpartyId: string; // "initech_procurement"
+  documents: ContractDocument[];
+  precedentRefs: string[]; // synthetic Initech vendor precedents (T4)
   locale: "en" | "fr";
+  /** Active pile source — usually msa_initech_redlines */
+  activeDocumentId?: string;
 }
 ```
 
@@ -59,8 +78,10 @@ export interface DealSession {
 ```ts
 export interface GhostEngine {
   generate(session: DealSession): Promise<GhostProfile>;
-  /** Optional: refresh after new Spellbook issues */
-  refreshFromIssues(session: DealSession, issues: SpellbookIssue[]): Promise<GhostProfile>;
+  refreshFromIssues(
+    session: DealSession,
+    issues: SpellbookIssue[]
+  ): Promise<GhostProfile>;
 }
 ```
 
@@ -70,15 +91,20 @@ export interface GhostEngine {
 
 ```ts
 export interface TreeEngine {
-  /** Returns root + 3 primary branches; deeper nodes optional for demo */
   bloom(session: DealSession, ghost: GhostProfile): Promise<GameTree>;
-  /** Live hover: predicted counterparty reply for a node */
-  predictCounterMove(nodeId: string, session: DealSession, ghost: GhostProfile): Promise<string>;
+  predictCounterMove(
+    nodeId: string,
+    session: DealSession,
+    ghost: GhostProfile
+  ): Promise<string>;
 }
 
 export interface EvalService {
-  /** Score in pawns-like units; negative = counterparty favor */
-  scorePosition(session: DealSession, ghost: GhostProfile, selectedNodeId: string): Promise<number>;
+  scorePosition(
+    session: DealSession,
+    ghost: GhostProfile,
+    selectedNodeId: string
+  ): Promise<number>;
 }
 ```
 
@@ -98,15 +124,15 @@ export interface WalkawayService {
 
 ```ts
 export interface ComplianceService {
-  /** TrueSight + Law 25 in one call for UX; may split internally */
-  checkProposedText(text: string, locale: "en" | "fr"): Promise<ComplianceReport>;
-}
-
-export interface ComplianceReport {
-  trueSight: TrueSightResult;
-  law25: Law25Result;
+  /** TrueSight + OSFI + PIPEDA + Law25 in one call for UX */
+  checkProposedText(
+    text: string,
+    locale: "en" | "fr"
+  ): Promise<ComplianceReport>;
 }
 ```
+
+`ComplianceReport` shape: `{ trueSight, osfi, pipeda, law25 }` — see DATA_MODELS.md.
 
 ---
 
@@ -150,7 +176,10 @@ export interface ArchitectRuntime {
 ```ts
 export interface WorkProductService {
   buildCounterRedlineDocx(decision: Decision): Promise<Uint8Array>;
-  buildSupervisorPdf(decision: Decision, mode: "legal" | "plain"): Promise<Uint8Array>;
+  buildSupervisorPdf(
+    decision: Decision,
+    mode: "legal" | "plain"
+  ): Promise<Uint8Array>;
 }
 ```
 
@@ -203,7 +232,7 @@ export interface ExecutionEngine {
 }
 
 export interface SpellbookClient {
-  detectIssues(msaText: string): Promise<SpellbookIssue[]>;
+  detectIssues(fullText: string, meta?: { kind: "nda" | "msa" }): Promise<SpellbookIssue[]>;
 }
 ```
 
@@ -222,5 +251,5 @@ export interface Translator {
 
 ## Versioning
 
-- Bump contract version in code: `export const CONTRACT_VERSION = "1.0.0"`.  
+- Bump contract version in code: `export const CONTRACT_VERSION = "1.1.0"`.  
 - Breaking changes: PR must update this file + notify all three owners.

@@ -2,50 +2,52 @@
 
 Three pre-staged accounts for demo narrative. **Not real users** — OAuth may be real Google, but these identities are **fixture-backed** for hackathon reliability.
 
+Scenario: **Dunder AI Inc.** (vendor) negotiating **Initech Financial Group Inc.** (client). See [SCENARIO_CONTEXT.md](./SCENARIO_CONTEXT.md).
+
 ---
 
-## 1. Sarah Chen — AE (protagonist)
+## 1. Sarah Chen — Co-founder & COO (protagonist)
 
 | Field | Value |
 |-------|--------|
 | **id** | `persona_sarah` |
 | **Display name** | Sarah Chen |
-| **Email** | `sarah.chen@acmeanalytics.demo` (map to real test inbox in `.env` if using live Gmail) |
-| **Role** | `ae` |
-| **Org** | Acme Analytics |
-| **Job** | Account Executive, Series B SaaS |
-| **Pain** | Quarter-end signature blocked by 12 redlines; counsel SLA 48h; board meeting hard stop |
+| **Email** | `sarah@dunderai.demo` (map to real test inbox in `.env` if using live Gmail) |
+| **Role** | `cofounder_coo` (or map to `ae` in code if enum not extended yet) |
+| **Org** | Dunder AI Inc. |
+| **Job** | Co-founder & Chief Operating Officer |
+| **Pain** | First enterprise MSA with a Big-5-style bank; Initech redlines are existential (liability, IP, 24/7, step-in); counsel SLA tight; board/exec hard stop |
 | **Demo actions** | Lands on Cockpit; triggers “Play Best Line”; plays voice memo; hits Send on Gmail draft |
 | **Branch** | T7 (auth mapping), T1 (chrome switcher) |
 
 ---
 
-## 2. Marc Tremblay — GC / sign-off
+## 2. Marc Tremblay — Fractional GC / sign-off
 
 | Field | Value |
 |-------|--------|
 | **id** | `persona_marc` |
 | **Display name** | Marc Tremblay |
-| **Email** | `marc.tremblay@acmeanalytics.demo` |
+| **Email** | `marc@dunderai.demo` |
 | **Role** | `gc` |
-| **Org** | Acme Analytics |
-| **Job** | General Counsel |
-| **Demo actions** | Supervisor PDF “Legal mode” reviewer; optional e-sign checkbox; voice sign-off attributed to GC in copy |
+| **Org** | Dunder AI Inc. (fractional) |
+| **Job** | General Counsel (outside / fractional) |
+| **Demo actions** | Supervisor PDF “Legal mode” reviewer; voice sign-off attributed to GC in copy |
 | **Branch** | T7, T8 |
 
 ---
 
-## 3. MegaCorp Legal — counterparty
+## 3. Initech Procurement Counsel — counterparty
 
 | Field | Value |
 |-------|--------|
-| **id** | `persona_megacorp` |
-| **Display name** | MegaCorp Legal |
-| **Email** | `legal@megacorpcloud.demo` |
+| **id** | `persona_initech` |
+| **Display name** | Initech Procurement Counsel |
+| **Email** | `procurement-legal@initechfg.demo` |
 | **Role** | `counterparty_legal` |
-| **Org** | MegaCorp Cloud Services Inc. |
-| **Job** | Inbound redline sender |
-| **Demo actions** | From-address on simulated Gmail thread; Slack bot name; Ghost card title **MEGACORP LEGAL** |
+| **Org** | Initech Financial Group Inc. |
+| **Job** | Inbound redline sender (procurement / legal) |
+| **Demo actions** | From-address on simulated Gmail thread; Slack bot name; Ghost card title **INITECH PROCUREMENT · Regulated FI** |
 | **Branch** | T7, T4 |
 
 ---
@@ -54,7 +56,7 @@ Three pre-staged accounts for demo narrative. **Not real users** — OAuth may b
 
 | Field | Value |
 |-------|--------|
-| **CEO** | Used in copy only — “CEO approved” in Slack; no separate login required unless you add `persona_ceo` later |
+| **CEO / Board** | Used in copy only — “CEO approved” in Slack; no separate login unless you add `persona_ceo` later |
 
 ---
 

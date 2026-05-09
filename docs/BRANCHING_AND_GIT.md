@@ -13,6 +13,24 @@
 
 ---
 
+## History note: integrating Spellbook fixtures + planning docs
+
+- `origin/main` received Spellbook assets (`Example Scenario (Optional)/`, `HeroVideo.MD`) in commits **before** the Gambit planning docs landed locally.  
+- Local `main` was **rebased onto `origin/main`** so planning docs sit **on top of** the real contract pack (no duplicate divergent histories).  
+- Feature branches `hamza`, `aditya`, `will` are **reset to `main`** after each planning doc drop so everyone starts from the same fixture + doc baseline.
+
+---
+
+## Read-only fixture source
+
+| Path | Rule |
+|------|------|
+| `Example Scenario (Optional)/*.md`, `*.docx` | **Do not edit** — Spellbook-provided scenario. Add **new** files only (e.g. `precedents/*.json` authored by team). |
+| `HeroVideo.MD` | Single source for hero `<video src>` URL — change only with team agreement. |
+| `design.MD` | **Read-only** — never edit |
+
+---
+
 ## Sprint 0 on `main` (before heavy feature coding)
 
 1. `create-next-app` + Tailwind + shadcn init  
@@ -38,6 +56,7 @@ Everyone **rebases** their feature branch onto latest `main` after Sprint 0.
 | Path / file | Rule |
 |-------------|------|
 | `design.MD` | **Read-only** — never edit |
+| `Example Scenario (Optional)/` Spellbook `.md`/`.docx` | **Read-only** — do not redline the redlines |
 | `src/lib/contracts/*` | Consensus-only; small focused PRs |
 | `docs/INTEGRATION_CONTRACTS.md` | Must match code after any API change |
 

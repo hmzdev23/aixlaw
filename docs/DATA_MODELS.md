@@ -2,6 +2,8 @@
 
 Canonical TypeScript shapes. Implement in `src/lib/contracts/models.ts` (Sprint 0).
 
+Fixture root: `FIXTURE_DIR = "Example Scenario (Optional)"` — see [INTEGRATION_CONTRACTS.md](./INTEGRATION_CONTRACTS.md).
+
 ---
 
 ## Identity & personas
@@ -11,7 +13,13 @@ export interface Persona {
   id: string;
   displayName: string;
   email: string;
-  role: "ae" | "gc" | "counterparty_legal" | "ceo" | "demo_admin";
+  role:
+    | "cofounder_coo"
+    | "ae"
+    | "gc"
+    | "counterparty_legal"
+    | "ceo"
+    | "demo_admin";
   org: string;
   avatarUrl?: string;
 }
@@ -19,24 +27,46 @@ export interface Persona {
 
 ---
 
-## Redlines & contract
+## Currency & regulatory tags
 
 ```ts
-export interface RedlineChange {
+export type Currency = "CAD" | "USD";
+
+export type RegulatoryRegime = "osfi_b13" | "pipeda" | "law25";
+```
+
+---
+
+## Contract documents & redlines
+
+```ts
+export type ContractKind = "nda" | "msa" | "spa";
+
+export interface ContractDocument {
   id: string;
-  clauseRef: string; // e.g. "8.2 Limitation of Liability"
-  summary: string;
-  ours: string;
-  theirs: string;
-  comment?: string;
+  type: ContractKind;
+  label: string;
+  /** Path key under FIXTURE_DIR, e.g. "msa_initech_redlines.md" */
+  originalRef?: string;
+  redlinedRef?: string;
 }
 
+/** @deprecated use ContractDocument */
 export interface MsaDocument {
   id: string;
   title: string;
   parties: { name: string; role: string }[];
   effectiveDate?: string;
-  fullTextRef: string; // fixture storage key
+  fullTextRef: string;
+}
+
+export interface RedlineChange {
+  id: string;
+  clauseRef: string; // e.g. "7.1 Limitation of Liability"
+  summary: string;
+  ours: string;
+  theirs: string;
+  comment?: string;
 }
 ```
 
@@ -46,7 +76,7 @@ export interface MsaDocument {
 
 ```ts
 export interface GhostProfile {
-  counterpartyId: string;
+  counterpartyId: string; // "initech_procurement"
   displayName: string;
   elo: number; // composite demo metric
   styleLabel: string; // e.g. "Hardline"
@@ -54,7 +84,7 @@ export interface GhostProfile {
   fightsOn: string[];
   oftenConcedes: string[];
   walksWhen: string[];
-  trainingSummary: string; // "Trained on 3 prior deals · 47 clauses analyzed"
+  trainingSummary: string; // e.g. "Trained on 3 prior Initech vendor deals · N clauses analyzed"
   precedentDealIds: string[];
 }
 ```
@@ -70,9 +100,10 @@ export interface CandidateMove {
   id: string;
   label: string;
   notation: ChessNotation;
-  summary: string; // one-line strategy
+  summary: string;
   closeProbability: number; // 0–1
-  retainedValueUsd?: number;
+  /** Retained value in CAD for this deal narrative */
+  retainedValueCad?: number;
   riskNote?: string;
 }
 
@@ -81,25 +112,24 @@ export interface GameTreeNode {
   parentId: string | null;
   move?: CandidateMove;
   childrenIds: string[];
-  /** Pre-staged ghost reply when hovering child */
   ghostReplyPreview?: string;
 }
 
 export interface GameTree {
   rootId: string;
   nodes: Record<string, GameTreeNode>;
-  primaryBranchIds: [string, string, string]; // three top moves
-  evalScore: number; // negative = bad for us
+  primaryBranchIds: [string, string, string];
+  evalScore: number;
 }
 
 export interface WalkawayCitation {
-  dealLabel: string; // "Acme deal (2023)"
+  dealLabel: string; // e.g. "CoreBank vendor (2022)"
   quote: string;
   clauseRef: string;
 }
 
 export interface WalkawayLine {
-  thresholdSummary: string; // e.g. cap vs ARR
+  thresholdSummary: string;
   citations: WalkawayCitation[];
 }
 ```
@@ -116,11 +146,14 @@ export interface Decision {
   summaryLegal: string;
   summaryPlain: string;
   financials: {
-    monthlyUsd: number;
-    netDays: number;
-    months: number;
+    currency: Currency; // "CAD" for Initech demo
+    monthlyAmount: number; // ~7500 for $180k/24mo narrative
+    netDays: number; // e.g. 60 per Initech redline
+    months: number; // 24
     tier: string;
     seats: number;
+    /** Optional headline for pitch */
+    totalContractCad?: number;
   };
   complianceFlags: string[];
   citationsUsed: { title: string; citation: string }[];
@@ -131,11 +164,11 @@ export interface Decision {
 
 ---
 
-## TrueSight & Law 25
+## TrueSight & multi-regime compliance
 
 ```ts
 export interface CitationClaim {
-  raw: string; // as model emitted
+  raw: string;
   normalized?: string;
 }
 
@@ -146,6 +179,18 @@ export interface TrueSightResult {
     verified?: string;
     sourceUrl?: string;
   }[];
+}
+
+export interface OsfiResult {
+  triggered: boolean;
+  triggers: string[];
+  notes?: string[];
+}
+
+export interface PipedaResult {
+  triggered: boolean;
+  triggers: string[];
+  notes?: string[];
 }
 
 export interface Law25Result {
@@ -159,6 +204,14 @@ export interface PIA {
   generatedAt: string;
   sectionsEn: Record<string, string>;
   sectionsFr: Record<string, string>;
+}
+
+/** Unified bundle returned by ComplianceService.checkProposedText */
+export interface ComplianceReport {
+  trueSight: TrueSightResult;
+  osfi: OsfiResult;
+  pipeda: PipedaResult;
+  law25: Law25Result;
 }
 ```
 
@@ -174,14 +227,19 @@ export type CouncilRole =
   | "compliance"
   | "crown";
 
-export type VoteValue = "accept" | "reject" | "likely_counter_accept" | "clear" | "abstain";
+export type VoteValue =
+  | "accept"
+  | "reject"
+  | "likely_counter_accept"
+  | "clear"
+  | "abstain";
 
 export interface DebateEvent {
-  t: number; // ms offset for animation
+  t: number;
   agent: CouncilRole;
   message: string;
   vote?: VoteValue;
-  influenceDelta?: number; // 0–1
+  influenceDelta?: number;
 }
 
 export interface CouncilResult {
@@ -206,6 +264,8 @@ export type AgentBlockType =
   | "compliance"
   | "crown"
   | "truesight"
+  | "osfi_vendor_management"
+  | "pipeda_watcher"
   | "law25"
   | "translator"
   | "slack_notifier"

@@ -1,45 +1,51 @@
 # Gambit — Demo Fixtures
 
-Everything needed so the demo arc is **deterministic**. Store under `src/lib/fixtures/` after Sprint 0.
+Everything needed so the demo arc is **deterministic**. **Authoritative contract text** lives in [`Example Scenario (Optional)/`](../Example%20Scenario%20(Optional)/) — **read-only** (do not edit those `.md` / `.docx` files). Runtime copies or parsed JSON may live under `src/lib/fixtures/` after Sprint 0.
+
+See [SCENARIO_CONTEXT.md](./SCENARIO_CONTEXT.md) for tension maps **R01–R13** (MSA) and **N01–N05** (NDA).
 
 ---
 
-## 1. Core deal documents
+## 0. Fixture root constant
 
-| Fixture key | Description | Owner |
-|-------------|-------------|-------|
-| `msa_megacorp_acme_base` | Clean baseline SaaS MSA (Spellbook fictional MSA when available) | Will / team |
-| `msa_megacorp_acme_redlined` | Version with **12** track-changes / redline items | Will |
-| `scenario_brief` | JSON: parties, commercial terms, tension points | Will |
-
-**12 redlines (conceptual buckets — align to Spellbook pack):**
-
-1. Limitation of liability — cap amount / carve-outs  
-2. Indemnity — IP vs general scope  
-3. Confidentiality — residual vs strict  
-4. Data processing — subprocessors, transfers, geolocation  
-5. Audit rights — frequency / scope  
-6. SLA / remedies — credits vs termination  
-7. Termination — convenience notice  
-8. Payment — Net 30 vs Net 60  
-9. Auto-renew / price increase  
-10. Insurance certificates  
-11. Assignment / change of control  
-12. Governing law / venue (if not Quebec-focused, keep neutral)
-
-Each maps to a `RedlineChange` id `R01`–`R12` in `DATA_MODELS.md`.
+```ts
+/** Spellbook pack location — read-only source files */
+export const FIXTURE_DIR = "Example Scenario (Optional)";
+```
 
 ---
 
-## 2. Ghost precedent corpus (3 × MegaCorp MSAs)
+## 1. Core deal documents (repo paths)
+
+| Key | Path | Description |
+|-----|------|-------------|
+| `scenario_brief` | `Example Scenario (Optional)/scenario_context.md` | Parties, stakes, tension tables |
+| `nda_dunder_original` | `Example Scenario (Optional)/nda_dunder_original.md` (+ `.docx`) | Mutual NDA draft |
+| `nda_initech_redlines` | `Example Scenario (Optional)/nda_initech_redlines.md` (+ `.docx`) | One-way + bank-style tightening |
+| `msa_dunder_original` | `Example Scenario (Optional)/msa_dunder_original.md` (+ `.docx`) | Vendor-friendly MSA |
+| `msa_initech_redlines` | `Example Scenario (Optional)/msa_initech_redlines.md` (+ `.docx`) | **Primary Cockpit pile** — enterprise redlines |
+
+**Redline marker format (parse in UI / T8):**
+
+- `~~strikethrough~~` = Initech deleted  
+- `**[INITECH ADD: text]**` = Initech added  
+- `*[INITECH COMMENT: ...]*` = internal comment (show as tooltip in demo polish)
+
+Map MSA themes to `RedlineChange.id` **`R01`–`R13`** per SCENARIO_CONTEXT. NDA → **`N01`–`N05`**.
+
+---
+
+## 2. Ghost precedent corpus (synthetic Initech vendor MSAs)
+
+The Spellbook zip does **not** include three historical Initech MSAs. **T4** adds (new files, team-authored):
 
 | Fixture key | Label in UI | Purpose |
 |-------------|-------------|---------|
-| `precedent_megacorp_2021` | e.g. “VendorCo (2021)” | Walkaway: cap vs revenue multiple |
-| `precedent_megacorp_2022` | e.g. “DataHub (2022)” | Audit / data residency fights |
-| `precedent_megacorp_2023` | “Acme-like” reference | Aligns with walkaway copy in PDF |
+| `precedent_initech_vendor_a` | e.g. “CoreBank Vendor (2022)” | Walkaway: cap / breach carve-out patterns |
+| `precedent_initech_vendor_b` | e.g. “Payments API (2023)” | Audit + Ontario data residency |
+| `precedent_initech_vendor_c` | e.g. “Cloud Analytics (2024)” | Step-in + insurance minimums |
 
-Each file: full text or chunked JSON for RAG. Include **at least one** clause snippet that supports walkaway narrative (e.g. walked when cap &lt; threshold).
+Place under `Example Scenario (Optional)/precedents/` as **JSON + short clause excerpts** (do not alter Spellbook `.md` contracts).
 
 ---
 
@@ -47,8 +53,8 @@ Each file: full text or chunked JSON for RAG. Include **at least one** clause sn
 
 | Item | Detail |
 |------|--------|
-| **Root** | Current position after their 12 redlines |
-| **Three branches** | `!!` / `?!` / `??` with fixed labels matching PDF (Net 60 + cap $5M, push all twelve, accept full markup) |
+| **Root** | Current position after Initech MSA redlines (focus **§7 Liability** / data /98 audit) |
+| **Three branches** | `!!` / `?!` / `??` tuned to **cap + breach carve-out** trade vs “push all enterprise asks” vs “accept full markup” |
 | **Scores** | Initial eval **−2.4**; after “Play Best Line” **+0.8** (tunable constants) |
 | **Depth** | 2 plies optional; demo can show 1 ply + ghost hover |
 | **Fallback** | If LLM fails, UI reads `fixtures/tree_canned.json` |
@@ -63,9 +69,10 @@ Each file: full text or chunked JSON for RAG. Include **at least one** clause sn
 
 ---
 
-## 5. Law 25 + PIA
+## 5. Multi-regime compliance + PIA
 
-- **Trigger snippet:** contract language mentioning tracking tech, IP geolocation, US subprocessors (from redline #4)  
+- **OSFI / PIPEDA:** Trigger panels from **insurance mins**, **24h breach notify**, **Ontario-only** data, **audit**, **step-in**, **ISO/SOC** language in `msa_initech_redlines.md`.  
+- **Law 25 (demo secondary):** Contrived but **labeled** trigger—e.g. proposed **US-hosted analytics subprocessor** affecting **Quebec** customers or branch data (see DEMO_SCRIPT).  
 - **PIA sections:** categories of data, retention, transfers, lawful basis — **EN + FR** JSON; Translation API can refine FR at runtime  
 - File: `fixtures/pia_template.json`
 
@@ -88,28 +95,36 @@ Each file: full text or chunked JSON for RAG. Include **at least one** clause sn
 |------|--------|
 | Mode | Test |
 | Card | `4242 4242 4242 4242` |
-| Amount | Derived from Decision financials — e.g. $9,500/mo × 12 = invoice line items (T9) |
+| Currency | **cad** |
+| Amount | Demo: **$90,000 CAD** first invoice / installment narrative (e.g. year-one payment chunk)—keep consistent with pitch; commercial anchor **$180K CAD / 24 mo** ≈ **$7,500 CAD/mo** in `Decision.financials` |
 
 ---
 
 ## 8. Slack / Gmail copy fixtures
 
 - `fixtures/slack_messages.json` — inbound simulation + outbound template  
-- `fixtures/gmail_draft.html` — pre-filled body EN/FR variants
+- `fixtures/gmail_draft.html` — pre-filled body EN/FR variants; **To:** `procurement-legal@initechfg.demo`
 
 ---
 
 ## 9. Spellbook
 
-- **Preferred:** Real trial API issue list for the MSA text  
-- **Fallback:** `fixtures/spellbook_issues.json` matching 12 redlines severity
+- **Preferred:** Real trial API issue list for `msa_initech_redlines.md` text  
+- **Fallback:** `fixtures/spellbook_issues.json` aligned to **R01–R13** severity
+
+---
+
+## 10. Hero video
+
+- **URL:** exact string in root [`HeroVideo.MD`](../HeroVideo.MD) — marketing `<video src>` must match **character-for-character** (T1).
 
 ---
 
 ## Checklist before demo
 
-- [ ] All fixture keys resolvable in dev  
+- [ ] All fixture paths resolve on clean clone  
 - [ ] Tree canned JSON loads in &lt; 100ms  
 - [ ] Voice file plays on Safari + Chrome  
-- [ ] Stripe test key returns 200  
-- [ ] CanLII check works or TrueSight falls back to canned substitute
+- [ ] Stripe test key returns 200 (**CAD**)  
+- [ ] CanLII check works or TrueSight falls back to canned substitute  
+- [ ] Hero video URL matches `HeroVideo.MD`

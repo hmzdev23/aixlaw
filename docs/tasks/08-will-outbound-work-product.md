@@ -6,7 +6,7 @@
 
 ## Goal (1 paragraph)
 
-Implement **`WorkProductService`**: generate a **real `.docx`** with track-changes-style revisions (minimum: comments + colored inserts using `docx` library) applied to the MegaCorp MSA fixture, reflecting the **chosen move** from Cockpit. Generate **Supervisor PDF** via **`@react-pdf/renderer`** with **Legal** vs **Plain-English** layouts. Implement **`VoiceSignoffService`** with pre-recorded audio and state transitions. Fire **Slack** notification and **Gmail draft** with attachment via Google APIs.
+Implement **`WorkProductService`**: generate a **real `.docx`** with track-changes-style revisions (minimum: comments + colored inserts using `docx` library) applied against **`Example Scenario (Optional)/msa_initech_redlines.md`** (parse `~~strike~~`, `**[INITECH ADD: …]**`, emit **Dunder counter-proposal** sections), reflecting the **chosen move** from Cockpit. Generate **Supervisor PDF** via **`@react-pdf/renderer`** with **Legal** vs **Plain-English** layouts (**Plain:** e.g. “Uncapped breach liability as drafted could end the company”). Implement **`VoiceSignoffService`** with pre-recorded audio and state transitions. Fire **Slack** notification and **Gmail draft** with attachment via Google APIs.
 
 ---
 
@@ -38,7 +38,7 @@ Implement **`WorkProductService`**: generate a **real `.docx`** with track-chang
 ### Gmail draft
 - [ ] Use Gmail API `users.drafts.create` with multipart MIME
 - [ ] Attach generated docx bytes
-- [ ] Pre-fill To: `legal@megacorpcloud.demo` (fixture)
+- [ ] Pre-fill To: `procurement-legal@initechfg.demo` (see PERSONAS.md)
 
 ### Bilingual
 - [ ] If `Decision.locale === 'fr'`, call T6 translate for email body + Slack (or use pre-translated templates)

@@ -12,7 +12,7 @@
 | Auth / Google | NextAuth.js v5 + Google provider (Gmail read/draft, Calendar) |
 | Slack | Incoming webhooks (notify) + optional Events API / slash for demo |
 | Doc gen | `docx` (npm) for `.docx`; `@react-pdf/renderer` for Supervisor PDF |
-| Payments | Stripe API (test mode) |
+| Payments | Stripe API (test mode), **currency CAD** for Initech demo |
 | Legal verify | CanLII search / scrape strategy documented in T6 |
 | i18n | `next-intl` or lightweight locale context + Cloud Translation API |
 | Deploy | Vercel (env vars in dashboard) |
@@ -25,28 +25,27 @@
 
 ```
 aixlaw/
-├── app/                          # Next.js routes
-│   ├── (marketing)/              # Landing, Sarah cold open (T1)
-│   ├── (app)/                    # Authenticated app shell
-│   │   ├── cockpit/              # T2
-│   │   ├── war-room/             # T3
-│   │   └── architect/            # T3
-│   └── api/                      # Route handlers (all owners)
-│       ├── engine/               # T4–T6 (or server actions)
-│       ├── integrations/         # T7–T9
-│       └── webhooks/
+├── Example Scenario (Optional)/   # Spellbook fixtures — READ-ONLY in hackathon
+├── HeroVideo.MD                  # Single allowed marketing hero video URL
+├── app/
+│   ├── (marketing)/              # Landing, Sarah cold open (T1) — <video src> from HeroVideo.MD
+│   ├── (app)/
+│   │   ├── cockpit/
+│   │   ├── war-room/
+│   │   └── architect/
+│   └── api/
 ├── src/
-│   ├── components/               # Hamza: ui/, cockpit/, war-room/, architect/
+│   ├── components/
 │   ├── lib/
-│   │   ├── contracts/            # Types mirroring docs/INTEGRATION_CONTRACTS.md
-│   │   ├── engine/               # Aditya: ghost, tree, council, compliance
-│   │   ├── integrations/       # Will: google, slack, stripe, translation
-│   │   └── fixtures/             # Demo JSON + doc snippets
-│   └── hooks/                    # Shared client hooks
+│   │   ├── contracts/
+│   │   ├── engine/
+│   │   ├── integrations/
+│   │   └── fixtures/             # Parsed JSON + canned tree (not a copy of Spellbook .md edits)
+│   └── hooks/
 ├── public/
-│   └── demo/                     # voice memo, static PDF previews if needed
-├── docs/                         # This planning pack
-└── design.MD                     # Read-only spec
+│   └── demo/
+├── docs/
+└── design.MD
 ```
 
 Sprint 0 on `main` creates empty stubs + `src/lib/contracts/*` so feature branches rebase cleanly.
@@ -69,6 +68,8 @@ flowchart LR
     Tree[GameTreeEval]
     Council[MultiAgentCouncil]
     TrueSight[TrueSightCanLII]
+    OSFI[OSFI_B13_Themes]
+    PIPEDA[PIPEDA_Baseline]
     Law25[Law25PIA]
     Bilingual[FR_EN_Translator]
     Runtime[ArchitectRuntime]
@@ -106,10 +107,16 @@ flowchart LR
 
 ## Data flow (happy path)
 
-1. **Inbound:** Gmail/Slack/classifier emits `InboundEvent` → deal session created in server state or DB (Sprint 0 picks: in-memory for hackathon vs SQLite).
-2. **Engine:** `GhostEngine.generate` → `TreeEngine.bloom` → optional `Compliance.check` on draft snippets → UI subscribes via SSE or polling.
+1. **Inbound:** Gmail/Slack/classifier emits `InboundEvent` → `DealSession` built from `Example Scenario (Optional)/` paths.
+2. **Engine:** `GhostEngine.generate` → `TreeEngine.bloom` → `ComplianceService.checkProposedText` on draft snippets → UI subscribes via SSE or polling.
 3. **User action:** “Play Best Line” → `Decision` object → `WorkProduct.docx` + `WorkProduct.supervisorPdf` + `ExecutionEngine.fire`.
 4. **Outbound:** Timeline events stream to Cockpit footer; Slack + Gmail draft complete the arc.
+
+---
+
+## Hero video (T1)
+
+- Marketing hero **must** use the exact URL in root [`HeroVideo.MD`](../HeroVideo.MD) (CloudFront). No re-hosting unless the team explicitly changes that file.
 
 ---
 
@@ -121,7 +128,7 @@ flowchart LR
 | `GOOGLE_CLIENT_ID` / `SECRET` | Will | NextAuth Google |
 | `NEXTAUTH_SECRET` | Will | Session |
 | `SLACK_WEBHOOK_URL` / signing secret | Will | Outbound + verify inbound |
-| `STRIPE_SECRET_KEY` | Will | Test invoices |
+| `STRIPE_SECRET_KEY` | Will | Test invoices (**CAD**) |
 | `GOOGLE_CLOUD_TRANSLATION_KEY` or service account JSON | Aditya | FR/EN |
 | `CANLII_*` or generic HTTP proxy | Aditya | TrueSight |
 | `SPELLBOOK_API_KEY` (optional) | Will | Real Spellbook vs fixture |
@@ -154,4 +161,5 @@ Never commit secrets; use `.env.local` (gitignored).
 
 - No separate Python service (stack lock: pure Next.js).  
 - No editing `design.MD`.  
-- Production-scale EDGAR/firm vault ingestion — out of scope; demo uses three precedent MSAs.
+- No editing Spellbook source files under `Example Scenario (Optional)/` (read-only fixtures).  
+- Production-scale firm vault ingestion — out of scope; demo uses **synthetic** Initech precedent JSON (T4).

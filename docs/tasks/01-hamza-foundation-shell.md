@@ -6,7 +6,9 @@
 
 ## Goal (1 paragraph)
 
-Deliver the **Next.js 15 app shell** and **marketing entry** that matches root `design.MD` (read-only): tokens, typography, spacing, nav, hero, and the **three-mode tab strip** (Cockpit | War Room | Architect). Include **locale toggle** (EN/FR) at the layout level and **persona switcher** chrome so the demo can switch Sarah / Marc / MegaCorp without touching engine code.
+Deliver the **Next.js 15 app shell** and **marketing entry** that matches root `design.MD` (read-only): tokens, typography, spacing, nav, hero, and the **three-mode tab strip** (Cockpit | War Room | Architect). Include **locale toggle** (EN/FR) at the layout level and **persona switcher** chrome so the demo can switch **Sarah (Dunder AI)** / **Marc (GC)** / **Initech Procurement** without touching engine code.
+
+**Hero video (required):** The marketing hero `<video>` element’s `src` must be **exactly** the URL in root [`HeroVideo.MD`](../../HeroVideo.MD) — character-for-character. No alternate CDN unless that file is updated by the team.
 
 ---
 
@@ -18,7 +20,7 @@ Deliver the **Next.js 15 app shell** and **marketing entry** that matches root `
 - [ ] shadcn/ui init: Button, Tabs, DropdownMenu, Sheet, Tooltip, Badge, Separator
 - [ ] Sticky nav: blur, 64px height, logo + mode tabs + locale + persona + optional “Sign in”
 - [ ] **Mode tabs:** route-linked `/(app)/cockpit`, `/war-room`, `/architect` or query `?mode=` — pick one pattern and document in PR
-- [ ] **Landing / Sarah cold open** section: hero, badge, two CTAs (“Enter Cockpit”, “Watch arc”) — copy from DEMO_SCRIPT
+- [ ] **Landing / Sarah cold open** section: hero with **`<video>`** using [`HeroVideo.MD`](../../HeroVideo.MD) URL, badge, two CTAs (“Enter Cockpit”, “Watch arc”) — copy from DEMO_SCRIPT + [SCENARIO_CONTEXT.md](../SCENARIO_CONTEXT.md)
 - [ ] **i18n shell:** `next-intl` or React context storing `locale: 'en' | 'fr'`; pass to `html lang` and downstream fetch headers
 - [ ] **Persona switcher:** dropdown bound to `localStorage` key `gambit_persona` (see PERSONAS.md)
 - [ ] **404 / error** minimal branded pages

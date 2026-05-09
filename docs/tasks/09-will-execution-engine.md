@@ -16,7 +16,7 @@ Implement **`ExecutionEngine.fire`** as an ordered async pipeline emitting **`Ti
 - [ ] `POST /api/execution/fire` body `{ dealId }` loads latest `Decision`
 - [ ] Step 1: `email_received` (immediate done — narrative)
 - [ ] Step 2: `counter_sent` after workproduct success flag
-- [ ] Step 3: Stripe: create customer + invoice items from `Decision.financials`
+- [ ] Step 3: Stripe: create **Customer** “Initech Financial Group Inc.” + invoice in **`cad`** — demo narrative **~$90,000 CAD** first installment (see DEMO_FIXTURES); align line items with `Decision.financials` (**~$7,500/mo × months** or annual chunk)
 - [ ] Step 4: POST internal `/api/provisioning/allocate` with `{ seats, tier }` → updates `data/mock_saas.json`
 - [ ] Step 5: `notary_queued` write job to `data/notary_queue.jsonl`
 - [ ] Emit events via SSE `GET /api/execution/stream?dealId=`
@@ -26,7 +26,7 @@ Implement **`ExecutionEngine.fire`** as an ordered async pipeline emitting **`Ti
 - [ ] Handle errors → `TimelineEvent.status: error` with message
 
 ### Provisioning webhook
-- [ ] Mock SaaS dashboard page at `/admin/mock-provisioning` (optional UI for judges) — can be **Will + Hamza** micro PR; if UI forbidden here, JSON only
+- [ ] Mock **Initech vendor portal** / seat dashboard at `/admin/mock-provisioning` (optional UI) — JSON source `data/mock_saas.json`; **Will + Hamza** micro PR if UI needed
 
 ### Notary queue
 - [ ] Job fields: `dealId`, `jurisdiction: QC`, `contact`, `status: queued`
@@ -34,7 +34,8 @@ Implement **`ExecutionEngine.fire`** as an ordered async pipeline emitting **`Ti
 
 ### Spellbook client
 - [ ] `SPELLBOOK_API_KEY` path: `POST https://...` per Spellbook docs (placeholder URL in `.env.example`)
-- [ ] Fallback: read `fixtures/spellbook_issues.json`
+- [ ] Pass **full text** from `Example Scenario (Optional)/msa_initech_redlines.md` (or NDA) + `{ kind: "msa" | "nda" }`
+- [ ] Fallback: read `fixtures/spellbook_issues.json` aligned to **R01–R13**
 - [ ] Expose `GET /api/spellbook/issues?dealId=` for T4
 
 ### Smoke test

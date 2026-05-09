@@ -6,7 +6,7 @@
 
 ## Goal (1 paragraph)
 
-Implement **`CouncilService.deliberate`** as a **multi-agent** Claude pipeline that emits **`DebateEvent`** timeline for UI animation, plus **`CouncilResult`** vote synthesis from **Counsel, Closer, Counterpart, Compliance, Crown**. Implement **`AiVsAiService`** for optional Q&A. Implement **`ArchitectRuntime.execute`** that walks a **`Playbook` DAG** (Spellbook → Ghost → Tree → Compliance → Decision) with block params affecting weights. Implement **`PlaybookRepository`** persistence (filesystem `data/playbooks/*.json` in dev; Vercel KV optional stretch).
+Implement **`CouncilService.deliberate`** as a **multi-agent** Claude pipeline that emits **`DebateEvent`** timeline for UI animation, plus **`CouncilResult`** vote synthesis from **Counsel, Closer, Counterpart, Compliance, Crown**. Implement **`AiVsAiService`** for optional Q&A. Implement **`ArchitectRuntime.execute`** that walks a **`Playbook` DAG** (Spellbook → **OSFI** → **PIPEDA** → Law 25 → Ghost → Tree → Compliance → Decision) with block params affecting weights. Implement **`PlaybookRepository`** persistence (filesystem `data/playbooks/*.json` in dev; Vercel KV optional stretch).
 
 ---
 
@@ -15,8 +15,8 @@ Implement **`CouncilService.deliberate`** as a **multi-agent** Claude pipeline t
 ### Agents (prompts)
 - [ ] **Counsel:** risk-averse; votes on indemnity, IP, liability, termination, privacy
 - [ ] **Closer:** revenue & speed; challenges Counsel trades
-- [ ] **Counterpart:** conditioned on Ghost profile; predicts MegaCorp response
-- [ ] **Compliance:** wraps T6 `Compliance.check` on proposed snippet (stub hook until T6 lands)
+- [ ] **Counterpart:** conditioned on Ghost profile; predicts **Initech procurement** response
+- [ ] **Compliance:** wraps T6 `ComplianceService.checkProposedText` — returns **OSFI + PIPEDA + Law 25 + TrueSight** bundle; agent summarizes **tri-regime** posture in one bubble chain (stub per-regime until T6 lands)
 - [ ] **Crown:** aggregates votes; breaks ties; produces `finalRecommendation`
 
 ### Council orchestration
@@ -26,7 +26,7 @@ Implement **`CouncilService.deliberate`** as a **multi-agent** Claude pipeline t
 - [ ] Persist last `CouncilResult` per `dealId+moveId` for audit badge
 
 ### AI vs AI
-- [ ] `AiVsAiService.runClauseNegotiation`: two ghost-conditioned agents alternate for `maxRounds`
+- [ ] `AiVsAiService.runClauseNegotiation`: two ghost-conditioned agents alternate for `maxRounds` — **default clause:** MSA **§7.1** liability cap / breach carve-out (`initech_procurement` vs `dunder_founder` personas)
 - [ ] Emit `DebateEvent` with agent tags `counterpart_left` / `counterpart_right` (extend type in contracts if needed — **document change**)
 
 ### Architect runtime

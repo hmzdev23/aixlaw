@@ -6,7 +6,7 @@
 
 ## Goal (1 paragraph)
 
-Implement **`GhostEngine`** and **`TreeEngine`** (+ **`EvalService`**, **`WalkawayService`**) as server-side modules and HTTP/route handlers. **Ghost** = RAG + structured extraction over three MegaCorp precedent MSAs producing `GhostProfile`. **Tree** = Raiffa-style **three candidate moves** with chess notation, close probabilities, retained value, and **ghost reply previews** on hover. **Walkaway** = threshold summary + three **evidence-backed** citations pulled from precedent text (quotes + clause refs). Use **Claude** with **tool use / JSON schema**; always merge with **canned fallback** from `fixtures/tree_canned.json` when model or latency fails.
+Implement **`GhostEngine`** and **`TreeEngine`** (+ **`EvalService`**, **`WalkawayService`**) as server-side modules and HTTP/route handlers. **Ghost** = RAG + structured extraction over **three synthetic Initech vendor precedent** JSON packs (T4 authors under `Example Scenario (Optional)/precedents/` — do not edit Spellbook `.md` contracts) producing `GhostProfile` with `counterpartyId: "initech_procurement"`. **Tree** = Raiffa-style **three candidate moves** with chess notation, close probabilities, **retainedValueCad**, and **ghost reply previews** on hover. **Walkaway** = threshold summary + three **evidence-backed** citations from those precedents (quotes + clause refs). Use **Claude** with **tool use / JSON schema**; always merge with **canned fallback** from `fixtures/tree_canned.json` when model or latency fails.
 
 ---
 
@@ -15,11 +15,11 @@ Implement **`GhostEngine`** and **`TreeEngine`** (+ **`EvalService`**, **`Walkaw
 ### Ingestion & RAG
 - [ ] Chunk precedent docs (e.g. 512–1k tokens, clause-aware splits on headings)
 - [ ] Embedding store: **in-memory** `Map` for hackathon OR `sqlite-vss` if time
-- [ ] Retrieve top-k chunks for queries: “MegaCorp liability cap”, “audit rights”, “termination”
+- [ ] Retrieve top-k chunks for queries: “Initech uncapped breach”, “audit rights”, “step-in”, “Ontario data”
 - [ ] `GhostEngine.generate(session)` pipeline: retrieve → synthesize profile → validate JSON against Zod schema
 
 ### Ghost profile
-- [ ] Deterministic `counterpartyId: megacorp`
+- [ ] Deterministic `counterpartyId: initech_procurement`; card title **INITECH PROCUREMENT · Regulated FI**
 - [ ] `elo`: composite function of extracted stubbornness signals (document formula in code comments)
 - [ ] `fightsOn`, `oftenConcedes`, `walksWhen`: **lists ≥ 3 items** where possible
 - [ ] `refreshFromIssues(session, issues)` bumps emphasis from Spellbook severities
@@ -27,7 +27,7 @@ Implement **`GhostEngine`** and **`TreeEngine`** (+ **`EvalService`**, **`Walkaw
 ### Game tree
 - [ ] `TreeEngine.bloom` returns `GameTree` with **exactly three** `primaryBranchIds`
 - [ ] Notation assignment: map model labels to `!!`, `?!`, `??` per demo script
-- [ ] Numeric: `closeProbability` monotonic with risk story; `retainedValueUsd` optional from commercial fixture
+- [ ] Numeric: `closeProbability` monotonic with risk story; `retainedValueCad` optional from **$180K CAD / 24 mo** fixture (~$7.5K/mo)
 - [ ] `predictCounterMove(nodeId)` uses node context + Ghost chunks
 - [ ] Pre-staged depth: at minimum root → 3 children; optional 2-ply for Q&A
 

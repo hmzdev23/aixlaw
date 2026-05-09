@@ -1,12 +1,12 @@
-# T6 — TrueSight + Law 25 + Bilingual Engine
+# T6 — TrueSight + Multi-Regime Compliance + Bilingual Engine
 
-**Owner:** Aditya · **Branch:** `aditya` · **Depends on:** Text surfaces from T4/T5 (draft clauses, citations), Cloud Translation creds · **Powers demo beats:** TrueSight intercept, PIA EN/FR, bilingual copy, notary trigger signal
+**Owner:** Aditya · **Branch:** `aditya` · **Depends on:** Text surfaces from T4/T5 (draft clauses, citations), Cloud Translation creds · **Powers demo beats:** TrueSight intercept, **OSFI + PIPEDA + Law 25** outputs, PIA EN/FR, bilingual copy, notary trigger signal
 
 ---
 
 ## Goal (1 paragraph)
 
-Implement **`ComplianceService.checkProposedText`** composing **TrueSight** (citation extraction + **CanLII verification**) and **Law 25** analysis (keyword + model classification) with auto-generated **PIA** sections in **English and French**. Expose **`Translator`** helpers for FR/EN toggles across dynamic strings. Emit structured flags consumed by Cockpit (T2) and outbound copy (T8). Provide **`notaryRequired`** boolean when Quebec formalities triggers fire (demo: contract + party location fixture).
+Implement **`ComplianceService.checkProposedText`** returning a unified **`ComplianceReport`**: **TrueSight** (CanLII verification), **OsfiResult** (third-party / operational resilience **themes** aligned to Initech’s posture — cite as risk assessment not legal advice), **PipedResult** (PIPEDA accountability, cross-border, retention), and **Law25Result** (secondary demo beat: contrived **US subprocessor + Quebec-impacted data** per DEMO_SCRIPT). Auto-generate **PIA** sections **EN + FR** when Law 25 triggers. Expose **`Translator`** for FR/EN toggles. Consumed by Cockpit **CompliancePanel** (T2) and outbound copy (T8).
 
 ---
 
@@ -19,23 +19,32 @@ Implement **`ComplianceService.checkProposedText`** composing **TrueSight** (cit
 - [ ] Return spans for UI strikethrough (`start`, `end` in draft string) — optional if hard: return full sentence replacement
 - [ ] Demo inject: read `fixtures/truesight_inject.json` when `dealId=demo`
 
-### Law 25
-- [ ] Trigger list: tracking tech, IP geolocation, cross-border US subprocessors (align with redline #4)
-- [ ] `Law25Result.triggered` + human-readable `triggers[]`
-- [ ] `buildPIA(params)` structured sections: data categories, purposes, retention, transfers, safeguards, lawful basis
-- [ ] French: base template FR + **Cloud Translation** pass EN→FR for consistency check
+### OSFI (theme engine, not a law firm opinion)
+- [ ] Parse signals from **`msa_initech_redlines.md`**: insurance minimums ($5M CGL, $5M E&O, $10M cyber), **24h** breach notification, **Ontario-only** data / no cross-border without consent, **audit** (48h notice, 2×/yr), **step-in** rights
+- [ ] Emit `OsfiResult { triggered, triggers[], notes? }` — `triggered: true` when ≥N enterprise risk signals present
+- [ ] UI disclaimer string id: `osfi_disclaimer` (watermark / footer)
+
+### PIPEDA
+- [ ] Flags: cross-border transfer without consent language, accountability / safeguards (ISO 27001 / SOC 2 refs), retention / breach reporting alignment
+- [ ] Emit `PipedaResult` same shape as `OsfiResult`
+
+### Law 25 (secondary)
+- [ ] Trigger: explicit **US-hosted analytics subprocessor** + **Quebec customer / branch** data exposure (hypo line injected for demo — see RISK_REGISTER R7)
+- [ ] `Law25Result.triggered` + `triggers[]`
+- [ ] `buildPIA(params)` structured sections: categories, purposes, retention, transfers, safeguards, lawful basis — **EN + FR**
+- [ ] French: base template FR + **Cloud Translation** EN→FR consistency pass
 
 ### Bilingual
 - [ ] `Translator.toFr/toEn` with caching
-- [ ] `getBilingualBundle(key)` for static UI strings optional (can stay T1)
+- [ ] `getBilingualBundle(key)` optional (can stay T1)
 
 ### API
-- [ ] `POST /api/engine/compliance` body: `{ text, locale }` → `ComplianceReport`
+- [ ] `POST /api/engine/compliance` body: `{ text, locale }` → `ComplianceReport` (**trueSight, osfi, pipeda, law25**)
 - [ ] `POST /api/engine/translate` body: `{ text, target }` → `{ text }`
 
 ### Notary signal
-- [ ] `ComplianceReport` extension or separate endpoint `GET /api/engine/notary?dealId` → `{ required: boolean, reason }`
-- [ ] Rule: if `partyQuebec=true` fixture flag AND agreement type MSA → `required`
+- [ ] `GET /api/engine/notary?dealId` → `{ required: boolean, reason }`
+- [ ] Rule: Quebec formalities **or** Law25 + `partyQuebec=true` fixture flag → `required` for demo narrative
 
 ---
 
@@ -45,9 +54,12 @@ Implement **`ComplianceService.checkProposedText`** composing **TrueSight** (cit
 src/lib/engine/compliance/
   trueSight.ts
   canliiClient.ts
+  osfi.ts
+  pipeda.ts
   law25.ts
   piaGenerator.ts
   translator.ts
+  complianceService.ts
 app/api/engine/compliance/route.ts
 app/api/engine/translate/route.ts
 app/api/engine/notary/route.ts
@@ -57,25 +69,24 @@ app/api/engine/notary/route.ts
 
 ## Public interfaces (typed)
 
-- `ComplianceService`, `Translator` from INTEGRATION_CONTRACTS.md
-- Extend `ComplianceReport` only via PR updating DATA_MODELS.md
+- `ComplianceService`, `Translator` from INTEGRATION_CONTRACTS.md  
+- `ComplianceReport` = `{ trueSight, osfi, pipeda, law25 }` per DATA_MODELS.md
 
 ---
 
 ## Implementation notes & method choices
 
-- CanLII: respect robots/terms; prefer **rate-limited** server cache; **never** scrape from client
-- If CanLII blocked: use **offline verification table** for demo cases (SCC, QCCA samples)
-- Law 25: pair regex with Claude **boolean JSON** `{"triggered":..., "reasons":[]}` for robustness
-- PIA: not legal advice — prepend watermark comment in JSON for demo
+- CanLII: respect terms; **server-side only** cache  
+- OSFI: reference **“third-party risk themes”** tied to scenario text — avoid citing paragraph numbers unless verified against published guidance  
+- Law 25: **label** demo trigger in API metadata `demoExtension: true` for honesty in Q&A
 
 ---
 
 ## Acceptance criteria
 
-- [ ] Demo inject path always produces red strikethrough + substitution
-- [ ] Law 25 path generates EN+FR PIA objects with ≥5 sections each
-- [ ] Translation API errors degrade to EN-only with banner flag
+- [ ] Demo inject path always produces TrueSight substitution  
+- [ ] OSFI + PIPEDA return non-empty triggers on full `msa_initech_redlines.md` text  
+- [ ] Law 25 path generates EN+FR PIA when hypo trigger text present  
 - [ ] `GAMBIT_DISABLE_CANLII=true` uses fixture verification
 
 ---
@@ -88,8 +99,8 @@ app/api/engine/notary/route.ts
 
 ## Fallback plan if behind
 
-- TrueSight: only demo inject, no live search
-- PIA: static `pia_template.json` with manual FR
+- OSFI/PIPEDA: static keyword list + canned messages  
+- Law 25: static `pia_template.json` only
 
 ---
 

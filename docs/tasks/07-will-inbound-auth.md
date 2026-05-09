@@ -6,7 +6,7 @@
 
 ## Goal (1 paragraph)
 
-Implement **real inbound integrations** where feasible: **NextAuth** with Google for **Gmail read + Calendar read** (and **Gmail compose** scope for drafts in T8). Add **Slack** endpoint (Events API or slash command) that classifies attachments as **contract redlines**. Normalize everything into **`InboundEvent`** (INTEGRATION_CONTRACTS.md). Provide **`triggerManualDemo()`** that loads Spellbook MSA fixtures instantly. Map authenticated Google emails to **`Persona`** records or run **`GAMBIT_DEMO_MODE`** bypass. Surface **calendar conflict** data for Cockpit countdown.
+Implement **real inbound integrations** where feasible: **NextAuth** with Google for **Gmail read + Calendar read** (and **Gmail compose** scope for drafts in T8). Add **Slack** endpoint (Events API or slash command) that classifies attachments as **contract redlines**. Normalize everything into **`InboundEvent`** (INTEGRATION_CONTRACTS.md). Provide **`triggerManualDemo(opts?: { documentFocus?: "nda" | "msa" })`** that loads files from **`Example Scenario (Optional)/`** instantly (`msa_initech_redlines.md` default; `nda_initech_redlines.md` optional). Map authenticated Google emails to **`Persona`** records or run **`GAMBIT_DEMO_MODE`** bypass. Surface **calendar conflict** data for Cockpit countdown.
 
 ---
 
@@ -36,7 +36,7 @@ Implement **real inbound integrations** where feasible: **NextAuth** with Google
 - [ ] API `GET /api/personas` for UI switcher when not using Google mapping
 
 ### Demo trigger
-- [ ] `POST /api/demo/trigger` → returns canned `InboundEvent` + loads `DealSession` fixture
+- [ ] `POST /api/demo/trigger` body `{ documentFocus?: "nda" | "msa" }` → returns canned `InboundEvent` + builds `DealSession` with `FIXTURE_DIR` paths from INTEGRATION_CONTRACTS.md
 
 ### API routes
 - [ ] `GET /api/inbound/latest?dealId`
