@@ -4,24 +4,38 @@ import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import { motion, AnimatePresence, useScroll } from "framer-motion";
 import {
-  ChevronRight,
-  ArrowRight,
-  Shield,
-  Zap,
-  Network,
-  LayoutDashboard,
-  Swords,
-  Check,
   Menu,
   X,
-  Clock,
-  Users,
-  FileText,
-  GitBranch,
+  Zap,
+  Shield,
+  Network,
+  Swords,
+  LayoutDashboard,
+  Check,
 } from "lucide-react";
 
 const HERO_VIDEO_URL =
   "https://d8j0ntlcm91z4.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/hf_20260505_101331_74f9b798-3f00-4e86-8a01-377aa16ffeaa.mp4";
+
+const MOTION_DEFAULTS = {
+  initial: { opacity: 0, y: 16 },
+  whileInView: { opacity: 1, y: 0 },
+  viewport: { once: true as const },
+  transition: { duration: 0.6, ease: [0.16, 1, 0.3, 1] as [number, number, number, number] },
+};
+
+/* ─────────────────────────── PulseGrid logo mark ────────────────── */
+
+function LogoMark() {
+  return (
+    <div className="w-7 h-7 grid grid-cols-2 gap-[2px] rounded-[4px] overflow-hidden flex-shrink-0">
+      <div className="bg-[#0c0a09]" />
+      <div className="bg-[#a7e5d3]" />
+      <div className="bg-[#a8c8e8]" />
+      <div className="bg-[#c8b8e0]" />
+    </div>
+  );
+}
 
 /* ─────────────────────────── TopNav ─────────────────────────────── */
 
@@ -31,43 +45,37 @@ function TopNav() {
   const { scrollY } = useScroll();
 
   useEffect(() => {
-    return scrollY.on("change", (v) => setScrolled(v > 12));
+    return scrollY.on("change", (v) => setScrolled(v > 8));
   }, [scrollY]);
 
   const navLinks = [
-    { label: "Product", href: "/#product" },
+    { label: "Cockpit", href: "/cockpit" },
     { label: "War Room", href: "/war-room" },
     { label: "Architect", href: "/architect" },
-    { label: "Pricing", href: "/#pricing" },
   ];
 
   return (
     <header
-      className={`fixed inset-x-0 top-0 z-50 transition-all duration-300 ${
-        scrolled
-          ? "bg-white/90 backdrop-blur-xl border-b border-zinc-200 shadow-sm"
-          : "bg-transparent"
+      className={`fixed inset-x-0 top-0 z-50 h-16 bg-[#f5f5f5] border-b border-[#e7e5e4] transition-shadow duration-200 ${
+        scrolled ? "shadow-sm" : ""
       }`}
     >
-      <div className="max-w-7xl mx-auto px-6 lg:px-8 h-16 flex items-center justify-between">
+      <div className="max-w-7xl mx-auto px-6 h-full flex items-center justify-between">
         {/* Logo */}
-        <Link href="/" className="flex items-center gap-2.5 flex-shrink-0">
-          <div
-            className="w-8 h-8 rounded-lg flex items-center justify-center text-white font-bold text-sm select-none"
-            style={{ background: "#FF4B00" }}
-          >
-            G
-          </div>
-          <span className="font-semibold text-zinc-950 tracking-tight">Gambit</span>
+        <Link href="/" className="flex items-center gap-2 flex-shrink-0">
+          <LogoMark />
+          <span className="font-medium text-[15px] text-[#0c0a09] tracking-tight select-none">
+            Gambit
+          </span>
         </Link>
 
         {/* Desktop nav */}
-        <nav className="hidden md:flex items-center gap-1">
+        <nav className="hidden md:flex items-center gap-6">
           {navLinks.map((link) => (
             <Link
               key={link.label}
               href={link.href}
-              className="px-4 py-2 text-sm text-zinc-500 hover:text-zinc-950 transition-colors rounded-full hover:bg-zinc-100"
+              className="text-[15px] font-medium text-[#0c0a09] opacity-70 hover:opacity-100 transition-opacity"
             >
               {link.label}
             </Link>
@@ -75,26 +83,24 @@ function TopNav() {
         </nav>
 
         {/* Desktop right */}
-        <div className="hidden md:flex items-center gap-3">
+        <div className="hidden md:flex items-center gap-4">
           <Link
             href="/cockpit"
-            className="text-sm text-zinc-500 hover:text-zinc-950 transition-colors"
+            className="text-[15px] text-[#0c0a09] opacity-60 hover:opacity-100 transition-opacity"
           >
             Log in
           </Link>
           <Link
             href="/cockpit"
-            className="inline-flex items-center gap-1.5 px-4 py-2 rounded-full text-sm font-semibold text-white shadow-sm transition-all hover:shadow-md active:scale-95"
-            style={{ background: "#FF4B00" }}
+            className="bg-[#0c0a09] text-white rounded-full px-5 py-2.5 text-[15px] font-medium hover:opacity-90 transition-opacity"
           >
             Enter Cockpit
-            <ChevronRight size={13} />
           </Link>
         </div>
 
         {/* Mobile hamburger */}
         <button
-          className="md:hidden p-2 rounded-full text-zinc-500 hover:text-zinc-950 hover:bg-zinc-100 transition-colors"
+          className="md:hidden p-2 rounded-full text-[#0c0a09] hover:bg-[#e7e5e4] transition-colors"
           onClick={() => setMobileOpen((o) => !o)}
           aria-label={mobileOpen ? "Close menu" : "Open menu"}
         >
@@ -110,7 +116,7 @@ function TopNav() {
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -8 }}
             transition={{ duration: 0.18 }}
-            className="md:hidden bg-white/95 backdrop-blur-xl border-b border-zinc-200"
+            className="md:hidden bg-[#f5f5f5] border-b border-[#e7e5e4]"
           >
             <div className="max-w-7xl mx-auto px-6 py-4 flex flex-col gap-1">
               {navLinks.map((link) => (
@@ -118,27 +124,25 @@ function TopNav() {
                   key={link.label}
                   href={link.href}
                   onClick={() => setMobileOpen(false)}
-                  className="px-4 py-2.5 text-sm font-medium text-zinc-600 hover:text-zinc-950 hover:bg-zinc-50 rounded-xl transition-colors"
+                  className="px-4 py-2.5 text-[15px] font-medium text-[#0c0a09] hover:bg-[#e7e5e4] rounded-xl transition-colors"
                 >
                   {link.label}
                 </Link>
               ))}
-              <div className="border-t border-zinc-100 mt-2 pt-3 flex flex-col gap-2">
+              <div className="border-t border-[#e7e5e4] mt-2 pt-3 flex flex-col gap-2">
                 <Link
                   href="/cockpit"
                   onClick={() => setMobileOpen(false)}
-                  className="px-4 py-2.5 text-sm text-zinc-500 hover:text-zinc-950 transition-colors"
+                  className="px-4 py-2.5 text-[15px] text-[#0c0a09] opacity-60"
                 >
                   Log in
                 </Link>
                 <Link
                   href="/cockpit"
                   onClick={() => setMobileOpen(false)}
-                  className="inline-flex items-center justify-center gap-1.5 px-4 py-2.5 rounded-full text-sm font-semibold text-white"
-                  style={{ background: "#FF4B00" }}
+                  className="inline-flex items-center justify-center bg-[#0c0a09] text-white rounded-full px-5 py-2.5 text-[15px] font-medium"
                 >
                   Enter Cockpit
-                  <ChevronRight size={13} />
                 </Link>
               </div>
             </div>
@@ -154,303 +158,351 @@ function TopNav() {
 function HeroSection() {
   const videoRef = useRef<HTMLVideoElement>(null);
 
-  const integrationBadges = [
-    { icon: <Zap size={12} />, label: "Spellbook" },
-    { icon: <Shield size={12} />, label: "OSFI" },
-    { icon: <FileText size={12} />, label: "PIPEDA" },
-    { icon: <GitBranch size={12} />, label: "Law 25" },
-  ];
-
   return (
-    <section
-      className="relative overflow-hidden"
-      style={{
-        background:
-          "radial-gradient(circle at top, rgba(255,75,0,0.06), transparent 35%), radial-gradient(circle at 20% 30%, rgba(255,184,0,0.05), transparent 28%), #ffffff",
-      }}
-    >
-      {/* Subtle grid overlay */}
+    <section className="relative overflow-hidden bg-[#f5f5f5] pt-24 pb-16 px-6">
+      {/* Atmospheric orbs */}
       <div
-        className="absolute inset-0 pointer-events-none"
-        style={{
-          backgroundImage:
-            "linear-gradient(to right, rgba(24,24,27,0.03) 1px, transparent 1px), linear-gradient(to bottom, rgba(24,24,27,0.03) 1px, transparent 1px)",
-          backgroundSize: "4rem 4rem",
-        }}
         aria-hidden="true"
+        className="pointer-events-none absolute -top-10 -left-16 w-[480px] h-[480px] opacity-40 blur-3xl z-0"
+        style={{
+          background: "radial-gradient(circle, #a7e5d3 0%, transparent 70%)",
+        }}
+      />
+      <div
+        aria-hidden="true"
+        className="pointer-events-none absolute -top-10 -right-16 w-[400px] h-[400px] opacity-35 blur-3xl z-0"
+        style={{
+          background: "radial-gradient(circle, #f4c5a8 0%, transparent 70%)",
+        }}
+      />
+      <div
+        aria-hidden="true"
+        className="pointer-events-none absolute bottom-0 left-1/2 -translate-x-1/2 w-[360px] h-[360px] opacity-30 blur-3xl z-0"
+        style={{
+          background: "radial-gradient(circle, #c8b8e0 0%, transparent 70%)",
+        }}
       />
 
-      <div className="relative max-w-7xl mx-auto px-6 pt-32 pb-14 lg:pt-40 lg:px-8 flex flex-col items-center text-center">
-        {/* Badge pill */}
+      {/* Content */}
+      <div className="relative z-10 max-w-4xl mx-auto text-center">
         <motion.div
           initial={{ opacity: 0, y: 16 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5 }}
-          className="inline-flex items-center gap-2 rounded-full border border-zinc-200 bg-white/90 px-3 py-1.5 shadow-sm backdrop-blur mb-8"
+          transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
         >
-          <span
-            className="w-1.5 h-1.5 rounded-full flex-shrink-0"
-            style={{ background: "#FF4B00" }}
-          />
-          <span className="text-xs font-medium uppercase tracking-widest text-zinc-500">
+          {/* Badge */}
+          <span className="inline-block bg-[#f0efed] text-[#777169] rounded-full px-3 py-1 text-[12px] font-semibold uppercase tracking-widest">
             Spellbook Challenge · Hackathon 2026
           </span>
-        </motion.div>
 
-        {/* H1 */}
-        <motion.h1
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, delay: 0.08 }}
-          className="text-5xl sm:text-6xl lg:text-7xl font-semibold tracking-tight text-zinc-950 max-w-4xl leading-[1.08]"
-        >
-          The negotiation cockpit for enterprise deals
-        </motion.h1>
-
-        {/* Sub */}
-        <motion.p
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, delay: 0.15 }}
-          className="mt-6 max-w-2xl text-lg text-zinc-500 leading-relaxed"
-        >
-          Ghost opponent modelling, game-tree analysis, multi-regime compliance, and full
-          execution arc — from Initech&apos;s redlines to signed in under two hours.
-        </motion.p>
-
-        {/* CTA row */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, delay: 0.22 }}
-          className="mt-8 flex flex-wrap items-center justify-center gap-3"
-        >
-          <Link
-            href="/cockpit"
-            className="inline-flex items-center gap-2 px-6 py-3 rounded-full text-sm font-semibold text-white shadow-sm hover:shadow-md transition-all active:scale-95"
-            style={{ background: "#FF4B00" }}
+          {/* H1 */}
+          <h1
+            className="font-display mt-6 text-[#0c0a09] leading-[1.05] tracking-[-0.03em]"
+            style={{ fontSize: "clamp(48px, 7vw, 80px)" }}
           >
-            Enter Cockpit
-            <ArrowRight size={14} />
-          </Link>
-          <Link
-            href="/#product"
-            className="inline-flex items-center gap-2 px-6 py-3 rounded-full text-sm font-semibold text-zinc-700 border border-zinc-200 bg-white shadow-sm hover:border-zinc-300 hover:bg-zinc-50 transition-all"
-          >
-            See how it works
-          </Link>
-        </motion.div>
+            Negotiate like you&apos;ve
+            <br />
+            been here before.
+          </h1>
 
-        {/* Integration badge pills */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, delay: 0.3 }}
-          className="mt-6 flex flex-wrap items-center justify-center gap-2"
-        >
-          {integrationBadges.map((badge) => (
-            <div
-              key={badge.label}
-              className="inline-flex items-center gap-1.5 rounded-full border border-zinc-200 bg-white/90 px-3 py-1.5 shadow-sm backdrop-blur"
+          {/* Sub */}
+          <p className="text-[17px] text-[#4e4e4e] leading-relaxed max-w-xl mx-auto mt-5">
+            Ghost opponent modelling, game-tree analysis, multi-regime compliance, and full
+            execution arc — from Initech&apos;s redlines to signed in under two hours.
+          </p>
+
+          {/* CTAs */}
+          <div className="mt-8 flex gap-3 justify-center flex-wrap">
+            <Link
+              href="/cockpit"
+              className="bg-[#0c0a09] text-white rounded-full px-5 py-2.5 text-[15px] font-medium hover:opacity-90 transition-opacity"
             >
-              <span className="text-zinc-400">{badge.icon}</span>
-              <span className="text-xs font-medium text-zinc-500">{badge.label}</span>
-            </div>
-          ))}
-        </motion.div>
-
-        {/* Video card */}
-        <motion.div
-          initial={{ opacity: 0, y: 32 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 0.4, ease: [0.16, 1, 0.3, 1] }}
-          className="relative mx-auto mt-14 w-full max-w-6xl"
-        >
-          {/* Glow blob */}
-          <div
-            className="absolute -top-16 left-1/2 -translate-x-1/2 w-[600px] h-[200px] pointer-events-none"
-            style={{
-              background:
-                "radial-gradient(ellipse at center, rgba(255,75,0,0.12), transparent 70%)",
-              filter: "blur(40px)",
-            }}
-            aria-hidden="true"
-          />
-
-          {/* Outer card */}
-          <div className="relative rounded-[2rem] border border-zinc-200 bg-white/95 p-3 shadow-[0_20px_80px_-20px_rgba(0,0,0,0.15)]">
-            {/* Inner card */}
-            <div className="rounded-[1.5rem] border border-zinc-200 overflow-hidden">
-              {/* Browser chrome */}
-              <div className="flex items-center gap-2 px-4 py-3 bg-zinc-50 border-b border-zinc-200">
-                <div className="flex items-center gap-1.5">
-                  <div className="w-3 h-3 rounded-full bg-red-400" />
-                  <div className="w-3 h-3 rounded-full bg-amber-400" />
-                  <div className="w-3 h-3 rounded-full bg-emerald-400" />
-                </div>
-                <div className="flex-1 flex justify-center">
-                  <div className="rounded-full border border-zinc-200 bg-white px-4 py-1 text-xs text-zinc-400 font-medium select-none">
-                    Dunder AI / MSA Cockpit
-                  </div>
-                </div>
-              </div>
-              {/* Video */}
-              <video
-                ref={videoRef}
-                src={HERO_VIDEO_URL}
-                autoPlay
-                loop
-                muted
-                playsInline
-                className="w-full h-80 md:h-[480px] object-cover block"
-                aria-label="Gambit product demo — AI-powered negotiation cockpit"
-              />
-            </div>
+              Enter Cockpit
+            </Link>
+            <Link
+              href="#features"
+              className="border border-[#d6d3d1] bg-transparent text-[#0c0a09] rounded-full px-5 py-2.5 text-[15px] font-medium hover:bg-[#f0efed] transition-colors"
+            >
+              See how it works
+            </Link>
           </div>
         </motion.div>
       </div>
+
+      {/* Video card */}
+      <motion.div
+        initial={{ opacity: 0, y: 16 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.6, delay: 0.2, ease: [0.16, 1, 0.3, 1] }}
+        className="relative mt-14 max-w-5xl mx-auto"
+      >
+        {/* Glow blob */}
+        <div
+          aria-hidden="true"
+          className="absolute inset-x-20 -top-6 h-32 rounded-full blur-3xl pointer-events-none"
+          style={{
+            background:
+              "linear-gradient(to right, rgba(167,229,211,0.3), rgba(200,184,224,0.2), rgba(244,197,168,0.3))",
+          }}
+        />
+
+        {/* Outer card */}
+        <div className="relative rounded-2xl border border-[#e7e5e4] bg-white/90 p-2.5 shadow-[0_16px_60px_-12px_rgba(0,0,0,0.1)]">
+          {/* Inner card */}
+          <div className="rounded-xl border border-[#e7e5e4] overflow-hidden">
+            {/* Chrome bar */}
+            <div className="flex items-center gap-2 px-4 py-3 bg-[#f5f5f5] border-b border-[#e7e5e4]">
+              <div className="flex items-center gap-1.5">
+                <div className="w-[10px] h-[10px] rounded-full bg-rose-400" />
+                <div className="w-[10px] h-[10px] rounded-full bg-amber-400" />
+                <div className="w-[10px] h-[10px] rounded-full bg-emerald-400" />
+              </div>
+              <div className="flex-1 flex justify-center">
+                <div className="rounded-full border border-[#e7e5e4] bg-white px-4 py-1 text-xs text-[#777169] font-medium select-none">
+                  Dunder AI / MSA Cockpit
+                </div>
+              </div>
+            </div>
+
+            {/* Video */}
+            <video
+              ref={videoRef}
+              src={HERO_VIDEO_URL}
+              autoPlay
+              loop
+              muted
+              playsInline
+              className="w-full h-[360px] object-cover block"
+              aria-label="Gambit product demo — AI-powered negotiation cockpit"
+            />
+          </div>
+        </div>
+      </motion.div>
     </section>
+  );
+}
+
+/* ─────────────────────────── Feature card illustrations ─────────── */
+
+function CockpitIllustration() {
+  const icons = [
+    { Icon: LayoutDashboard, label: "Eval bar", color: "#a7e5d3" },
+    { Icon: Swords, label: "Ghost", color: "#c8b8e0" },
+    { Icon: Network, label: "Tree", color: "#a8c8e8" },
+    { Icon: Shield, label: "Walkaway", color: "#f4c5a8" },
+  ];
+  return (
+    <div className="h-48 rounded-xl bg-[#f5f5f5] mb-5 relative overflow-hidden">
+      {/* Mint atmosphere */}
+      <div
+        aria-hidden="true"
+        className="absolute inset-0 pointer-events-none opacity-40"
+        style={{ background: "radial-gradient(circle at 30% 40%, #a7e5d3 0%, transparent 60%)" }}
+      />
+      <div className="relative z-10 grid grid-cols-2 gap-3 p-4 h-full">
+        {icons.map(({ Icon, label, color }) => (
+          <div
+            key={label}
+            className="flex flex-col items-center justify-center gap-1.5 rounded-lg border border-[#e7e5e4] bg-white/80"
+          >
+            <Icon size={20} style={{ color }} />
+            <span className="text-[11px] text-[#777169] font-medium">{label}</span>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function WarRoomIllustration() {
+  const nodes = [
+    { Icon: Zap, label: "File", color: "#a7e5d3" },
+    { Icon: Swords, label: "Ghost", color: "#c8b8e0" },
+    { Icon: Network, label: "Council", color: "#a8c8e8" },
+    { Icon: Shield, label: "Crown", color: "#f4c5a8" },
+    { Icon: Check, label: "Sign", color: "#a7e5d3" },
+  ];
+  return (
+    <div className="h-48 rounded-xl bg-[#f5f5f5] mb-5 relative overflow-hidden">
+      <div
+        aria-hidden="true"
+        className="absolute inset-0 pointer-events-none opacity-30"
+        style={{ background: "radial-gradient(circle at 70% 50%, #c8b8e0 0%, transparent 60%)" }}
+      />
+      <div className="relative z-10 flex items-center justify-center gap-1.5 h-full px-4">
+        {nodes.map(({ Icon, label, color }, i) => (
+          <div key={label} className="flex items-center gap-1.5">
+            <div className="flex flex-col items-center gap-1">
+              <div
+                className="w-9 h-9 rounded-lg border border-[#e7e5e4] bg-white/90 flex items-center justify-center"
+              >
+                <Icon size={16} style={{ color }} />
+              </div>
+              <span className="text-[10px] text-[#777169]">{label}</span>
+            </div>
+            {i < nodes.length - 1 && (
+              <div className="w-4 h-px bg-[#e7e5e4] mb-4 flex-shrink-0" />
+            )}
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function ComplianceIllustration() {
+  const rows = [
+    { label: "OSFI", status: "pass", color: "#a7e5d3" },
+    { label: "PIPEDA", status: "pass", color: "#a7e5d3" },
+    { label: "Law 25", status: "warn", color: "#f4c5a8" },
+  ];
+  return (
+    <div className="h-48 rounded-xl bg-[#f5f5f5] mb-5 relative overflow-hidden">
+      <div
+        aria-hidden="true"
+        className="absolute inset-0 pointer-events-none opacity-30"
+        style={{ background: "radial-gradient(circle at 20% 60%, #a7e5d3 0%, transparent 60%)" }}
+      />
+      <div className="relative z-10 flex flex-col justify-center gap-3 h-full px-5">
+        {rows.map(({ label, status, color }) => (
+          <div
+            key={label}
+            className="flex items-center justify-between bg-white/90 rounded-lg border border-[#e7e5e4] px-4 py-2.5"
+          >
+            <span className="text-[13px] font-medium text-[#0c0a09]">{label}</span>
+            <div className="flex items-center gap-1.5">
+              <div
+                className="w-2 h-2 rounded-full"
+                style={{ background: color }}
+              />
+              <span className="text-[11px] text-[#777169] uppercase tracking-wide font-semibold">
+                {status}
+              </span>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function ArchitectIllustration() {
+  const blocks = [
+    { color: "#a7e5d3", label: "Brief" },
+    { color: "#c8b8e0", label: "Ghost" },
+    { color: "#a8c8e8", label: "Council" },
+    { color: "#f4c5a8", label: "Exec" },
+  ];
+  return (
+    <div className="h-48 rounded-xl bg-[#f5f5f5] mb-5 relative overflow-hidden">
+      <div
+        aria-hidden="true"
+        className="absolute inset-0 pointer-events-none opacity-30"
+        style={{ background: "radial-gradient(circle at 80% 20%, #a8c8e8 0%, transparent 60%)" }}
+      />
+      <div className="relative z-10 grid grid-cols-2 gap-3 p-4 h-full">
+        {blocks.map(({ color, label }) => (
+          <div
+            key={label}
+            className="rounded-lg border border-[#e7e5e4] bg-white/80 flex flex-col items-center justify-center gap-1.5"
+          >
+            <div className="w-6 h-6 rounded-md" style={{ background: color }} />
+            <span className="text-[11px] text-[#777169] font-medium">{label}</span>
+          </div>
+        ))}
+      </div>
+    </div>
   );
 }
 
 /* ─────────────────────────── FeaturesSection ────────────────────── */
 
 function FeaturesSection() {
-  const features = [
-    {
-      id: "cockpit",
-      icon: <LayoutDashboard size={20} />,
-      iconBg: "bg-indigo-50 text-indigo-600",
-      col: "lg:col-span-1",
-      title: "Evaluate every move in real time",
-      sub: "Cockpit",
-      bullets: [
-        { color: "text-indigo-500", label: "Chess-style eval bar" },
-        { color: "text-indigo-500", label: "Ghost opponent model (ELO 2341)" },
-        { color: "text-indigo-500", label: "Game tree with 3 branches" },
-        { color: "text-indigo-500", label: "Walkaway line with citations" },
-      ],
-      href: "/cockpit",
-    },
-    {
-      id: "warroom",
-      icon: <Swords size={20} />,
-      iconBg: "bg-violet-50 text-violet-600",
-      col: "lg:col-span-2",
-      title: "Multi-agent council. Auditable record.",
-      sub: "War Room",
-      bullets: [
-        { color: "text-violet-500", label: "4 AI agents deliberate" },
-        { color: "text-violet-500", label: "Vote tally + Crown synthesis" },
-        { color: "text-violet-500", label: "AI-vs-AI preset debate" },
-        { color: "text-violet-500", label: "Full transcript" },
-      ],
-      href: "/war-room",
-    },
-    {
-      id: "compliance",
-      icon: <Shield size={20} />,
-      iconBg: "bg-emerald-50 text-emerald-600",
-      col: "lg:col-span-2",
-      title: "OSFI · PIPEDA · Law 25",
-      sub: "Compliance",
-      bullets: [
-        { color: "text-emerald-500", label: "Multi-regime compliance scanner" },
-        { color: "text-emerald-500", label: "Auto-generated PIA (EN/FR)" },
-        { color: "text-emerald-500", label: "TrueSight citation verifier" },
-        { color: "text-emerald-500", label: "CanLII validation" },
-      ],
-      href: "/cockpit",
-    },
-    {
-      id: "architect",
-      icon: <Network size={20} />,
-      iconBg: "bg-amber-50 text-amber-600",
-      col: "lg:col-span-1",
-      title: "Rewire the engine",
-      sub: "Architect",
-      bullets: [
-        { color: "text-amber-500", label: "Drag-and-drop agent canvas" },
-        { color: "text-amber-500", label: "Save as Playbook" },
-        { color: "text-amber-500", label: "Tune sensitivity sliders" },
-        { color: "text-amber-500", label: "Export JSON" },
-      ],
-      href: "/architect",
-    },
-  ];
-
   return (
-    <section id="product" className="py-24 bg-white">
-      <div className="max-w-7xl mx-auto px-6 lg:px-8">
-        {/* Header */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.6 }}
-          className="text-center mb-16"
+    <section id="features" className="py-24 px-6">
+      {/* Header */}
+      <motion.div
+        {...MOTION_DEFAULTS}
+        className="text-center max-w-3xl mx-auto"
+      >
+        <span className="bg-[#f0efed] text-[#777169] rounded-full px-3 py-1 text-[12px] font-semibold uppercase tracking-widest">
+          Three modes
+        </span>
+        <h2
+          className="font-display text-[#0c0a09] leading-[1.1] tracking-[-0.03em] mt-3"
+          style={{ fontSize: "clamp(36px, 5vw, 56px)" }}
         >
-          <p className="text-xs font-medium uppercase tracking-widest text-zinc-400 mb-4">
-            Platform
+          One unfair advantage.
+        </h2>
+        <p className="text-[17px] text-[#4e4e4e] mt-4 max-w-2xl mx-auto">
+          Cockpit is the product. War Room makes it defensible. Architect makes it yours.
+        </p>
+      </motion.div>
+
+      {/* Cards grid */}
+      <div className="mt-14 grid grid-cols-1 lg:grid-cols-3 gap-4 max-w-6xl mx-auto">
+        {/* Card 1 — Cockpit (lg:col-span-1) */}
+        <motion.div
+          {...MOTION_DEFAULTS}
+          transition={{ duration: 0.6, delay: 0.05, ease: [0.16, 1, 0.3, 1] }}
+          className="lg:col-span-1 bg-white border border-[#e7e5e4] rounded-2xl p-6"
+        >
+          <CockpitIllustration />
+          <p className="text-[20px] font-medium text-[#0c0a09] leading-snug">
+            Eval bar. Ghost card. Game tree. Walkaway line.
           </p>
-          <h2 className="text-4xl lg:text-5xl font-semibold tracking-tight text-zinc-950 mb-4">
-            Three modes. One unfair advantage.
-          </h2>
-          <p className="max-w-2xl mx-auto text-lg text-zinc-500 leading-relaxed">
-            Cockpit is the product. War Room makes it defensible. Architect makes it yours.
+          <p className="text-[15px] text-[#4e4e4e] mt-2 leading-relaxed">
+            Chess-style position scoring with a counterparty model built from Initech&apos;s
+            precedent corpus.
           </p>
         </motion.div>
 
-        {/* Cards grid */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
-          {features.map((f, i) => (
-            <motion.div
-              key={f.id}
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.5, delay: i * 0.08 }}
-              className={`${f.col} rounded-[1.5rem] border border-zinc-200 bg-white p-6 flex flex-col gap-5 hover:shadow-md transition-shadow`}
-            >
-              {/* Icon + label */}
-              <div className="flex items-start justify-between">
-                <div className={`w-10 h-10 rounded-xl flex items-center justify-center ${f.iconBg}`}>
-                  {f.icon}
-                </div>
-                <span className="text-xs font-medium uppercase tracking-widest text-zinc-400">
-                  {f.sub}
-                </span>
-              </div>
+        {/* Card 2 — War Room (lg:col-span-2) */}
+        <motion.div
+          {...MOTION_DEFAULTS}
+          transition={{ duration: 0.6, delay: 0.1, ease: [0.16, 1, 0.3, 1] }}
+          className="lg:col-span-2 bg-white border border-[#e7e5e4] rounded-2xl p-6"
+        >
+          <WarRoomIllustration />
+          <p className="text-[20px] font-medium text-[#0c0a09] leading-snug">
+            Multi-agent council. Auditable record.
+          </p>
+          <p className="text-[15px] text-[#4e4e4e] mt-2 leading-relaxed">
+            Four AI agents deliberate, vote, and synthesize. Crown produces a 4–0 recommendation
+            with full transcript.
+          </p>
+        </motion.div>
 
-              {/* Title */}
-              <h3 className="text-xl font-semibold tracking-tight text-zinc-950 leading-snug">
-                {f.title}
-              </h3>
+        {/* Card 3 — Compliance (lg:col-span-2) */}
+        <motion.div
+          {...MOTION_DEFAULTS}
+          transition={{ duration: 0.6, delay: 0.15, ease: [0.16, 1, 0.3, 1] }}
+          className="lg:col-span-2 bg-white border border-[#e7e5e4] rounded-2xl p-6"
+        >
+          <ComplianceIllustration />
+          <p className="text-[20px] font-medium text-[#0c0a09] leading-snug">
+            OSFI · PIPEDA · Law 25.
+          </p>
+          <p className="text-[15px] text-[#4e4e4e] mt-2 leading-relaxed">
+            Multi-regime compliance scanner. Auto-generated PIA in EN + FR. TrueSight citation
+            verifier against CanLII.
+          </p>
+        </motion.div>
 
-              {/* Bullets */}
-              <ul className="flex flex-col gap-2 flex-1">
-                {f.bullets.map((b) => (
-                  <li key={b.label} className="flex items-center gap-2 text-sm text-zinc-600">
-                    <Check size={13} className={`flex-shrink-0 ${b.color}`} />
-                    {b.label}
-                  </li>
-                ))}
-              </ul>
-
-              {/* Link */}
-              <Link
-                href={f.href}
-                className="inline-flex items-center gap-1 text-sm font-medium text-zinc-400 hover:text-zinc-950 transition-colors group"
-              >
-                Learn more
-                <ArrowRight
-                  size={13}
-                  className="transition-transform group-hover:translate-x-0.5"
-                />
-              </Link>
-            </motion.div>
-          ))}
-        </div>
+        {/* Card 4 — Architect (lg:col-span-1) */}
+        <motion.div
+          {...MOTION_DEFAULTS}
+          transition={{ duration: 0.6, delay: 0.2, ease: [0.16, 1, 0.3, 1] }}
+          className="lg:col-span-1 bg-white border border-[#e7e5e4] rounded-2xl p-6"
+        >
+          <ArchitectIllustration />
+          <p className="text-[20px] font-medium text-[#0c0a09] leading-snug">
+            Rewire the engine.
+          </p>
+          <p className="text-[15px] text-[#4e4e4e] mt-2 leading-relaxed">
+            Drag-and-drop agent canvas. Tune sensitivity sliders. Save as Playbook. Export JSON.
+          </p>
+        </motion.div>
       </div>
     </section>
   );
@@ -462,76 +514,81 @@ function WorkflowSection() {
   const steps = [
     {
       number: "01",
-      icon: <FileText size={20} className="text-zinc-400" />,
       title: "Brief lands",
-      body: "MSA redlines arrive from Initech. Ghost forms instantly from precedent corpus.",
+      body: "MSA redlines arrive from Initech. Ghost forms instantly from the precedent corpus.",
+      miniColor: "#a7e5d3",
     },
     {
       number: "02",
-      icon: <Swords size={20} className="text-zinc-400" />,
       title: "Best line played",
-      body: "Eval bar, game tree, Council vote. One click to play the brilliant line.",
+      body: "Eval bar, game tree bloom, Council 4–0 vote. One click plays the brilliant line.",
+      miniColor: "#c8b8e0",
     },
     {
       number: "03",
-      icon: <Clock size={20} className="text-zinc-400" />,
       title: "Deal closes",
-      body: "Counter-redline DOCX, voice sign-off, Stripe CAD payment, timeline fires.",
+      body: "Counter-redline DOCX, voice sign-off, Stripe CAD payment, execution timeline fires.",
+      miniColor: "#a8c8e8",
     },
   ];
 
   return (
-    <section id="workflow" className="py-24 bg-zinc-50">
-      <div className="max-w-7xl mx-auto px-6 lg:px-8">
-        {/* Header */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.6 }}
-          className="text-center mb-16"
+    <section id="workflow" className="py-24 px-6 bg-[#fafafa]">
+      {/* Header */}
+      <motion.div
+        {...MOTION_DEFAULTS}
+        className="text-center max-w-3xl mx-auto"
+      >
+        <h2
+          className="font-display text-[#0c0a09] leading-[1.1] tracking-[-0.03em]"
+          style={{ fontSize: "clamp(36px, 5vw, 56px)" }}
         >
-          <p className="text-xs font-medium uppercase tracking-widest text-zinc-400 mb-4">
-            Workflow
-          </p>
-          <h2 className="text-4xl lg:text-5xl font-semibold tracking-tight text-zinc-950 mb-4">
-            From inbox to invoice in two hours
-          </h2>
-          <p className="max-w-xl mx-auto text-lg text-zinc-500 leading-relaxed">
-            The complete negotiation arc — brief in, deal signed, Stripe fired.
-          </p>
-        </motion.div>
+          From inbox to invoice in two hours.
+        </h2>
+        <p className="text-[17px] text-[#4e4e4e] mt-4">
+          The complete negotiation arc, automated.
+        </p>
+      </motion.div>
 
-        {/* Step cards */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          {steps.map((step, i) => (
-            <motion.div
-              key={step.number}
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.5, delay: i * 0.1 }}
-              className="rounded-[1.5rem] border border-zinc-200 bg-white p-6 flex flex-col gap-4"
+      {/* Step cards */}
+      <div className="mt-14 grid md:grid-cols-3 gap-4 max-w-5xl mx-auto">
+        {steps.map((step, i) => (
+          <motion.div
+            key={step.number}
+            {...MOTION_DEFAULTS}
+            transition={{ duration: 0.6, delay: i * 0.1, ease: [0.16, 1, 0.3, 1] }}
+            className="bg-white border border-[#e7e5e4] rounded-2xl p-6"
+          >
+            {/* Mini illustration card */}
+            <div
+              className="h-24 rounded-xl mb-5 relative overflow-hidden"
+              style={{ background: "#f5f5f5" }}
             >
-              {/* Step number + icon */}
-              <div className="flex items-center justify-between">
-                <span className="text-xs font-medium uppercase tracking-widest text-zinc-300">
-                  Step {step.number}
+              <div
+                aria-hidden="true"
+                className="absolute inset-0 pointer-events-none opacity-50"
+                style={{
+                  background: `radial-gradient(circle at 40% 50%, ${step.miniColor} 0%, transparent 65%)`,
+                }}
+              />
+              <div className="relative z-10 flex items-center justify-center h-full">
+                <span
+                  className="text-[32px] font-display tracking-[-0.04em] text-[#0c0a09] opacity-20"
+                >
+                  {step.number}
                 </span>
-                <div className="w-9 h-9 rounded-xl border border-zinc-100 bg-zinc-50 flex items-center justify-center">
-                  {step.icon}
-                </div>
               </div>
+            </div>
 
-              <div>
-                <h3 className="text-lg font-semibold tracking-tight text-zinc-950 mb-2">
-                  {step.title}
-                </h3>
-                <p className="text-sm text-zinc-500 leading-relaxed">{step.body}</p>
-              </div>
-            </motion.div>
-          ))}
-        </div>
+            <span className="text-[12px] font-semibold tracking-widest uppercase text-[#777169]">
+              {step.number}
+            </span>
+            <p className="text-[20px] font-medium text-[#0c0a09] mt-3 leading-snug">
+              {step.title}
+            </p>
+            <p className="text-[15px] text-[#4e4e4e] mt-2 leading-relaxed">{step.body}</p>
+          </motion.div>
+        ))}
       </div>
     </section>
   );
@@ -541,94 +598,92 @@ function WorkflowSection() {
 
 function StatsSection() {
   const stats = [
-    { value: "$180K CAD", label: "Deal locked in the demo" },
-    { value: "ELO 2341", label: "Initech Ghost model" },
-    { value: "< 2 hrs", label: "Inbox to invoice arc" },
+    { value: "$180K CAD", label: "Deal value locked in the demo" },
+    { value: "ELO 2341", label: "Initech Ghost model strength" },
+    { value: "< 2 hrs", label: "Inbox to signed contract" },
   ];
 
   return (
-    <section className="py-16 bg-white">
-      <div className="max-w-7xl mx-auto px-6 lg:px-8">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.6 }}
-          className="rounded-2xl border border-zinc-200 bg-zinc-50 px-8 py-10"
-        >
-          <div className="grid grid-cols-1 md:grid-cols-3 divide-y md:divide-y-0 md:divide-x divide-zinc-200">
-            {stats.map((stat) => (
-              <div
-                key={stat.value}
-                className="flex flex-col items-center justify-center py-8 md:py-0 md:px-12 text-center first:pt-0 last:pb-0 md:first:pl-0 md:last:pr-0"
-              >
-                <span
-                  className="text-4xl font-semibold tracking-tight"
-                  style={{ color: "#FF4B00" }}
-                >
-                  {stat.value}
-                </span>
-                <span className="mt-1.5 text-sm text-zinc-500">{stat.label}</span>
-              </div>
-            ))}
-          </div>
-        </motion.div>
-      </div>
+    <section className="py-20 px-6">
+      <motion.div
+        {...MOTION_DEFAULTS}
+        className="max-w-4xl mx-auto bg-white border border-[#e7e5e4] rounded-2xl p-8"
+      >
+        <div className="grid grid-cols-1 md:grid-cols-3 divide-y md:divide-y-0 md:divide-x divide-[#e7e5e4]">
+          {stats.map((stat) => (
+            <div
+              key={stat.value}
+              className="flex flex-col items-center justify-center py-8 md:py-0 md:px-12 text-center first:pt-0 last:pb-0 md:first:pl-0 md:last:pr-0"
+            >
+              <span className="font-display text-[48px] text-[#0c0a09] leading-none">
+                {stat.value}
+              </span>
+              <span className="text-[15px] text-[#777169] mt-1">{stat.label}</span>
+            </div>
+          ))}
+        </div>
+      </motion.div>
     </section>
   );
 }
 
-/* ─────────────────────────── DarkCTA ───────────────────────────── */
+/* ─────────────────────────── DarkCTASection ─────────────────────── */
 
 function DarkCTASection() {
   return (
-    <section
-      className="relative overflow-hidden py-32"
-      style={{ background: "#09090b" }}
-    >
-      {/* Radial gradient overlays */}
-      <div
-        className="absolute inset-0 pointer-events-none"
-        style={{
-          background:
-            "radial-gradient(ellipse 60% 50% at 10% 40%, rgba(99,102,241,0.18), transparent), radial-gradient(ellipse 50% 50% at 90% 60%, rgba(16,185,129,0.12), transparent), radial-gradient(ellipse 40% 40% at 50% 0%, rgba(139,92,246,0.12), transparent)",
-        }}
-        aria-hidden="true"
-      />
+    <section className="py-24 px-6">
+      <motion.div
+        {...MOTION_DEFAULTS}
+        className="bg-[#0c0a09] rounded-2xl max-w-5xl mx-auto overflow-hidden relative py-20 px-8 text-center flex flex-col items-center"
+      >
+        {/* Atmospheric orbs inside dark card */}
+        <div
+          aria-hidden="true"
+          className="pointer-events-none absolute -top-20 -left-20 w-[400px] h-[400px] blur-3xl"
+          style={{ opacity: 0.15, background: "radial-gradient(circle, #a7e5d3 0%, transparent 70%)" }}
+        />
+        <div
+          aria-hidden="true"
+          className="pointer-events-none absolute -bottom-20 -right-20 w-[360px] h-[360px] opacity-20 blur-3xl"
+          style={{ background: "radial-gradient(circle, #c8b8e0 0%, transparent 70%)" }}
+        />
 
-      <div className="relative max-w-4xl mx-auto px-6 lg:px-8 text-center flex flex-col items-center">
         {/* Badge */}
-        <div className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-3 py-1.5 mb-8 backdrop-blur">
-          <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 flex-shrink-0" />
-          <span className="text-xs font-medium uppercase tracking-widest text-zinc-400">
-            Designed for deals that can&apos;t afford to lose
-          </span>
-        </div>
+        <span className="relative z-10 inline-block border border-white/10 bg-white/5 text-[#a8a29e] rounded-full px-3 py-1 text-xs uppercase tracking-widest font-semibold">
+          For deals that can&apos;t afford to lose
+        </span>
 
-        <h2 className="text-4xl lg:text-5xl font-semibold tracking-tight text-white leading-[1.1] mb-6">
-          Run your negotiation machine without the chaos
+        {/* H2 */}
+        <h2
+          className="relative z-10 font-display text-white leading-[1.1] mt-6"
+          style={{ fontSize: "clamp(36px, 5vw, 56px)" }}
+        >
+          Run your negotiation machine
+          <br />
+          without the chaos.
         </h2>
 
-        <p className="text-lg text-zinc-400 leading-relaxed mb-10 max-w-xl">
+        {/* Sub */}
+        <p className="relative z-10 text-[17px] text-[#a8a29e] mt-4">
           One cockpit. Ghost opponent. Council. Playbook. Execution.
         </p>
 
-        <div className="flex flex-wrap items-center justify-center gap-3">
+        {/* CTAs */}
+        <div className="relative z-10 mt-8 flex flex-wrap gap-3 justify-center">
           <Link
             href="/cockpit"
-            className="inline-flex items-center gap-2 px-6 py-3 rounded-full text-sm font-semibold text-zinc-950 bg-white shadow-sm hover:shadow-md hover:bg-zinc-50 transition-all active:scale-95"
+            className="bg-white text-[#0c0a09] rounded-full px-6 py-3 font-medium text-[15px] hover:opacity-90 transition-opacity"
           >
             Enter Cockpit
-            <ArrowRight size={14} />
           </Link>
           <Link
-            href="/#product"
-            className="inline-flex items-center gap-2 px-6 py-3 rounded-full text-sm font-semibold text-white border border-white/15 bg-white/5 hover:bg-white/10 transition-all"
+            href="#features"
+            className="border border-white/15 bg-white/5 text-white rounded-full px-6 py-3 font-medium text-[15px] hover:bg-white/10 transition-colors"
           >
             Watch demo
           </Link>
         </div>
-      </div>
+      </motion.div>
     </section>
   );
 }
@@ -637,17 +692,19 @@ function DarkCTASection() {
 
 function Footer() {
   return (
-    <footer className="bg-white border-t border-zinc-200 py-8">
-      <div className="max-w-7xl mx-auto px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-sm text-zinc-400">
-        <span>© 2026 Gambit</span>
+    <footer className="bg-[#f5f5f5] border-t border-[#e7e5e4] py-10 px-6">
+      <div className="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
+        <span className="text-[15px] text-[#777169]">
+          © 2026 Gambit. All rights reserved.
+        </span>
         <div className="flex items-center gap-6">
-          <Link href="/#" className="hover:text-zinc-700 transition-colors">
+          <Link href="#" className="text-[15px] text-[#777169] hover:text-[#0c0a09] transition-colors">
             Privacy
           </Link>
-          <Link href="/#" className="hover:text-zinc-700 transition-colors">
+          <Link href="#" className="text-[15px] text-[#777169] hover:text-[#0c0a09] transition-colors">
             Terms
           </Link>
-          <Link href="/#" className="hover:text-zinc-700 transition-colors">
+          <Link href="#" className="text-[15px] text-[#777169] hover:text-[#0c0a09] transition-colors">
             Contact
           </Link>
         </div>

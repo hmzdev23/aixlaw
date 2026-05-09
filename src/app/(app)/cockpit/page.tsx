@@ -51,25 +51,23 @@ export default function CockpitPage() {
   return (
     <div className="flex flex-col h-full" style={{ minHeight: "calc(100vh - 64px)" }}>
       {/* Top bar */}
-      <div className="flex items-center justify-between px-6 py-3 gap-4 flex-wrap border-b border-zinc-200 bg-white">
+      <div className="flex items-center justify-between px-6 py-3 gap-4 flex-wrap border-b border-[#e7e5e4] bg-[#f5f5f5]">
         {/* Doc mode toggle */}
         <div className="flex items-center gap-2">
-          <div className="flex rounded-full border border-zinc-200 overflow-hidden">
+          <div className="flex border border-[#e7e5e4] rounded-full overflow-hidden">
             {(["msa", "nda"] as const).map((m) => (
               <button
                 key={m}
                 onClick={() => setDocMode(m)}
-                className="px-4 py-1.5 text-xs font-medium uppercase transition-colors"
-                style={{
-                  background: docMode === m ? "#18181b" : "transparent",
-                  color: docMode === m ? "white" : "#52525b",
-                }}
+                className={`px-4 py-1.5 text-xs font-medium uppercase transition-colors ${
+                  docMode === m ? "bg-[#0c0a09] text-white" : "bg-transparent text-[#777169]"
+                }`}
               >
                 {m.toUpperCase()}
               </button>
             ))}
           </div>
-          <span className="text-sm font-medium text-zinc-600">
+          <span className="text-[15px] font-medium text-[#4e4e4e]">
             {docMode === "msa" ? "MSA — Initech Redlines" : "NDA — Initech Redlines"}
           </span>
         </div>
@@ -80,10 +78,9 @@ export default function CockpitPage() {
         {/* Play Best Line */}
         <button
           onClick={playBestLine}
-          className="flex items-center gap-2 px-5 py-2 rounded-full font-medium text-sm text-white transition-all hover:-translate-y-0.5"
-          style={{
-            background: bestLinePlayed ? "#059669" : "#18181b",
-          }}
+          className={`flex items-center gap-2 px-5 py-2 rounded-full font-medium text-[15px] text-white transition-colors ${
+            bestLinePlayed ? "bg-[#16a34a]" : "bg-[#0c0a09]"
+          }`}
         >
           <Zap size={14} />
           {bestLinePlayed ? "Best Line Active" : "Play Best Line"}
@@ -91,14 +88,14 @@ export default function CockpitPage() {
       </div>
 
       {/* Main layout: 3 columns */}
-      <div className="flex-1 grid gap-0 bg-zinc-50" style={{ gridTemplateColumns: "320px 1fr 340px", overflow: "hidden" }}>
+      <div className="flex-1 grid gap-0 bg-[#f5f5f5]" style={{ gridTemplateColumns: "320px 1fr 340px", overflow: "hidden" }}>
         {/* LEFT: Redline pile + walkaway */}
-        <div className="bg-white border-r border-zinc-200 p-4 flex flex-col gap-4 overflow-y-auto">
-          <div className="rounded-xl bg-zinc-50 border border-zinc-200 px-3 py-2 flex justify-between">
-            <p className="text-xs font-medium uppercase tracking-widest text-zinc-400">
+        <div className="bg-white border-r border-[#e7e5e4] p-5 flex flex-col gap-4 overflow-y-auto">
+          <div className="bg-[#f0efed] rounded-xl px-3 py-2 flex justify-between">
+            <p className="text-[12px] font-semibold uppercase tracking-widest text-[#777169]">
               {redlines.length} Redlines
             </p>
-            <span className="text-xs font-mono text-zinc-400">
+            <span className="text-xs font-mono text-[#777169]">
               R01–R{redlines.length}
             </span>
           </div>
@@ -111,9 +108,9 @@ export default function CockpitPage() {
         </div>
 
         {/* CENTER: Game tree + TrueSight */}
-        <div className="bg-zinc-50 p-4 flex flex-col gap-4 overflow-y-auto">
+        <div className="bg-[#f5f5f5] p-4 flex flex-col gap-4 overflow-y-auto">
           <div className="flex items-center justify-between">
-            <p className="text-xs font-medium uppercase tracking-widest text-zinc-400">
+            <p className="text-[12px] font-semibold uppercase tracking-widest text-[#777169]">
               Game Tree — Bloom
             </p>
             {bestLinePlayed && (
@@ -123,7 +120,7 @@ export default function CockpitPage() {
             )}
           </div>
 
-          <div className="rounded-[1.25rem] border border-zinc-200 bg-white p-3 shadow-sm">
+          <div className="bg-white border border-[#e7e5e4] rounded-xl p-4">
             <GameTreeBoard
               tree={DEMO_GAME_TREE}
               highlightedNodeIds={highlightedNodes}
@@ -134,12 +131,12 @@ export default function CockpitPage() {
             />
           </div>
 
-          <div className="rounded-[1.25rem] border border-zinc-200 bg-white p-3 shadow-sm">
+          <div className="bg-white border border-[#e7e5e4] rounded-xl p-4">
             <TrueSightLayer result={DEMO_COMPLIANCE.trueSight} />
           </div>
 
           {/* Work product panes */}
-          <div className="rounded-[1.25rem] border border-zinc-200 bg-white p-3 shadow-sm">
+          <div className="bg-white border border-[#e7e5e4] rounded-xl p-4">
             <div className="grid grid-cols-2 gap-3">
               <button
                 onClick={() => setShowPdf(!showPdf)}
@@ -164,7 +161,7 @@ export default function CockpitPage() {
           </div>
 
           {showPdf && (
-            <div className="rounded-xl border border-zinc-200 p-4 text-xs bg-zinc-50 text-zinc-600">
+            <div className="bg-white border border-[#e7e5e4] rounded-xl p-4 text-xs text-[#4e4e4e]">
               <p className="font-semibold mb-1 text-zinc-900">
                 MSA Counter-Redline Preview
               </p>
@@ -173,8 +170,8 @@ export default function CockpitPage() {
           )}
 
           {/* Execution timeline */}
-          <div className="rounded-[1.25rem] border border-zinc-200 bg-white p-4 shadow-sm">
-            <p className="text-xs font-medium uppercase tracking-widest text-zinc-400 mb-3">
+          <div className="bg-white border border-[#e7e5e4] rounded-xl p-4">
+            <p className="text-[12px] font-semibold uppercase tracking-widest text-[#777169] mb-3">
               Execution Timeline
             </p>
             <ExecutionTimeline events={DEMO_TIMELINE} animate={timelineAnimate} />
@@ -182,16 +179,16 @@ export default function CockpitPage() {
         </div>
 
         {/* RIGHT: Eval bar + Ghost + Compliance */}
-        <div className="bg-white border-l border-zinc-200 p-4 flex flex-col gap-4 overflow-y-auto">
-          <div className="rounded-[1.25rem] border border-zinc-200 bg-zinc-50 p-4 flex justify-center">
+        <div className="bg-white border-l border-[#e7e5e4] p-5 flex flex-col gap-4 overflow-y-auto">
+          <div className="bg-[#f5f5f5] border border-[#e7e5e4] rounded-xl p-4 flex justify-center">
             <EvalBar score={evalScore} />
           </div>
 
           <GhostCard ghost={DEMO_GHOST} />
 
-          <div className="rounded-[1.25rem] border border-zinc-200 bg-white overflow-hidden">
+          <div className="bg-white border border-[#e7e5e4] rounded-xl overflow-hidden">
             <div className="flex items-center justify-between px-3 pt-3 pb-2">
-              <p className="text-xs font-medium uppercase tracking-widest text-zinc-400">
+              <p className="text-[12px] font-semibold uppercase tracking-widest text-[#777169]">
                 Compliance
               </p>
               <button

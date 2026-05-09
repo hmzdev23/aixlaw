@@ -50,18 +50,18 @@ export default function WarRoomPage() {
   const isCrownjudgement = finalEvent?.agent === "crown" && finalEvent?.vote === "clear";
 
   return (
-    <div className="flex h-full bg-zinc-50" style={{ minHeight: "calc(100vh - 64px)" }}>
+    <div className="flex h-full bg-[#f5f5f5]" style={{ minHeight: "calc(100vh - 64px)" }}>
       {/* Main council area */}
-      <div className="flex-1 flex flex-col items-center justify-start p-6 overflow-y-auto bg-white border-r border-zinc-200">
+      <div className="flex-1 flex flex-col items-center justify-start p-6 overflow-y-auto bg-white border-r border-[#e7e5e4]">
         <div className="w-full max-w-4xl">
           <div className="flex items-center justify-between mb-6">
             <div className="flex items-center gap-3">
               <Users size={18} style={{ color: "var(--color-brand)" }} />
               <div>
-                <h1 className="font-bold text-lg text-zinc-900" style={{ letterSpacing: "-0.03em" }}>
+                <h1 className="text-[20px] font-medium text-[#0c0a09]">
                   War Room
                 </h1>
-                <p className="text-xs text-zinc-400">
+                <p className="text-[14px] text-[#777169] mt-0.5">
                   Multi-agent council deliberating Move A
                 </p>
               </div>
@@ -69,10 +69,10 @@ export default function WarRoomPage() {
             <div className="flex items-center gap-2">
               <button
                 onClick={() => setAiVsAi(!aiVsAi)}
-                className={`text-xs px-3 py-1.5 rounded-full border font-medium transition-colors ${
+                className={`px-4 py-2 rounded-full border text-[15px] font-medium transition-colors ${
                   aiVsAi
-                    ? "border-orange-200 bg-orange-50 text-orange-600"
-                    : "border-zinc-200 bg-white text-zinc-600"
+                    ? "border-[#e7e5e4] bg-[#f0efed] text-[#0c0a09]"
+                    : "border-[#e7e5e4] bg-transparent text-[#777169]"
                 }`}
               >
                 AI vs AI {aiVsAi ? "ON" : "OFF"}
@@ -80,10 +80,9 @@ export default function WarRoomPage() {
               <button
                 onClick={playCouncil}
                 disabled={running}
-                className="flex items-center gap-2 px-4 py-2 rounded-full text-sm font-semibold text-white transition-all"
-                style={{
-                  background: running ? "#d4d4d8" : "#18181b",
-                }}
+                className={`flex items-center gap-2 px-5 py-2 rounded-full text-[15px] font-medium text-white transition-colors ${
+                  running ? "bg-[#a8a29e]" : "bg-[#0c0a09]"
+                }`}
               >
                 {running ? <RotateCcw size={14} className="animate-spin" /> : <Play size={14} />}
                 {running ? "Deliberating…" : events.length > 0 ? "Replay" : "Start Council"}
@@ -106,8 +105,8 @@ export default function WarRoomPage() {
             <div className="flex-1 space-y-4">
               {/* Vote tally */}
               {Object.keys(votes).length > 0 && (
-                <div className="rounded-[1.25rem] border border-zinc-200 bg-zinc-50 p-4">
-                  <p className="text-xs font-medium uppercase tracking-widest text-zinc-400 mb-3">
+                <div className="bg-[#f5f5f5] border border-[#e7e5e4] rounded-xl p-4">
+                  <p className="text-[12px] font-semibold uppercase tracking-widest text-[#777169] mb-3">
                     Vote Tally — Move A
                   </p>
                   <div className="grid grid-cols-3 gap-2">
@@ -130,8 +129,8 @@ export default function WarRoomPage() {
 
               {/* Crown synthesis */}
               {isCrownjudgement && (
-                <div className="rounded-[1.25rem] border border-violet-200 bg-violet-50 p-4">
-                  <p className="text-xs font-medium uppercase tracking-widest text-violet-600 mb-1">
+                <div className="bg-[#f0efed] border border-[#e7e5e4] rounded-xl p-4">
+                  <p className="text-[12px] font-semibold uppercase tracking-widest text-[#777169] mb-1">
                     Crown Synthesis — 4–0
                   </p>
                   <p className="text-sm font-semibold text-zinc-900">
@@ -142,25 +141,25 @@ export default function WarRoomPage() {
 
               {/* AI vs AI arena */}
               {aiVsAi && (
-                <div className="rounded-[1.25rem] border border-zinc-200 bg-zinc-50 p-4">
-                  <p className="text-xs font-medium uppercase tracking-widest text-zinc-400 mb-3">
+                <div className="bg-[#f5f5f5] border border-[#e7e5e4] rounded-xl p-4">
+                  <p className="text-[12px] font-semibold uppercase tracking-widest text-[#777169] mb-3">
                     AI vs AI — MSA §7.1 Liability Cap
                   </p>
                   <div className="grid grid-cols-2 gap-3 mb-3">
-                    <div className="p-3 rounded-xl" style={{ background: "rgba(255,75,0,0.05)", border: "1px solid rgba(255,75,0,0.2)" }}>
-                      <p className="text-xs font-bold" style={{ color: "var(--color-brand)" }}>Dunder Founder</p>
-                      <p className="text-xs mt-1 text-zinc-600">
+                    <div className="bg-white border border-[#e7e5e4] rounded-xl p-3">
+                      <p className="text-xs font-bold text-[#0c0a09]">Dunder Founder</p>
+                      <p className="text-xs mt-1 text-[#4e4e4e]">
                         "24-month cap is our maximum exposure ceiling. We can offer uncapped exclusion for gross negligence only."
                       </p>
                     </div>
-                    <div className="p-3 rounded-xl" style={{ background: "rgba(239,68,68,0.05)", border: "1px solid rgba(239,68,68,0.2)" }}>
-                      <p className="text-xs font-bold" style={{ color: "#EF4444" }}>Initech Hardline</p>
-                      <p className="text-xs mt-1 text-zinc-600">
+                    <div className="bg-[#f0efed] border border-[#e7e5e4] rounded-xl p-3">
+                      <p className="text-xs font-bold text-[#0c0a09]">Initech Hardline</p>
+                      <p className="text-xs mt-1 text-[#4e4e4e]">
                         "Data breach liability cannot be capped. Our OSFI posture requires uncapped exposure for AI vendors."
                       </p>
                     </div>
                   </div>
-                  <p className="text-xs text-zinc-400">
+                  <p className="text-xs text-[#777169]">
                     Preset clause: MSA §7.1 · Enable full AI-vs-AI mode via T5 integration
                   </p>
                 </div>
@@ -171,12 +170,12 @@ export default function WarRoomPage() {
       </div>
 
       {/* Right: Debate feed */}
-      <div className="w-80 flex flex-col p-4 gap-3 overflow-y-auto bg-zinc-50">
-        <p className="text-xs font-medium uppercase tracking-widest text-zinc-400 mb-1">
+      <div className="w-80 flex flex-col p-4 gap-3 overflow-y-auto bg-[#f5f5f5] border-l border-[#e7e5e4]">
+        <p className="text-[12px] font-semibold uppercase tracking-widest text-[#777169] mb-1">
           Debate Feed
         </p>
         {events.length === 0 ? (
-          <p className="text-sm text-zinc-400">
+          <p className="text-sm text-[#777169]">
             Press Start Council to begin deliberation.
           </p>
         ) : (
