@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef } from "react";
 import {
   ReactFlow,
   Background,
@@ -105,6 +105,7 @@ interface ArchitectCanvasProps {
 }
 
 export function ArchitectCanvas({ playbook, onChange, onSelectNode }: ArchitectCanvasProps) {
+  const lastSerialized = useRef("");
   const initialNodes: Node[] = useMemo(
     () =>
       playbook.blocks.map((b) => ({
@@ -132,9 +133,49 @@ export function ArchitectCanvas({ playbook, onChange, onSelectNode }: ArchitectC
   const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes);
   const [edges, setEdges, onEdgesChange] = useEdgesState(initialEdges);
 
+  useEffect(() => {
+    setNodes(initialNodes);
+    setEdges(initialEdges);
+  }, [initialEdges, initialNodes, setEdges, setNodes]);
+
+  useEffect(() => {
+    const next = {
+      ...playbook,
+      blocks: nodes.map((node) => {
+        const data = node.data as AgentBlockData;
+        return {
+          id: node.id,
+          type: data.type,
+          position: node.position,
+          params: data.params,
+        };
+      }),
+      edges: edges.map((edge) => ({
+        id: edge.id,
+        source: edge.source,
+        target: edge.target,
+      })),
+    };
+    const serialized = JSON.stringify({ blocks: next.blocks, edges: next.edges });
+    if (serialized === lastSerialized.current) return;
+    lastSerialized.current = serialized;
+    onChange({ ...next, updatedAt: new Date().toISOString() });
+    // React Flow owns noisy transient node/edge state; only persist core fields.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [nodes, edges]);
+
   const onConnect = useCallback(
     (params: Connection) => {
-      setEdges((eds) => addEdge({ ...params, style: { stroke: "var(--color-gray-400)", strokeWidth: 1.5 } }, eds));
+      setEdges((eds) =>
+        addEdge(
+          {
+            ...params,
+            id: `${params.source}-${params.target}-${Date.now()}`,
+            style: { stroke: "var(--color-gray-400)", strokeWidth: 1.5 },
+          },
+          eds,
+        ),
+      );
     },
     [setEdges]
   );

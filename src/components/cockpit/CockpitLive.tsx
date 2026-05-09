@@ -368,6 +368,7 @@ export function CockpitLive({ dealId }: CockpitLiveProps) {
           </div>
 
           <VoiceSignoff
+            dealId={dealId}
             onSigned={() => {
               setShowPdf(true);
             }}

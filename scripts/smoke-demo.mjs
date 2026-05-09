@@ -72,6 +72,7 @@ async function expectStatus(res, label, expected = 200) {
 
 async function main() {
   console.log(`Gambit smoke (${BASE})`);
+  const smokeDealId = `demo_smoke_${Date.now()}`;
 
   // 1. Trigger inbound (manual demo).
   let dealId;
@@ -79,7 +80,7 @@ async function main() {
     const res = await fetch(`${BASE}/api/demo/trigger`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ documentFocus: "msa" }),
+      body: JSON.stringify({ dealId: smokeDealId, documentFocus: "msa" }),
     });
     const body = await jsonOrThrow(res, "trigger");
     dealId = body?.data?.event?.dealId;

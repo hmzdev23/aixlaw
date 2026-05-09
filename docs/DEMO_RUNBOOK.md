@@ -15,9 +15,10 @@
 5. Hover tree nodes — **counter** preview line updates via `GET /api/engine/counter`.
 6. **Play Best Line** — `POST /api/playbooks/pb_default/execute` → `POST /api/workproduct/decision` → `POST /api/execution/fire`; timeline fills via **SSE** `GET /api/execution/stream?dealId=demo`.
 7. Download **DOCX** / **Supervisor PDF** links in cockpit (after decision stored).
-8. `/deals/demo/war-room` — static council visualization (stream wiring optional).
-9. `/deals/demo/review` — PDF shortcuts + clause diff shell.
-10. `/settings`, `/playbooks` — shell pages; playbooks API live at `GET /api/playbooks`.
+8. `/deals/demo/war-room` — council stream auto-replays via NDJSON; add `?flex=1` or click AI-vs-AI for liability-cap flex mode.
+9. `/deals/demo/architect` — live React Flow playbook canvas; tune a slider, save as a new playbook, execute into a Decision.
+10. `/deals/demo/review` — PDF shortcuts + clause diff shell.
+11. `/settings`, `/playbooks` — shell pages; playbooks API live at `GET /api/playbooks`.
 
 **Expected**
 

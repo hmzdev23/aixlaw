@@ -44,21 +44,23 @@ function cn(...classes: Array<string | false | null | undefined>) {
 export function Logo() {
   return (
     <Link href="/dashboard" className="flex items-center gap-3 text-[13px] font-semibold tracking-[0.08em] text-[var(--ink)]">
-      {/* eslint-disable-next-line @next/next/no-img-element */}
-      <img
-        src="/brand/01_primary_icon_mark.png"
-        alt=""
-        width={28}
-        height={28}
-        className="h-7 w-7 shrink-0 rounded-md"
-      />
+      <span className="grid h-8 w-8 shrink-0 place-items-center rounded-xl bg-[#0c0a09] shadow-[0_8px_20px_rgba(12,10,9,0.16)]">
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img
+          src="/brand/08_micro_mark_variation.png"
+          alt=""
+          width={20}
+          height={20}
+          className="h-5 w-5 object-contain mix-blend-screen"
+        />
+      </span>
       {/* eslint-disable-next-line @next/next/no-img-element */}
       <img
         src="/brand/02_horizontal_wordmark_lockup.png"
         alt="Gambit"
         height={22}
         width={120}
-        className="h-[22px] w-auto hidden sm:block"
+        className="hidden h-[22px] w-auto object-contain sm:block [filter:contrast(1.2)_saturate(0.95)]"
       />
       <span className="sm:hidden font-semibold">GAMBIT</span>
     </Link>
@@ -114,12 +116,14 @@ export function StatusPill({ children, tone = "neutral" }: { children: React.Rea
 
 export function AppShell({ children }: { children: React.ReactNode }) {
   return (
-    <div className="min-h-screen bg-[var(--canvas)] p-4 md:p-6">
-      <div className="mx-auto flex min-h-[calc(100vh-48px)] max-w-[1220px] overflow-hidden rounded-xl border border-[var(--hairline)] bg-white shadow-[0_18px_45px_rgba(12,10,9,0.08)]">
+    <div className="relative min-h-screen overflow-hidden bg-[var(--canvas)] p-3 md:p-6">
+      <div className="pointer-events-none absolute -left-24 top-10 h-80 w-80 rounded-full bg-[var(--grad-peach)] opacity-30 blur-3xl" />
+      <div className="pointer-events-none absolute bottom-0 right-0 h-96 w-96 rounded-full bg-[var(--grad-sky)] opacity-25 blur-3xl" />
+      <div className="relative mx-auto flex min-h-[calc(100vh-48px)] max-w-[1420px] overflow-hidden rounded-[24px] border border-[var(--hairline)] bg-white/90 shadow-[0_18px_45px_rgba(12,10,9,0.08)] backdrop-blur">
         <Sidebar />
         <div className="flex min-w-0 flex-1 flex-col">
           <TopBar />
-          <main id="main-content" className="flex-1 bg-white px-7 py-7 md:px-10">
+          <main id="main-content" className="flex-1 bg-white/80 px-5 py-6 md:px-8">
             {children}
           </main>
         </div>

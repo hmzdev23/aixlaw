@@ -1,9 +1,5 @@
-import {
-  AgentPalette,
-  AppShell,
-  DealPageHeader,
-  WorkflowCanvas,
-} from "@/components/product-ui/components";
+import { AppShell, DealPageHeader } from "@/components/product-ui/components";
+import { ArchitectLive } from "@/components/architect/ArchitectLive";
 
 export default async function Page({
   params,
@@ -15,13 +11,15 @@ export default async function Page({
     <AppShell>
       <DealPageHeader dealId={id} activeTab="Architect" />
       <div className="mb-7">
-        <h2 className="text-[22px] font-semibold tracking-[-0.01em] text-[var(--ink)]">Build your negotiation playbook</h2>
-        <p className="mt-2 text-[13px] text-[var(--body)]">Drag, connect, and configure agents.</p>
+        <h2 className="font-display text-[42px] leading-none tracking-[-0.03em] text-[var(--ink)]">
+          Architect the deal machine
+        </h2>
+        <p className="mt-3 max-w-2xl text-[14px] leading-6 text-[var(--body)]">
+          Load the default Spellbook → OSFI → PIPEDA → Law 25 → Ghost → Tree → Crown
+          graph, tune agent weights, save it, and execute it into a real Decision.
+        </p>
       </div>
-      <div className="flex gap-7">
-        <AgentPalette />
-        <WorkflowCanvas />
-      </div>
+      <ArchitectLive dealId={id} />
     </AppShell>
   );
 }
