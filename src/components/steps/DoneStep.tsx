@@ -1,28 +1,35 @@
 "use client";
 
 import { useWizard } from "@/components/wizard/state";
+import { getScenario } from "@/lib/scenarios";
 
 export function DoneStep() {
   const { state, dispatch } = useWizard();
+  const scenario = state.scenarioId ? getScenario(state.scenarioId) : null;
   const items: { label: string; value: string }[] = [
+    { label: "Scenario", value: scenario?.headline ?? "—" },
     { label: "Document", value: state.doc?.filename ?? "—" },
     { label: "Locale", value: state.locale.toUpperCase() },
     {
       label: "E-signature (Quebec)",
       value: state.esig
         ? state.esig.qcAvailable
-          ? "Available"
+          ? `Available · ${state.signatures.length}/${state.esig.signatureBlocksFound} signed`
           : "Restricted"
         : "—",
     },
+    { label: "Workflow", value: state.workflow.join(" → ") || "—" },
     { label: "Goal", value: state.goal || "—" },
     { label: "Final win bar", value: state.score.toFixed(1) },
     {
-      label: "Decisions",
+      label: "Decision path",
       value:
-        state.decisions.length === 0
+        state.decisionPath.length === 0
           ? "(none)"
-          : state.decisions.map((d) => d.label).join(" → "),
+          : state.decisionTree
+              .filter((n) => state.decisionPath.includes(n.id))
+              .map((d) => d.label)
+              .join(" → "),
     },
     {
       label: "Translation booking",
@@ -43,9 +50,7 @@ export function DoneStep() {
     {
       label: "Memo",
       value: state.memo
-        ? state.memo.postedToSlack
-          ? "Posted to Slack"
-          : "PDF generated"
+        ? `${state.memo.postedToSlack ? "Posted to Slack" : "PDF generated"}${state.memo.redacted ? " · redacted" : ""}`
         : state.memoNeeded === false
           ? "Skipped"
           : "—",
@@ -53,7 +58,7 @@ export function DoneStep() {
   ];
 
   return (
-    <div className="mx-auto flex max-w-[640px] flex-col gap-5 py-4">
+    <div className="mx-auto flex max-w-[680px] flex-col gap-5 py-4">
       <header className="text-center">
         <h2 className="text-[26px] font-semibold tracking-tight">All done.</h2>
         <p className="muted mt-2 text-[13px]">Here&apos;s the deal as you ran it.</p>

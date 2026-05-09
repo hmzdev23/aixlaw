@@ -1,248 +1,240 @@
 "use client";
 
-import { useCallback, useEffect, useMemo } from "react";
-import {
-  Background,
-  Controls,
-  ReactFlow,
-  ReactFlowProvider,
-  addEdge,
-  applyEdgeChanges,
-  applyNodeChanges,
-  type Connection,
-  type Edge,
-  type EdgeChange,
-  type Node,
-  type NodeChange,
-  type NodeProps,
-} from "@xyflow/react";
-import "@xyflow/react/dist/style.css";
-import { AGENTS } from "@/lib/agents";
+import { useState } from "react";
 import { useWizard } from "@/components/wizard/state";
+import { AGENTS } from "@/lib/agents";
 
-const NODE_WIDTH = 180;
+const SLOT_COUNT = 5;
 
-function AgentNode({ data }: NodeProps) {
-  const d = data as { name: string; role: string; speciality: string; emoji: string; active: boolean };
-  return (
-    <div
-      className="rounded-xl border bg-white px-3 py-2 shadow-sm"
-      style={{
-        borderColor: d.active ? "var(--ink)" : "var(--line-strong)",
-        width: NODE_WIDTH,
-      }}
-    >
-      <div className="flex items-center gap-2">
-        <span
-          className="grid h-7 w-7 place-items-center rounded-full text-[12px] font-semibold"
-          style={{ background: "var(--accent-soft)", color: "var(--ink)" }}
-        >
-          {d.emoji}
-        </span>
-        <div>
-          <p className="text-[13px] font-semibold leading-tight">{d.name}</p>
-          <p className="text-[11px] muted leading-tight">{d.role}</p>
-        </div>
-      </div>
-      <p className="mt-2 text-[11px] muted">{d.speciality}</p>
-    </div>
-  );
-}
-
-const NODE_TYPES = { agent: AgentNode };
-
-function buildInitial(active: string[]): { nodes: Node[]; edges: Edge[] } {
-  const nodes: Node[] = AGENTS.map((a, i) => {
-    const isActive = active.includes(a.id);
-    return {
-      id: a.id,
-      type: "agent",
-      position: { x: 60 + (i % 3) * (NODE_WIDTH + 60), y: 80 + Math.floor(i / 3) * 140 },
-      data: {
-        name: a.name,
-        role: a.role,
-        speciality: a.speciality,
-        emoji: a.emoji,
-        active: isActive,
-      },
-    };
-  });
-  const edges: Edge[] = [];
-  for (let i = 0; i < active.length - 1; i += 1) {
-    edges.push({
-      id: `e-${active[i]}-${active[i + 1]}`,
-      source: active[i],
-      target: active[i + 1],
-      animated: true,
-      style: { stroke: "var(--ink)" },
-    });
-  }
-  return { nodes, edges };
-}
-
-function Inner() {
+export function WorkflowStep() {
   const { state, dispatch } = useWizard();
-  const initial = useMemo(() => buildInitial(state.workflow), [state.workflow]);
+  // Pad workflow to fixed slot count for clean visual rendering.
+  const slots: (string | null)[] = Array.from({ length: SLOT_COUNT }, (_, i) => state.workflow[i] ?? null);
+  const [draggingId, setDraggingId] = useState<string | null>(null);
+  const [dragOverSlot, setDragOverSlot] = useState<number | null>(null);
 
-  const [nodes, setNodes] = React.useState<Node[]>(initial.nodes);
-  const [edges, setEdges] = React.useState<Edge[]>(initial.edges);
+  function commit(next: (string | null)[]) {
+    const clean = next.filter((x): x is string => !!x);
+    dispatch({ type: "SET_WORKFLOW", workflow: clean });
+  }
 
-  // Keep workflow order in sync with edges (left-to-right walk).
-  useEffect(() => {
-    const order = topoOrder(nodes, edges);
-    if (order.join(",") !== state.workflow.join(",")) {
-      dispatch({ type: "SET_WORKFLOW", workflow: order });
+  function dropOnSlot(idx: number, agentId: string) {
+    const next = [...slots];
+    // Remove from elsewhere first to avoid duplicates.
+    for (let i = 0; i < next.length; i += 1) {
+      if (next[i] === agentId) next[i] = null;
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [nodes, edges]);
+    next[idx] = agentId;
+    commit(next);
+  }
 
-  const onNodesChange = useCallback(
-    (changes: NodeChange[]) => setNodes((ns) => applyNodeChanges(changes, ns)),
-    [],
-  );
-  const onEdgesChange = useCallback(
-    (changes: EdgeChange[]) => setEdges((es) => applyEdgeChanges(changes, es)),
-    [],
-  );
-  const onConnect = useCallback(
-    (c: Connection) =>
-      setEdges((es) =>
-        addEdge({ ...c, animated: true, style: { stroke: "var(--ink)" } }, es),
-      ),
-    [],
-  );
-
-  function toggleAgent(id: string) {
-    const next = state.workflow.includes(id)
-      ? state.workflow.filter((x) => x !== id)
-      : [...state.workflow, id];
-    dispatch({ type: "SET_WORKFLOW", workflow: next });
-    setNodes((ns) =>
-      ns.map((n) => (n.id === id ? { ...n, data: { ...n.data, active: next.includes(id) } } : n)),
-    );
+  function clearSlot(idx: number) {
+    const next = [...slots];
+    next[idx] = null;
+    commit(next);
   }
 
   function reset() {
-    const fresh = buildInitial(["pierre", "marie", "etienne", "sophie", "antoine"]);
-    setNodes(fresh.nodes);
-    setEdges(fresh.edges);
-    dispatch({ type: "SET_WORKFLOW", workflow: ["pierre", "marie", "etienne", "sophie", "antoine"] });
+    commit(["pierre", "marie", "etienne", "sophie", "antoine"]);
   }
 
+  function clearAll() {
+    commit([null, null, null, null, null]);
+  }
+
+  const usedIds = new Set(slots.filter(Boolean) as string[]);
+  const available = AGENTS.filter((a) => !usedIds.has(a.id));
+
   return (
-    <div className="flex flex-col gap-4">
+    <div className="flex flex-col gap-5">
       <header className="flex flex-wrap items-end justify-between gap-3">
         <div>
           <h2 className="text-[22px] font-semibold tracking-tight">Build your workflow</h2>
           <p className="muted text-[13px]">
-            Drag the agents around. Connect them in the order you want them to weigh in.
-            Toggle one off below if you don&apos;t want it in the room.
+            Drag an agent onto a numbered slot. Drag between slots to reorder.
+            Click <span className="kbd">×</span> on a slot to remove. Empty slots are skipped.
           </p>
         </div>
         <div className="flex items-center gap-2">
+          <button type="button" className="btn btn-ghost" onClick={clearAll}>Clear all</button>
           <button type="button" className="btn btn-secondary" onClick={reset}>Reset</button>
         </div>
       </header>
 
-      <div className="card overflow-hidden" style={{ height: 380 }}>
-        <ReactFlow
-          nodes={nodes}
-          edges={edges}
-          onNodesChange={onNodesChange}
-          onEdgesChange={onEdgesChange}
-          onConnect={onConnect}
-          nodeTypes={NODE_TYPES}
-          fitView
-          proOptions={{ hideAttribution: true }}
+      <div className="card px-4 py-6 md:px-6">
+        <div className="flex flex-wrap items-stretch justify-center gap-3 md:flex-nowrap">
+          {slots.map((id, idx) => (
+            <div key={idx} className="flex items-center gap-3">
+              <SlotBox
+                index={idx}
+                agentId={id}
+                isOver={dragOverSlot === idx}
+                onDragOver={(e) => {
+                  e.preventDefault();
+                  setDragOverSlot(idx);
+                }}
+                onDragLeave={() => setDragOverSlot((s) => (s === idx ? null : s))}
+                onDrop={(e) => {
+                  e.preventDefault();
+                  setDragOverSlot(null);
+                  const dropped = draggingId ?? e.dataTransfer.getData("text/plain");
+                  if (dropped) dropOnSlot(idx, dropped);
+                  setDraggingId(null);
+                }}
+                onClear={() => clearSlot(idx)}
+                onStartDrag={(e) => {
+                  if (!id) return;
+                  setDraggingId(id);
+                  e.dataTransfer.setData("text/plain", id);
+                  e.dataTransfer.effectAllowed = "move";
+                }}
+                onEndDrag={() => setDraggingId(null)}
+              />
+              {idx < slots.length - 1 ? <Arrow /> : null}
+            </div>
+          ))}
+        </div>
+      </div>
+
+      <div>
+        <p className="label mb-2">Available agents</p>
+        <div className="flex flex-wrap gap-2">
+          {available.length === 0 ? (
+            <p className="muted text-[12px]">All five agents placed.</p>
+          ) : (
+            available.map((a) => (
+              <div
+                key={a.id}
+                draggable
+                onDragStart={(e) => {
+                  setDraggingId(a.id);
+                  e.dataTransfer.setData("text/plain", a.id);
+                  e.dataTransfer.effectAllowed = "move";
+                }}
+                onDragEnd={() => setDraggingId(null)}
+                className="card flex items-center gap-3 px-3 py-2"
+                style={{ cursor: "grab", minWidth: 200 }}
+              >
+                <span
+                  className="grid h-7 w-7 place-items-center rounded-full text-[12px] font-semibold"
+                  style={{ background: "var(--accent-soft)" }}
+                >
+                  {a.emoji}
+                </span>
+                <div>
+                  <p className="text-[13px] font-semibold leading-tight">{a.name}</p>
+                  <p className="muted text-[11px] leading-tight">{a.role}</p>
+                </div>
+              </div>
+            ))
+          )}
+        </div>
+      </div>
+
+      <div className="mt-2 flex justify-between">
+        <button type="button" className="btn btn-ghost" onClick={() => dispatch({ type: "BACK" })}>← Back</button>
+        <button
+          type="button"
+          className="btn"
+          onClick={() => dispatch({ type: "GOTO", step: "goal" })}
+          disabled={state.workflow.length === 0}
         >
-          <Background gap={16} color="#e5e5e3" />
-          <Controls showInteractive={false} />
-        </ReactFlow>
+          Continue → State your goal
+        </button>
       </div>
-
-      <div className="flex flex-wrap gap-2">
-        {AGENTS.map((a) => {
-          const on = state.workflow.includes(a.id);
-          return (
-            <button
-              key={a.id}
-              type="button"
-              onClick={() => toggleAgent(a.id)}
-              className="rounded-full border px-3 py-1 text-[12px] font-medium"
-              style={{
-                background: on ? "var(--ink)" : "white",
-                color: on ? "white" : "var(--ink)",
-                borderColor: on ? "var(--ink)" : "var(--line-strong)",
-              }}
-            >
-              {on ? "✓ " : "+ "}
-              {a.name} · {a.role}
-            </button>
-          );
-        })}
-      </div>
-
-      <Footer
-        onBack={() => dispatch({ type: "BACK" })}
-        onNext={() => dispatch({ type: "GOTO", step: "goal" })}
-        disabled={state.workflow.length === 0}
-      />
     </div>
   );
 }
 
-import React from "react";
-
-export function WorkflowStep() {
-  return (
-    <ReactFlowProvider>
-      <Inner />
-    </ReactFlowProvider>
-  );
-}
-
-function Footer({
-  onBack,
-  onNext,
-  disabled,
+function SlotBox({
+  index,
+  agentId,
+  isOver,
+  onDragOver,
+  onDragLeave,
+  onDrop,
+  onClear,
+  onStartDrag,
+  onEndDrag,
 }: {
-  onBack: () => void;
-  onNext: () => void;
-  disabled?: boolean;
+  index: number;
+  agentId: string | null;
+  isOver: boolean;
+  onDragOver: (e: React.DragEvent) => void;
+  onDragLeave: () => void;
+  onDrop: (e: React.DragEvent) => void;
+  onClear: () => void;
+  onStartDrag: (e: React.DragEvent) => void;
+  onEndDrag: () => void;
 }) {
+  const agent = AGENTS.find((a) => a.id === agentId);
   return (
-    <div className="mt-2 flex justify-between">
-      <button type="button" className="btn btn-ghost" onClick={onBack}>← Back</button>
-      <button type="button" className="btn" disabled={disabled} onClick={onNext}>
-        Continue → State your goal
-      </button>
+    <div
+      onDragOver={onDragOver}
+      onDragLeave={onDragLeave}
+      onDrop={onDrop}
+      className="relative flex flex-col items-center justify-center rounded-xl border text-center"
+      style={{
+        width: 144,
+        height: 152,
+        borderStyle: agent ? "solid" : "dashed",
+        borderColor: isOver ? "var(--ink)" : agent ? "var(--ink)" : "var(--line-strong)",
+        background: isOver ? "var(--accent-soft)" : "white",
+      }}
+    >
+      <span
+        className="absolute left-2 top-2 text-[10px] font-semibold tabular-nums"
+        style={{ color: "var(--muted)" }}
+      >
+        SLOT {index + 1}
+      </span>
+      {agent ? (
+        <button
+          type="button"
+          onClick={onClear}
+          className="absolute right-2 top-2 grid h-5 w-5 place-items-center rounded-full text-[11px]"
+          style={{ background: "var(--accent-soft)", color: "var(--ink)" }}
+          aria-label={`Remove ${agent.name} from slot ${index + 1}`}
+        >
+          ×
+        </button>
+      ) : null}
+      {agent ? (
+        <div
+          draggable
+          onDragStart={onStartDrag}
+          onDragEnd={onEndDrag}
+          className="flex flex-col items-center gap-1"
+          style={{ cursor: "grab" }}
+        >
+          <span
+            className="grid h-10 w-10 place-items-center rounded-full text-[14px] font-semibold"
+            style={{ background: "var(--accent-soft)" }}
+          >
+            {agent.emoji}
+          </span>
+          <p className="text-[13px] font-semibold leading-tight">{agent.name}</p>
+          <p className="muted text-[11px] leading-tight">{agent.role}</p>
+        </div>
+      ) : (
+        <p className="muted text-[12px]">Drop an agent here</p>
+      )}
     </div>
   );
 }
 
-/** Walk the edge graph in topological order, falling back to insertion order. */
-function topoOrder(nodes: Node[], edges: Edge[]): string[] {
-  const active = nodes.filter((n) => (n.data as { active?: boolean }).active).map((n) => n.id);
-  if (active.length === 0) return [];
-  const inDeg: Record<string, number> = Object.fromEntries(active.map((id) => [id, 0]));
-  const out: Record<string, string[]> = Object.fromEntries(active.map((id) => [id, []]));
-  for (const e of edges) {
-    if (out[e.source] && active.includes(e.target)) {
-      out[e.source].push(e.target);
-      inDeg[e.target] += 1;
-    }
-  }
-  const q = active.filter((id) => inDeg[id] === 0);
-  const order: string[] = [];
-  while (q.length > 0) {
-    const cur = q.shift()!;
-    order.push(cur);
-    for (const t of out[cur]) {
-      inDeg[t] -= 1;
-      if (inDeg[t] === 0) q.push(t);
-    }
-  }
-  // Fall back: append any leftover (cycles)
-  for (const id of active) if (!order.includes(id)) order.push(id);
-  return order;
+function Arrow() {
+  return (
+    <svg width="36" height="14" viewBox="0 0 36 14" aria-hidden>
+      <line x1="0" y1="7" x2="28" y2="7" stroke="currentColor" strokeWidth="1.4" />
+      <polyline
+        points="22,2 30,7 22,12"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="1.4"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+    </svg>
+  );
 }

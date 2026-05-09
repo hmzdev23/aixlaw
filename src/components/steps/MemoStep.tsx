@@ -3,11 +3,12 @@
 import { useMemo, useState } from "react";
 import { useWizard } from "@/components/wizard/state";
 import { getAgent } from "@/lib/agents";
+import { getScenario } from "@/lib/scenarios";
 import { redact } from "@/lib/redact";
 
 function buildHighlights(state: ReturnType<typeof useWizard>["state"]): string[] {
   const out: string[] = [];
-  out.push(`Final win bar: ${state.score.toFixed(1)} (out of -10..+10).`);
+  out.push(`Final win bar: ${state.score.toFixed(1)} / ±10.`);
   if (state.esig) {
     out.push(
       state.esig.qcAvailable
@@ -19,9 +20,7 @@ function buildHighlights(state: ReturnType<typeof useWizard>["state"]): string[]
     out.push("Translation review meeting booked because the doc was machine-translated.");
   }
   if (state.meeting?.booked) {
-    out.push(
-      `Internal review meeting booked for ${new Date(state.meeting.whenIso!).toLocaleString()}.`,
-    );
+    out.push(`Internal review meeting booked for ${new Date(state.meeting.whenIso!).toLocaleString()}.`);
   }
   for (const t of state.debate.slice(-3)) {
     const a = getAgent(t.agentId);
@@ -32,9 +31,15 @@ function buildHighlights(state: ReturnType<typeof useWizard>["state"]): string[]
 
 export function MemoStep() {
   const { state, dispatch } = useWizard();
+  const scenario = state.scenarioId ? getScenario(state.scenarioId) : null;
   const [needed, setNeeded] = useState<boolean | null>(state.memoNeeded);
   const [redactOn, setRedactOn] = useState(true);
-  const [extraNamesText, setExtraNamesText] = useState(state.redactionNames.join(", "));
+  const [extraNamesText, setExtraNamesText] = useState(
+    (state.redactionNames.length > 0
+      ? state.redactionNames
+      : scenario?.sensitiveNames ?? []
+    ).join(", "),
+  );
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [pdfUrl, setPdfUrl] = useState<string | null>(state.memo?.pdfUrl ?? null);
@@ -50,7 +55,10 @@ export function MemoStep() {
     const block = [
       `Goal: ${state.goal || "(not stated)"}`,
       "",
-      `Decisions: ${state.decisions.map((d) => `${d.label} (${d.delta > 0 ? "+" : ""}${d.delta})`).join(" → ") || "(none)"}`,
+      `Decisions: ${state.decisionTree
+        .filter((n) => state.decisionPath.includes(n.id))
+        .map((d) => `${d.label} (${d.delta > 0 ? "+" : ""}${d.delta})`)
+        .join(" → ") || "(none)"}`,
       "",
       "Highlights:",
       ...highlights.map((h) => `• ${h}`),
@@ -71,10 +79,12 @@ export function MemoStep() {
         method: "POST",
         headers: { "content-type": "application/json" },
         body: JSON.stringify({
-          title: `Gambit memo — ${state.doc?.filename ?? "contract"}`,
+          title: scenario?.summaryTitle ?? `Gambit memo — ${state.doc?.filename ?? "contract"}`,
           goal: state.goal,
           finalScore: state.score,
-          decisions: state.decisions.map((d) => ({ label: d.label, delta: d.delta })),
+          decisions: state.decisionTree
+            .filter((n) => state.decisionPath.includes(n.id))
+            .map((d) => ({ label: d.label, delta: d.delta })),
           highlights,
           redact: redactOn,
           extraNames,
@@ -87,7 +97,10 @@ export function MemoStep() {
       const blob = await r.blob();
       const url = URL.createObjectURL(blob);
       setPdfUrl(url);
-      dispatch({ type: "SET_MEMO", memo: { pdfUrl: url, postedToSlack: posted } });
+      dispatch({
+        type: "SET_MEMO",
+        memo: { pdfUrl: url, postedToSlack: posted, redacted: redactOn },
+      });
     } catch (e) {
       setError((e as Error).message);
     } finally {
@@ -103,7 +116,7 @@ export function MemoStep() {
         method: "POST",
         headers: { "content-type": "application/json" },
         body: JSON.stringify({
-          memoTitle: `Gambit memo — ${state.doc?.filename ?? "contract"}`,
+          memoTitle: scenario?.summaryTitle ?? `Gambit memo — ${state.doc?.filename ?? "contract"}`,
           text: previewBody,
         }),
       });
@@ -114,7 +127,7 @@ export function MemoStep() {
       setPosted(true);
       dispatch({
         type: "SET_MEMO",
-        memo: { pdfUrl: pdfUrl ?? "", postedToSlack: true },
+        memo: { pdfUrl: pdfUrl ?? "", postedToSlack: true, redacted: redactOn },
       });
     } catch (e) {
       setError((e as Error).message);
@@ -146,12 +159,36 @@ export function MemoStep() {
               <input type="checkbox" checked={redactOn} onChange={(e) => setRedactOn(e.target.checked)} />
               Redact for Slack
             </label>
+          </div>
+
+          <div className="card px-5 py-3">
+            <p className="label">Extra names to redact</p>
             <input
-              className="input ml-auto max-w-[320px]"
-              placeholder="Extra names to redact"
+              className="input mt-2"
               value={extraNamesText}
               onChange={(e) => setExtraNamesText(e.target.value)}
             />
+            {scenario ? (
+              <div className="mt-2 flex flex-wrap gap-1.5">
+                <span className="muted text-[11px]">Suggested:</span>
+                {scenario.sensitiveNames.map((n) => (
+                  <button
+                    key={n}
+                    type="button"
+                    onClick={() =>
+                      setExtraNamesText((s) =>
+                        s.split(",").map((x) => x.trim()).filter(Boolean).concat(n)
+                          .filter((v, i, arr) => arr.indexOf(v) === i).join(", "),
+                      )
+                    }
+                    className="rounded-full border px-2 py-0.5 text-[11px]"
+                    style={{ borderColor: "var(--line-strong)", background: "white" }}
+                  >
+                    + {n}
+                  </button>
+                ))}
+              </div>
+            ) : null}
           </div>
 
           <pre
@@ -170,16 +207,9 @@ export function MemoStep() {
               {busy ? "Building PDF…" : pdfUrl ? "Rebuild PDF" : "Build PDF"}
             </button>
             {pdfUrl ? (
-              <a className="btn btn-secondary" href={pdfUrl} download="gambit-memo.pdf">
-                Download PDF
-              </a>
+              <a className="btn btn-secondary" href={pdfUrl} download="gambit-memo.pdf">Download PDF</a>
             ) : null}
-            <button
-              type="button"
-              className="btn"
-              disabled={posting}
-              onClick={() => void post()}
-            >
+            <button type="button" className="btn" disabled={posting} onClick={() => void post()}>
               {posting ? "Posting…" : posted ? "✓ Posted to Slack" : "Post to Slack"}
             </button>
           </div>
@@ -188,8 +218,8 @@ export function MemoStep() {
 
       <div className="flex justify-between">
         <button type="button" className="btn btn-ghost" onClick={() => dispatch({ type: "BACK" })}>← Back</button>
-        <button type="button" className="btn" onClick={() => dispatch({ type: "GOTO", step: "done" })}>
-          Continue → Wrap up
+        <button type="button" className="btn" onClick={() => dispatch({ type: "GOTO", step: "edited" })}>
+          Continue → See edited contract
         </button>
       </div>
     </div>

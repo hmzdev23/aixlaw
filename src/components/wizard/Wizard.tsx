@@ -12,6 +12,7 @@ import { WarRoomStep } from "@/components/steps/WarRoomStep";
 import { ExportStep } from "@/components/steps/ExportStep";
 import { MeetingStep } from "@/components/steps/MeetingStep";
 import { MemoStep } from "@/components/steps/MemoStep";
+import { EditedDocStep } from "@/components/steps/EditedDocStep";
 import { DoneStep } from "@/components/steps/DoneStep";
 
 function Inner() {
@@ -41,6 +42,7 @@ function Inner() {
         {state.step === "export" && <ExportStep />}
         {state.step === "meeting" && <MeetingStep />}
         {state.step === "memo" && <MemoStep />}
+        {state.step === "edited" && <EditedDocStep />}
         {state.step === "done" && <DoneStep />}
       </section>
     </main>

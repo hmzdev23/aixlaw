@@ -33,7 +33,10 @@ export function MeetingStep() {
           whenIso: new Date(when).toISOString(),
           durationMins: 30,
           attendeeEmail: attendee || undefined,
-          description: `Goal: ${state.goal}\n\nFinal win bar: ${state.score.toFixed(1)}\nDecisions: ${state.decisions.map((d) => d.label).join(" → ") || "(none)"}`,
+          description: `Goal: ${state.goal}\n\nFinal win bar: ${state.score.toFixed(1)}\nDecisions: ${state.decisionTree
+            .filter((n) => state.decisionPath.includes(n.id))
+            .map((d) => d.label)
+            .join(" → ") || "(none)"}`,
         }),
       });
       const j = (await res.json()) as
