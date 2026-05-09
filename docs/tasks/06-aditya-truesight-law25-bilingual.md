@@ -6,7 +6,7 @@
 
 ## Goal (1 paragraph)
 
-Implement **`ComplianceService.checkProposedText`** returning a unified **`ComplianceReport`**: **TrueSight** (CanLII verification), **OsfiResult** (third-party / operational resilience **themes** aligned to Initech’s posture — cite as risk assessment not legal advice), **PipedResult** (PIPEDA accountability, cross-border, retention), and **Law25Result** (secondary demo beat: contrived **US subprocessor + Quebec-impacted data** per DEMO_SCRIPT). Auto-generate **PIA** sections **EN + FR** when Law 25 triggers. Expose **`Translator`** for FR/EN toggles. Consumed by Cockpit **CompliancePanel** (T2) and outbound copy (T8).
+Implement **`ComplianceService.checkProposedText`** returning a unified **`ComplianceReport`**: **TrueSight** (CanLII verification), **OsfiResult** (third-party / operational resilience **themes** aligned to Initech’s posture — cite as risk assessment not legal advice), **PipedaResult** (PIPEDA accountability, cross-border, retention), and **Law25Result** (secondary demo beat: contrived **US subprocessor + Quebec-impacted data** per DEMO_SCRIPT). Auto-generate **PIA** sections **EN + FR** when Law 25 triggers. Expose **`Translator`** for FR/EN toggles. Consumed by Cockpit **CompliancePanel** (T2) and outbound copy (T8).
 
 ---
 
