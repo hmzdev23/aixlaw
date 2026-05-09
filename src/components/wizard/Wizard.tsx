@@ -1,6 +1,5 @@
 "use client";
 
-import Image from "next/image";
 import { WizardProvider, useWizard } from "./state";
 import { StepBar } from "./StepBar";
 import { UploadStep } from "@/components/steps/UploadStep";
@@ -17,110 +16,195 @@ import { MemoStep } from "@/components/steps/MemoStep";
 import { EditedDocStep } from "@/components/steps/EditedDocStep";
 import { DoneStep } from "@/components/steps/DoneStep";
 
-function SideLogo() {
+function ArrowIcon() {
   return (
-    <aside
-      aria-hidden
-      className="hidden xl:flex flex-col items-center justify-start gap-4 pt-24 select-none"
-    >
-      <div className="relative h-[140px] w-[140px] fade-in">
-        <Image
-          src="/gambit-logo.png"
-          alt=""
-          fill
-          sizes="140px"
-          priority
-          style={{ objectFit: "contain" }}
-        />
-      </div>
-      <div className="flex flex-col items-center gap-1 fade-in stagger-2">
-        <span
-          className="text-[14px] font-semibold tracking-[0.22em]"
-          style={{ color: "var(--ink)" }}
-        >
-          GAMBIT
-        </span>
-        <span
-          className="h-px w-10"
-          style={{ background: "var(--green-line, #b9d6c4)" }}
-        />
-        <span
-          className="text-[10px] uppercase tracking-[0.28em]"
-          style={{ color: "var(--green-deep, #185538)" }}
-        >
-          AI Council
-        </span>
-      </div>
-    </aside>
+    <svg className="sigma-arrow" viewBox="0 0 16 16" fill="none" aria-hidden>
+      <path
+        d="M4.25 11.75 11.75 4.25M6 4.25h5.75V10"
+        stroke="currentColor"
+        strokeLinecap="square"
+        strokeWidth="1.5"
+      />
+    </svg>
   );
 }
 
-function SideQuote() {
+function BrandMark() {
   return (
-    <aside
-      aria-hidden
-      className="hidden xl:flex flex-col items-start justify-start pt-28 pr-2 select-none"
-    >
-      <div className="fade-in stagger-3 max-w-[200px]">
-        <span className="side-quote-mark">&ldquo;</span>
-        <p className="side-quote text-[15px]">
-          Out-think the contract. Out-play the room.
-        </p>
-        <p
-          className="mt-3 text-[10px] uppercase tracking-[0.28em]"
-          style={{ color: "var(--muted)" }}
-        >
-          &mdash; the gambit doctrine
-        </p>
-      </div>
-    </aside>
+    <a className="sigma-mark" href="#top" aria-label="Gambit">
+      <span className="sigma-mark-icon">
+        <span className="sigma-mark-dot" />
+      </span>
+      <span className="sigma-mark-text">Gambit</span>
+    </a>
   );
 }
 
 function Inner() {
   const { state } = useWizard();
   return (
-    <main className="min-h-screen w-full">
-      <div className="mx-auto grid max-w-[1500px] grid-cols-1 gap-6 px-4 pb-24 pt-8 md:px-6 xl:grid-cols-[180px_minmax(0,1100px)_220px]">
-        <SideLogo />
-        <div className="flex flex-col">
-          <header className="mb-6 flex items-baseline justify-between gap-4">
-            <div>
-              <h1 className="text-[24px] font-semibold tracking-tight">Gambit</h1>
-              <p className="subhead text-[13px]">
-                Upload a contract. Debate it with an AI council. Export the deal.
-              </p>
-            </div>
-            <span
-              className="text-[11px] uppercase tracking-[0.22em]"
-              style={{ color: "var(--green-deep, #185538)" }}
-            >
-              step-by-step
-            </span>
-          </header>
+    <main id="top" className="sigma-shell">
+      <header className="sigma-header">
+        <BrandMark />
 
-          <div className="card mb-6 px-5 py-4">
-            <StepBar />
-          </div>
+        <nav className="sigma-nav" aria-label="Primary">
+          <a href="#workflow">Workflow</a>
+          <a href="#war-room">AI Council</a>
+          <a href="#exports">Exports</a>
+          <a href="#security">Security</a>
+        </nav>
 
-          <section className="card flex-1 px-6 py-6 md:px-8 md:py-8">
-            {state.step === "upload" && <UploadStep />}
-            {state.step === "review" && <ReviewStep />}
-            {state.step === "esig" && <EsigStep />}
-            {state.step === "violations" && <ViolationsStep />}
-            {state.step === "workflow" && <WorkflowStep />}
-            {state.step === "goal" && <GoalStep />}
-            {state.step === "context" && <ContextStep />}
-            {state.step === "warroom" && <WarRoomStep />}
-            {state.step === "export" && <ExportStep />}
-            {state.step === "meeting" && <MeetingStep />}
-            {state.step === "memo" && <MemoStep />}
-            {state.step === "edited" && <EditedDocStep />}
-            {state.step === "done" && <DoneStep />}
-          </section>
+        <div className="sigma-actions">
+          <a className="sigma-muted-link" href="#app">App</a>
+          <a className="sigma-button" href="#app">
+            Start review
+            <ArrowIcon />
+          </a>
         </div>
-        <SideQuote />
-      </div>
+      </header>
+
+      <section className="sigma-hero">
+        <div className="sigma-hero-grid">
+          <h1 className="sigma-display sigma-title">
+            Contract work for
+            <br />
+            <strong>AI deal teams</strong>
+          </h1>
+          <div>
+            <p className="sigma-lede">
+              Upload a contract, review risk, coordinate signatures, debate
+              tradeoffs with an AI council, and export the deal package.
+            </p>
+            <div className="sigma-actions sigma-hero-actions">
+              <a className="sigma-button" href="#app">
+                Get started
+                <ArrowIcon />
+              </a>
+              <a className="sigma-button secondary" href="#workflow">
+                See workflow
+                <ArrowIcon />
+              </a>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section className="sigma-brand-strip">
+        <div className="sigma-brand-inner">
+          <div className="sigma-brand-label">
+            Built for legal
+            <br />
+            operating teams:
+          </div>
+          <div className="sigma-brand-list" aria-label="Workflow capabilities">
+            {["Review", "Signature", "Debate", "Memo"].map((item) => (
+              <div className="sigma-brand-item" key={item}>
+                <span className="sigma-brand-symbol" />
+                <span>{item}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <section id="app" className="sigma-app">
+        <div className="sigma-map">
+          <span className="sigma-point one" />
+          <span className="sigma-point two" />
+          <span className="sigma-point three" />
+          <span className="sigma-kicker sigma-fig">Fig 002</span>
+
+          <div className="sigma-console-wrap">
+            <div className="sigma-console">
+              <div className="sigma-console-bar">
+                <span className="sigma-dot" />
+                <span className="sigma-dot" />
+                <span className="sigma-dot" />
+                <span className="sigma-console-name">gambit-review-console</span>
+              </div>
+
+              <div className="sigma-workspace">
+                <div className="sigma-workspace-head">
+                  <div>
+                    <span className="sigma-kicker" style={{ color: "var(--green-deep)" }}>
+                      step-by-step
+                    </span>
+                    <h2 className="sigma-display">Gambit review</h2>
+                    <p className="subhead text-[13px]">
+                      The upload, review, signature, council, and export flow is
+                      unchanged.
+                    </p>
+                  </div>
+                  <StepBar />
+                </div>
+
+                <section>
+                  {state.step === "upload" && <UploadStep />}
+                  {state.step === "review" && <ReviewStep />}
+                  {state.step === "esig" && <EsigStep />}
+                  {state.step === "violations" && <ViolationsStep />}
+                  {state.step === "workflow" && <WorkflowStep />}
+                  {state.step === "goal" && <GoalStep />}
+                  {state.step === "context" && <ContextStep />}
+                  {state.step === "warroom" && <WarRoomStep />}
+                  {state.step === "export" && <ExportStep />}
+                  {state.step === "meeting" && <MeetingStep />}
+                  {state.step === "memo" && <MemoStep />}
+                  {state.step === "edited" && <EditedDocStep />}
+                  {state.step === "done" && <DoneStep />}
+                </section>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div className="sigma-ruler" aria-hidden>
+          <div className="sigma-ruler-labels">
+            <span>Fig 001</span>
+            <span>Fig 003</span>
+          </div>
+          <div className="sigma-ruler-track">
+            <span className="sigma-marker" />
+            {Array.from({ length: 150 }).map((_, i) => (
+              <span
+                className={`sigma-tick ${
+                  i % 10 === 0 ? "major" : i % 5 === 0 ? "medium" : "minor"
+                }`}
+                key={i}
+              />
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <section className="sigma-cta">
+        <h2 className="sigma-display">
+          Move from draft to <span>signed</span>
+        </h2>
+        <div className="sigma-cta-row">
+          <p>
+            Keep every step in one review surface without changing the
+            underlying workflow.
+          </p>
+          <a className="sigma-button" href="#app">
+            Continue in app
+            <ArrowIcon />
+          </a>
+        </div>
+        <div className="sigma-strip" />
+      </section>
+
+      <footer className="sigma-footer">
+        <div className="sigma-footer-inner">
+          <BrandMark />
+          <nav className="sigma-footer-nav" aria-label="Footer">
+            <a href="#workflow">Workflow</a>
+            <a href="#exports">Exports</a>
+            <a href="#security">Privacy</a>
+          </nav>
+          <span className="sigma-copy">Copyright © 2026 Gambit</span>
+        </div>
+      </footer>
     </main>
   );
 }

@@ -1,6 +1,6 @@
 "use client";
 
-import { createContext, useContext, useMemo, useReducer } from "react";
+import { createContext, useCallback, useContext, useMemo, useReducer } from "react";
 import type {
   ContextAnswer,
   DebateTurn,
@@ -236,8 +236,28 @@ interface Ctx {
 const WizardCtx = createContext<Ctx | null>(null);
 
 export function WizardProvider({ children }: { children: React.ReactNode }) {
-  const [state, dispatch] = useReducer(reducer, INITIAL_STATE);
-  const value = useMemo(() => ({ state, dispatch }), [state]);
+  const [state, rawDispatch] = useReducer(reducer, INITIAL_STATE);
+  const dispatch = useCallback<React.Dispatch<Action>>((action) => {
+    const preserveScroll =
+      action.type === "GOTO" ||
+      action.type === "NEXT" ||
+      action.type === "BACK" ||
+      action.type === "RESET";
+    const scroll =
+      preserveScroll && typeof window !== "undefined"
+        ? { x: window.scrollX, y: window.scrollY }
+        : null;
+
+    rawDispatch(action);
+
+    if (scroll) {
+      requestAnimationFrame(() => {
+        window.scrollTo(scroll.x, scroll.y);
+        requestAnimationFrame(() => window.scrollTo(scroll.x, scroll.y));
+      });
+    }
+  }, []);
+  const value = useMemo(() => ({ state, dispatch }), [state, dispatch]);
   return <WizardCtx.Provider value={value}>{children}</WizardCtx.Provider>;
 }
 
